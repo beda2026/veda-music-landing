@@ -55,3 +55,43 @@ export const vedaStations: VedaStation[] = [
     status: 'coming-soon',
   },
 ];
+
+
+export type VedaPlatformSource = {
+  id: string;
+  label: string;
+  status: 'live' | 'coming-soon';
+  embedUrl: string;
+  externalUrl: string;
+};
+
+export const vedaPlatformSources: VedaPlatformSource[] = [
+  {
+    id: 'en-vivo',
+    label: 'En Vivo',
+    status: 'live',
+    embedUrl: '',
+    externalUrl: '',
+  },
+  {
+    id: 'spotify',
+    label: 'Spotify',
+    status: 'coming-soon',
+    embedUrl: '',
+    externalUrl: '',
+  },
+  {
+    id: 'youtube',
+    label: 'YouTube',
+    status: 'coming-soon',
+    embedUrl: '',
+    externalUrl: '',
+  },
+  {
+    id: 'soundcloud',
+    label: 'SoundCloud',
+    status: 'coming-soon',
+    embedUrl: '',
+    externalUrl: '',
+  },
+];

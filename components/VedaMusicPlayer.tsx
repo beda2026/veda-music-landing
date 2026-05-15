@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import type { VedaStation } from '@/lib/veda-player';
-import { vedaStations } from '@/lib/veda-player';
+import { vedaPlatformSources, vedaStations } from '@/lib/veda-player';
 
 const STORAGE_VOLUME_KEY = 'veda-player-volume';
 
@@ -17,7 +17,11 @@ export default function VedaMusicPlayer() {
   const [isMuted, setIsMuted] = useState(false);
   const [volume, setVolume] = useState(0.8);
   const [isExpanded, setIsExpanded] = useState(false);
+  const [activePlatformId, setActivePlatformId] = useState('en-vivo');
 
+  const activePlatform =
+    vedaPlatformSources.find((platform) => platform.id === activePlatformId) ?? vedaPlatformSources[0];
+  const usingLivePlatform = activePlatform.id === 'en-vivo';
   const activeStation = vedaStations[activeIndex];
   const isComingSoon = !hasPlayableStream(activeStation);
   const isLive = !isComingSoon && activeStation.status === 'live';
@@ -113,7 +117,40 @@ export default function VedaMusicPlayer() {
         <p className="text-xs uppercase tracking-[0.24em] text-[#f0d3a0]">VEDA Music Player</p>
         <h2 className="mt-2 text-2xl font-extrabold text-zinc-100 md:text-3xl">Música, estrenos y movimiento urbano en vivo.</h2>
 
-        <div className="mt-6 grid gap-5 lg:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)]">
+        <div role="tablist" aria-label="Plataformas oficiales de VEDA Music Player" className="mt-5 flex flex-wrap gap-2">
+          {vedaPlatformSources.map((platform) => {
+            const selected = platform.id === activePlatform.id;
+            return (
+              <button
+                key={platform.id}
+                id={`veda-platform-tab-${platform.id}`}
+                type="button"
+                role="tab"
+                aria-selected={selected}
+                aria-controls={`veda-platform-panel-${platform.id}`}
+                tabIndex={selected ? 0 : -1}
+                onClick={() => setActivePlatformId(platform.id)}
+                className={`rounded-full border px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.14em] transition ${
+                  selected
+                    ? 'border-[#f5b21b] bg-[#2a2111] text-[#f5d186]'
+                    : 'border-zinc-700 bg-zinc-900/70 text-zinc-300 hover:border-zinc-500'
+                }`}
+              >
+                {platform.label}
+              </button>
+            );
+          })}
+        </div>
+
+        <div className="mt-6">
+          {usingLivePlatform ? (
+            <div
+              id={`veda-platform-panel-${activePlatform.id}`}
+              role="tabpanel"
+              aria-labelledby={`veda-platform-tab-${activePlatform.id}`}
+              className="grid gap-5 lg:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)]"
+            >
+
           <div className="rounded-2xl border border-zinc-700/80 bg-zinc-950/70 p-4 md:p-5">
             <div className="flex items-start gap-4 md:gap-5">
               <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-2xl border border-zinc-700 shadow-[0_8px_25px_rgba(0,0,0,.45),inset_0_0_0_1px_rgba(245,178,27,.08)] bg-[radial-gradient(circle_at_25%_20%,rgba(239,31,45,.35),transparent_45%),radial-gradient(circle_at_80%_70%,rgba(245,178,27,.3),transparent_50%),linear-gradient(145deg,#131313,#1f1f1f)] md:h-28 md:w-28">
@@ -192,6 +229,21 @@ export default function VedaMusicPlayer() {
               );
             })}
           </div>
+            </div>
+          ) : (
+            <div
+              id={`veda-platform-panel-${activePlatform.id}`}
+              role="tabpanel"
+              aria-labelledby={`veda-platform-tab-${activePlatform.id}`}
+              className="rounded-2xl border border-zinc-700/80 bg-zinc-950/70 p-6 text-center"
+            >
+              <p className="text-xs uppercase tracking-[0.18em] text-[#f0d3a0]">{activePlatform.label}</p>
+              <p className="mt-3 text-lg font-semibold text-zinc-100">Próximamente</p>
+              <p className="mt-2 text-sm text-zinc-400">
+                Este contenedor oficial de VEDA Music Player estará disponible pronto.
+              </p>
+            </div>
+          )}
         </div>
         <audio ref={audioRef} preload="none" onWaiting={() => setIsLoading(true)} onPlaying={() => { setIsPlaying(true); setIsLoading(false); }} onPause={() => setIsPlaying(false)} onError={() => { setError('No pudimos conectar esta señal ahora mismo. Intenta otra estación.'); setIsLoading(false); setIsPlaying(false); }} />
       </div>
