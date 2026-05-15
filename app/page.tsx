@@ -1,6 +1,7 @@
 import VisitCounter from '@/components/VisitCounter';
 import VedaMusicPlayer from '@/components/VedaMusicPlayer';
 import CommercialContactForm from '@/components/CommercialContactForm';
+import SubscribeForm from '@/components/SubscribeForm';
 import { interviews, photos, releases, services, topTen, videos } from '@/lib/veda-data';
 
 const navLinks = ['Inicio', 'Noticias', 'Música', 'Videos', 'Fotos', 'Entrevistas', 'Nosotros', 'Contacto'];
@@ -317,6 +318,8 @@ export default function HomePage() {
             </div>
           </div>
         </section>
+
+        <SubscribeForm />
 
         <section className="ad-box rounded-2xl p-5 text-center">
           <p className="mb-4 font-semibold">BRAND PARTNERS · PATROCINADORES OFICIALES</p>
