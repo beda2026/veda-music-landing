@@ -143,9 +143,27 @@ body {
 .ad-box { border: 1px dashed #4a4a4a; background: #111111cc; color: #a1a1aa; }
 .section-title { font-size: 1.6rem; font-weight: 800; color: #f8f8f8; }
 .social-clean { white-space: nowrap; }
+.social-icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.8rem;
+  height: 1.8rem;
+  flex: 0 0 auto;
+  border-radius: 9999px;
+  border: 1px solid #52525b;
+  background: #151515;
+  color: #e4e4e7;
+  transition: border-color .2s ease, color .2s ease, transform .2s ease;
+}
+.social-icon-btn:hover {
+  border-color: #f5b21b;
+  color: #ef1f2d;
+  transform: translateY(-1px);
+}
 .hide-scrollbar::-webkit-scrollbar { display: none; }
 .hide-scrollbar { scrollbar-width: none; }
 
 @media (max-width: 760px) {
-  .social-clean { max-width: 240px; overflow: hidden; text-overflow: ellipsis; }
+  .social-clean { max-width: 100%; }
 }

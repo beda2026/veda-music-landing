@@ -2,7 +2,38 @@ import VisitCounter from '@/components/VisitCounter';
 import { interviews, photos, releases, services, topTen, videos } from '@/lib/veda-data';
 
 const navLinks = ['Inicio', 'Noticias', 'Música', 'Videos', 'Fotos', 'Entrevistas', 'Contacto'];
-const socialLinks = ['F', 'X', 'IG', 'YT', 'TT', 'SP'];
+const socialLinks = [
+  { name: 'Facebook', icon: 'facebook' },
+  { name: 'X', icon: 'x' },
+  { name: 'Instagram', icon: 'instagram' },
+  { name: 'YouTube', icon: 'youtube' },
+  { name: 'TikTok', icon: 'tiktok' },
+  { name: 'Spotify', icon: 'spotify' },
+] as const;
+
+function SocialIcon({ icon }: { icon: (typeof socialLinks)[number]['icon'] }) {
+  if (icon === 'facebook') return <path d="M14 8h2V5h-2c-2.2 0-4 1.8-4 4v2H8v3h2v5h3v-5h2.2l.8-3H13V9c0-.6.4-1 1-1Z" />;
+  if (icon === 'x') return <path d="M6 6h3.2l3.1 4.5L15.8 6H18l-4.5 5.8L18 18h-3.2l-3.3-4.8L7.8 18H5.5l4.8-6.2L6 6Z" />;
+  if (icon === 'instagram') return <><rect x="6.5" y="6.5" width="11" height="11" rx="3" /><circle cx="12" cy="12" r="2.6" /><circle cx="15.7" cy="8.3" r="0.9" fill="currentColor" stroke="none" /></>;
+  if (icon === 'youtube') return <><rect x="5.5" y="7.5" width="13" height="9" rx="2.5" /><path d="m11 10 4 2-4 2v-4Z" fill="currentColor" stroke="none" /></>;
+  if (icon === 'tiktok') return <path d="M14.2 7.2c.6.8 1.4 1.3 2.4 1.4V11c-1 0-1.8-.2-2.6-.7V14a4.1 4.1 0 1 1-4.1-4.1c.2 0 .5 0 .7.1v2.3a1.9 1.9 0 1 0 1.2 1.8V6h2.4v1.2Z" />;
+  return <path d="M12 6.3a5.7 5.7 0 1 0 0 11.4 5.7 5.7 0 0 0 0-11.4Zm2.6 8.2a3.6 3.6 0 0 1-4.9 1.2A3.5 3.5 0 0 1 8 10.9a3.6 3.6 0 0 1 6.5-.7h1.7c-.4-2.6-2.6-4.6-5.2-4.6A5.4 5.4 0 0 0 12 16.4c2.6 0 4.8-2 5.2-4.6h-2.6Z" />;
+}
+
+function SocialButtons() {
+  return (
+    <div className="hide-scrollbar social-clean flex items-center gap-2 overflow-x-auto text-zinc-200">
+      <span className="shrink-0 text-xs">SÍGUENOS:</span>
+      {socialLinks.map((item) => (
+        <a key={item.name} href="#" aria-label={item.name} className="social-icon-btn">
+          <svg viewBox="0 0 24 24" className="h-3.5 w-3.5" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+            <SocialIcon icon={item.icon} />
+          </svg>
+        </a>
+      ))}
+    </div>
+  );
+}
 
 export default function HomePage() {
   return (
@@ -15,7 +46,7 @@ export default function HomePage() {
             <span className="rounded-full bg-[#ef1f2d] px-3 py-1 font-semibold text-white">TRENDING</span>
             <p className="text-zinc-300">Eladio Carrión llevó CORSA al Coliseo de Puerto Rico · LIT Killah ft. Paulo Londra, Khea y Ramma – Si Te Vas 2.0 · Kris R – Lindos Recuerdos</p>
           </div>
-          <p className="social-clean text-xs text-zinc-300">SÍGUENOS: {socialLinks.join(' · ')}</p>
+          <SocialButtons />
         </div>
 
         <div className="panel flex flex-col gap-4 rounded-2xl p-4 lg:flex-row lg:items-center lg:justify-between">
@@ -198,6 +229,7 @@ export default function HomePage() {
             <p>Puerto Rico</p>
             <p>Disponibles para colaboraciones</p>
             <div className="mt-3"><VisitCounter /></div>
+            <div className="mt-3"><SocialButtons /></div>
           </div>
           <form className="flex items-center gap-2" aria-label="newsletter">
             <input type="email" placeholder="Tu correo electrónico" className="w-full rounded-xl border border-zinc-700 bg-[#101010] px-3 py-2 text-sm text-zinc-200 placeholder:text-zinc-500" />
