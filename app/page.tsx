@@ -261,9 +261,6 @@ export default function HomePage() {
                   alt="MGF Enterprises VIP sponsor banner"
                   className="h-full w-full object-cover"
                 />
-                <span className="pointer-events-none absolute left-3 top-3 rounded-full border border-zinc-500/70 bg-black/55 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.14em] text-zinc-200">
-                  VIP SPONSOR
-                </span>
               </a>
             </aside>
           </div>
