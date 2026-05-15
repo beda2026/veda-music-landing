@@ -11,8 +11,8 @@ export type VedaStation = {
 export const vedaStations: VedaStation[] = [
   {
     id: 'veda-live',
-    name: 'VEDA Live',
-    tagline: 'Música, estrenos y movimiento urbano en vivo.',
+    name: 'Live Radio',
+    tagline: 'Transmisión musical y movimiento urbano en vivo.',
     genre: 'Urbano / Reggaetón / Trap Latino',
     streamUrl: '',
     artwork: '/assets/veda/player/veda-live.jpg',
@@ -20,8 +20,8 @@ export const vedaStations: VedaStation[] = [
   },
   {
     id: 'urbano-selecta',
-    name: 'Urbano Selecta',
-    tagline: 'Reggaetón, trap y sonidos latinos seleccionados.',
+    name: 'Urban Selection',
+    tagline: 'Selección curada de reggaetón, trap y sonidos latinos.',
     genre: 'Latin Urban',
     streamUrl: '',
     artwork: '/assets/veda/player/urbano-selecta.jpg',
@@ -29,8 +29,8 @@ export const vedaStations: VedaStation[] = [
   },
   {
     id: 'clasicos-del-perreo',
-    name: 'Clásicos del Perreo',
-    tagline: 'Old school, nostalgia y calle.',
+    name: 'Classics',
+    tagline: 'Clásicos del perreo, nostalgia y calle.',
     genre: 'Old School Reggaetón',
     streamUrl: '',
     artwork: '/assets/veda/player/clasicos-del-perreo.jpg',
@@ -38,7 +38,7 @@ export const vedaStations: VedaStation[] = [
   },
   {
     id: 'new-heat',
-    name: 'New Heat',
+    name: 'New Releases',
     tagline: 'Estrenos, artistas nuevos y temas recomendados.',
     genre: 'Estrenos Urbanos',
     streamUrl: '',
@@ -47,8 +47,8 @@ export const vedaStations: VedaStation[] = [
   },
   {
     id: 'entrevistas-drops',
-    name: 'Entrevistas & Drops',
-    tagline: 'Cápsulas, entrevistas, saludos y contenido exclusivo.',
+    name: 'Backstage',
+    tagline: 'Entrevistas, drops, saludos y contenido exclusivo.',
     genre: 'Contenido VEDA',
     streamUrl: '',
     artwork: '/assets/veda/player/entrevistas-drops.jpg',
