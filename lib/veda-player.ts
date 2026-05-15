@@ -4,55 +4,41 @@ export type VedaStation = {
   tagline: string;
   genre: string;
   streamUrl: string;
+  externalUrl?: string;
   artwork?: string;
-  status?: 'live' | 'coming-soon';
+  status?: 'live' | 'coming-soon' | 'external';
 };
 
 export const vedaStations: VedaStation[] = [
   {
-    id: 'veda-live',
-    name: 'Live Radio',
-    tagline: 'Transmisión musical y movimiento urbano en vivo.',
-    genre: 'Urbano / Reggaetón / Trap Latino',
+    id: 'la-nueva-94',
+    name: 'La Nueva 94',
+    tagline: 'Reggaetón, urbano y programación de Puerto Rico.',
+    genre: 'Radio Oficial',
     streamUrl: '',
+    externalUrl: 'https://www.lamusica.com/stations/woda',
     artwork: '/assets/veda/player/veda-live.jpg',
-    status: 'coming-soon',
+    status: 'external',
   },
   {
-    id: 'urbano-selecta',
-    name: 'Urban Selection',
-    tagline: 'Selección curada de reggaetón, trap y sonidos latinos.',
-    genre: 'Latin Urban',
+    id: 'mega-106-9',
+    name: 'Mega 106.9',
+    tagline: 'Música y entretenimiento urbano / Top 40 latino.',
+    genre: 'Radio Oficial',
     streamUrl: '',
+    externalUrl: 'https://www.lamusica.com/en/stations/wmeg',
     artwork: '/assets/veda/player/urbano-selecta.jpg',
-    status: 'coming-soon',
+    status: 'external',
   },
   {
-    id: 'clasicos-del-perreo',
-    name: 'Classics',
-    tagline: 'Clásicos del perreo, nostalgia y calle.',
-    genre: 'Old School Reggaetón',
+    id: 'mix-107-7',
+    name: 'Mix 107.7',
+    tagline: 'Donde vive tu música urbana.',
+    genre: 'Radio Oficial',
     streamUrl: '',
+    externalUrl: 'https://mix107pr.com/',
     artwork: '/assets/veda/player/clasicos-del-perreo.jpg',
-    status: 'coming-soon',
-  },
-  {
-    id: 'new-heat',
-    name: 'New Releases',
-    tagline: 'Estrenos, artistas nuevos y temas recomendados.',
-    genre: 'Estrenos Urbanos',
-    streamUrl: '',
-    artwork: '/assets/veda/player/new-heat.jpg',
-    status: 'coming-soon',
-  },
-  {
-    id: 'entrevistas-drops',
-    name: 'Backstage',
-    tagline: 'Entrevistas, drops, saludos y contenido exclusivo.',
-    genre: 'Contenido VEDA',
-    streamUrl: '',
-    artwork: '/assets/veda/player/entrevistas-drops.jpg',
-    status: 'coming-soon',
+    status: 'external',
   },
 ];
 
