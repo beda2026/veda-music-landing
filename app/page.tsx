@@ -138,11 +138,22 @@ export default function HomePage() {
           </article>
 
           <aside className="ad-box flex min-h-[280px] flex-col items-center justify-center rounded-3xl p-4 text-center lg:h-[300px] lg:min-h-[300px]">
-            <div className="flex h-[250px] w-full max-w-[336px] flex-col items-center justify-center rounded-2xl border border-zinc-600/80 bg-[#111111]/70">
-              <p className="text-xl font-semibold">AD</p>
-              <p>RECTANGLE</p>
-              <p>336x280 / 300x250</p>
-            </div>
+            <a
+              href="https://www.youtube.com/@DimeloKombete"
+              target="_blank"
+              rel="noreferrer"
+              className="group relative block h-[250px] w-full max-w-[336px] overflow-hidden rounded-2xl border border-zinc-600/80 bg-[#111111]/70"
+              aria-label="Dímelo Kombete sponsor banner"
+            >
+              <img
+                src="/assets/dimelo-kombete-ad-336x280.png"
+                alt="Dímelo Kombete sponsor banner"
+                className="h-full w-full object-cover transition duration-300 group-hover:scale-[1.01]"
+              />
+              <span className="pointer-events-none absolute left-3 top-3 rounded-full border border-zinc-500/70 bg-black/55 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.14em] text-zinc-200">
+                SPONSORED
+              </span>
+            </a>
           </aside>
         </section>
 
