@@ -1,8 +1,9 @@
 import VisitCounter from '@/components/VisitCounter';
 import VedaMusicPlayer from '@/components/VedaMusicPlayer';
+import CommercialContactForm from '@/components/CommercialContactForm';
 import { interviews, photos, releases, services, topTen, videos } from '@/lib/veda-data';
 
-const navLinks = ['Inicio', 'Noticias', 'Música', 'Videos', 'Fotos', 'Entrevistas', 'Contacto'];
+const navLinks = ['Inicio', 'Noticias', 'Música', 'Videos', 'Fotos', 'Entrevistas', 'Nosotros', 'Contacto'];
 const socialLinks = [
   { name: 'Spotify', icon: 'spotify' },
   { name: 'YouTube', icon: 'youtube' },
@@ -15,7 +16,7 @@ const promoCards = [
     text: 'Coloca tu marca, evento o negocio en espacios visibles dentro de V.E.D.A. MUSIC.',
     items: ['Top Banner', 'Sponsored Banner', 'Brand Partner'],
     cta: 'Quiero anunciarme',
-    href: 'mailto:vedamusicpr@gmail.com?subject=Quiero%20anunciarme%20en%20VEDA%20MUSIC',
+    href: '#contacto-comercial',
   },
   {
     badge: 'NEGOCIOS',
@@ -23,7 +24,7 @@ const promoCards = [
     text: 'Comparte tu canción, video o estreno para evaluación editorial.',
     items: ['Video oficial', 'Estreno musical', 'Artista emergente'],
     cta: 'Enviar música',
-    href: 'mailto:vedamusicpr@gmail.com?subject=Enviar%20música%20a%20VEDA%20MUSIC',
+    href: '#contacto-comercial',
   },
   {
     badge: 'SPONSORS',
@@ -31,7 +32,7 @@ const promoCards = [
     text: 'Coordina entrevistas, cobertura o contenido especial para tu proyecto.',
     items: ['Entrevista', 'Cobertura de evento', 'Studio / contenido'],
     cta: 'Reservar entrevista',
-    href: 'mailto:vedamusicpr@gmail.com?subject=Reservar%20entrevista%20en%20VEDA%20MUSIC',
+    href: '#contacto-comercial',
   },
 ] as const;
 const promoPackages = ['Publicación básica', 'Video destacado', 'Banner semanal', 'Banner mensual', 'Sponsor oficial', 'Entrevista / cobertura'];
@@ -71,7 +72,7 @@ export default function HomePage() {
                 <p className="text-sm text-zinc-200">Promociona tu música, evento, marca o negocio urbano en una plataforma visual creada para descubrir movimiento.</p>
               </div>
               <div className="flex flex-col items-start gap-3 md:items-end md:text-right">
-                <a href="mailto:vedamusicpr@gmail.com?subject=Reservar%20espacio%20publicitario%20en%20VEDA%20MUSIC" className="btn-gold">Reservar espacio</a>
+                <a href="#contacto-comercial" className="btn-gold">Reservar espacio</a>
                 <p className="text-[11px] uppercase tracking-[0.16em] text-zinc-400">Top Banner · Sponsored Slot</p>
               </div>
             </div>
@@ -94,7 +95,7 @@ export default function HomePage() {
           </div>
           <nav className="hide-scrollbar -mx-2 flex gap-3 overflow-x-auto px-2 text-sm font-medium text-zinc-200 lg:flex-wrap lg:overflow-visible">
             {navLinks.map((link) => (
-              <a key={link} href={link === 'Inicio' ? '#' : `#${link.toLowerCase()}`} className="whitespace-nowrap rounded-full border border-zinc-700 px-3 py-1.5 transition hover:border-[#ef1f2d] hover:text-white">
+              <a key={link} href={link === 'Inicio' ? '#' : link === 'Contacto' ? '#contacto-comercial' : link === 'Nosotros' ? '#sobre-nosotros' : `#${link.toLowerCase()}`} className="whitespace-nowrap rounded-full border border-zinc-700 px-3 py-1.5 transition hover:border-[#ef1f2d] hover:text-white">
                 {link}
               </a>
             ))}
@@ -197,7 +198,7 @@ export default function HomePage() {
             <p className="font-semibold">SPONSORED BANNER · 970x90</p>
             <p className="text-zinc-300">Tu marca aquí con la cultura urbana</p>
           </div>
-          <a href="#contacto" className="btn-gold">Más información</a>
+          <a href="#contacto-comercial" className="btn-gold">Más información</a>
         </section>
 
         <section className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_340px]">
@@ -244,8 +245,41 @@ export default function HomePage() {
           </div>
           <div className="panel rounded-2xl p-5 text-center">
             <p className="mb-4 text-lg font-semibold text-zinc-100">¿Listo para llevar tu carrera al siguiente nivel?</p>
-            <a href="mailto:vedamusicpr@gmail.com" className="btn-red">Contáctanos</a>
+            <a href="#contacto-comercial" className="btn-red">Contáctanos</a>
           </div>
+        </section>
+
+        <section id="sobre-nosotros" className="space-y-5">
+          <div className="panel rounded-2xl p-6">
+            <h2 className="section-title">Sobre V.E.D.A. MUSIC</h2>
+            <div className="mt-4 space-y-4 text-sm leading-relaxed text-zinc-300 sm:text-base">
+              <p>V.E.D.A. MUSIC es una plataforma digital enfocada en música, cultura urbana, entrevistas, estrenos y descubrimiento de talento. Nacemos para conectar artistas, creadores, marcas y público en un espacio visual, moderno y directo.</p>
+              <p>Nuestro enfoque combina contenido editorial, promoción musical, espacios publicitarios y cobertura urbana para darle visibilidad a proyectos que forman parte del movimiento latino y caribeño.</p>
+              <p>Más que una página de música, V.E.D.A. MUSIC funciona como un punto de encuentro para artistas emergentes, marcas locales, eventos, entrevistas y contenido que representa la calle, la cultura y la evolución del sonido urbano.</p>
+            </div>
+          </div>
+          <div className="grid gap-4 md:grid-cols-3">
+            <article className="panel hover-card rounded-2xl p-5">
+              <h3 className="text-lg font-semibold text-zinc-100">Música &amp; Estrenos</h3>
+              <p className="mt-2 text-sm text-zinc-300">Espacio para destacar canciones, videos, playlists y nuevos lanzamientos.</p>
+            </article>
+            <article className="panel hover-card rounded-2xl p-5">
+              <h3 className="text-lg font-semibold text-zinc-100">Cultura Urbana</h3>
+              <p className="mt-2 text-sm text-zinc-300">Cobertura visual y editorial de movimientos, artistas, eventos y comunidades.</p>
+            </article>
+            <article className="panel hover-card rounded-2xl p-5">
+              <h3 className="text-lg font-semibold text-zinc-100">Publicidad &amp; Alianzas</h3>
+              <p className="mt-2 text-sm text-zinc-300">Opciones para marcas, negocios y proyectos que buscan visibilidad dentro del público urbano.</p>
+            </article>
+          </div>
+        </section>
+
+        <section id="contacto-comercial" className="space-y-4">
+          <div>
+            <h2 className="section-title">Contacto Comercial</h2>
+            <p className="mt-2 max-w-3xl text-zinc-300">Cuéntanos qué quieres promocionar, enviar o coordinar. Nuestro equipo revisa cada solicitud y responde por email.</p>
+          </div>
+          <CommercialContactForm />
         </section>
 
         <section className="space-y-5 pt-3 md:pt-5">
