@@ -96,7 +96,7 @@ export default function HomePage() {
       </header>
 
       <main className="mx-auto flex w-full max-w-[1400px] flex-col gap-8 px-4 py-8 sm:px-6 lg:px-10">
-        <section className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_300px]">
+        <section className="grid gap-4 lg:grid-cols-[minmax(0,65fr)_minmax(0,35fr)] lg:items-stretch">
           <article className="hero-panel rounded-3xl p-6 lg:col-span-2 lg:p-10">
             <p className="mb-4 text-xs uppercase tracking-[0.25em] text-zinc-300">V.E.D.A. MUSIC · PUERTO RICO</p>
             <h1 className="hero-title text-zinc-50">
@@ -114,21 +114,23 @@ export default function HomePage() {
             </div>
           </article>
 
-          <article className="panel hover-card rounded-3xl p-5 featured-card lg:col-span-1">
-            <span className="inline-block rounded-full border border-[#f5b21b] bg-[#f5b21b1a] px-3 py-1 text-xs font-semibold uppercase tracking-wide text-[#f5b21b]">ENTREVISTA / ESTRENO</span>
-            <div className="featured-visual my-4 flex h-44 items-center justify-center rounded-2xl border border-zinc-700">
+          <article className="panel hover-card featured-card rounded-3xl p-4 lg:col-span-1 lg:max-h-[300px] lg:p-5">
+            <span className="inline-block rounded-full border border-[#f5b21b] bg-[#f5b21b1a] px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-[0.12em] text-[#f5b21b]">ENTREVISTA / ESTRENO</span>
+            <div className="featured-visual my-3 flex h-32 items-center justify-center rounded-2xl border border-zinc-700 lg:h-28">
               <span className="text-7xl font-black text-zinc-100">V</span>
               <span className="featured-play">▶</span>
             </div>
-            <h2 className="text-2xl font-bold text-zinc-100">LIT Killah, Paulo Londra, Khea y Ramma – Si Te Vas 2.0</h2>
-            <p className="mt-2 text-zinc-300">Uno de los lanzamientos más comentados del movimiento.</p>
-            <button type="button" className="mt-4 rounded-full border border-zinc-600 px-4 py-2 text-sm font-semibold text-zinc-200 transition hover:border-[#ef1f2d]">Leer más</button>
+            <h2 className="text-xl font-bold leading-snug text-zinc-100">LIT Killah, Paulo Londra, Khea y Ramma – Si Te Vas 2.0</h2>
+            <p className="mt-1.5 text-sm text-zinc-300">Uno de los lanzamientos más comentados del movimiento.</p>
+            <button type="button" className="mt-3 rounded-full border border-zinc-600 px-3.5 py-1.5 text-sm font-semibold text-zinc-200 transition hover:border-[#ef1f2d]">Leer más</button>
           </article>
 
-          <aside className="ad-box flex min-h-[250px] flex-col items-center justify-center rounded-3xl text-center">
-            <p className="text-xl font-semibold">AD</p>
-            <p>RECTANGLE</p>
-            <p>300x250</p>
+          <aside className="ad-box flex min-h-[280px] flex-col items-center justify-center rounded-3xl p-4 text-center lg:h-[300px] lg:min-h-[300px]">
+            <div className="flex h-[250px] w-full max-w-[336px] flex-col items-center justify-center rounded-2xl border border-zinc-600/80 bg-[#111111]/70">
+              <p className="text-xl font-semibold">AD</p>
+              <p>RECTANGLE</p>
+              <p>336x280 / 300x250</p>
+            </div>
           </aside>
         </section>
 
