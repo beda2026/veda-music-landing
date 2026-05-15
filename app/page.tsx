@@ -195,7 +195,6 @@ export default function HomePage() {
           <div className="grid gap-4 md:grid-cols-3">
             {interviews.map((item, idx) => (
               <article key={item.title} className="panel hover-card rounded-2xl p-4 interview-card" data-idx={idx}>
-                <span className="media-badge mb-3 inline-block">EXCLUSIVA</span>
                 <h3 className="font-semibold text-zinc-100">{item.title}</h3>
                 <p className="mt-2 text-sm text-zinc-300">{item.meta}</p>
               </article>
