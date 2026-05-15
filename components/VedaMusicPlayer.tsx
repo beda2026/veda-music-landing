@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import type { VedaStation } from '@/lib/veda-player';
-import { vedaPlatformSources, vedaStations } from '@/lib/veda-player';
+import { vedaPlatformSources, vedaSpotifyPlaylists, vedaStations } from '@/lib/veda-player';
 
 const STORAGE_VOLUME_KEY = 'veda-player-volume';
 
@@ -250,23 +250,33 @@ export default function VedaMusicPlayer() {
               <p className="text-xs uppercase tracking-[0.18em] text-[#f0d3a0]">Spotify · Playlist externa</p>
               <h3 className="text-xl font-semibold text-zinc-100">{activePlatform.title}</h3>
               <p className="text-sm text-zinc-300">{activePlatform.tagline}</p>
-              <iframe
-                src={activePlatform.embedUrl}
-                width="100%"
-                height="352"
-                allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
-                loading="lazy"
-                title={activePlatform.title}
-                className="rounded-xl border border-zinc-800"
-              />
-              <a
-                href={activePlatform.externalUrl}
-                target="_blank"
-                rel="noreferrer"
-                className="inline-flex rounded-full border border-[#1db954] bg-[#1db954]/10 px-4 py-2 text-sm font-semibold text-[#66ffa5] transition hover:bg-[#1db954]/20"
-              >
-                {activePlatform.ctaLabel ?? 'Escuchar en Spotify'}
-              </a>
+              <div className="grid gap-4 lg:grid-cols-2">
+                {vedaSpotifyPlaylists.map((playlist) => (
+                  <article key={playlist.id} className="space-y-3 rounded-xl border border-zinc-800 bg-zinc-900/50 p-3.5 md:p-4">
+                    <h4 className="text-lg font-semibold text-zinc-100">{playlist.title}</h4>
+                    <p className="text-sm text-zinc-300">{playlist.tagline}</p>
+                    <div className="overflow-hidden rounded-xl border border-zinc-800">
+                      <iframe
+                        src={playlist.embedUrl}
+                        width="100%"
+                        height="352"
+                        allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+                        loading="lazy"
+                        title={playlist.title}
+                        className="block"
+                      />
+                    </div>
+                    <a
+                      href={playlist.externalUrl}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="inline-flex rounded-full border border-[#1db954] bg-[#1db954]/10 px-4 py-2 text-sm font-semibold text-[#66ffa5] transition hover:bg-[#1db954]/20"
+                    >
+                      {playlist.ctaLabel ?? 'Escuchar en Spotify'}
+                    </a>
+                  </article>
+                ))}
+              </div>
             </div>
           ) : (
             <div
