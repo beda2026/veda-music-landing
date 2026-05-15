@@ -236,7 +236,7 @@ export default function HomePage() {
             <button type="submit" className="btn-gold">→</button>
           </form>
         </div>
-        <p className="border-t border-zinc-800 py-4 text-center text-xs text-zinc-500">© 2026 V.E.D.A. MUSIC. Hecho con corazón en Puerto Rico.</p>
+        <p className="border-t border-zinc-800 py-4 text-center text-xs text-zinc-500">© 2026 V.E.D.A. MUSIC. Todos los derechos reservados.</p>
       </footer>
     </>
   );
