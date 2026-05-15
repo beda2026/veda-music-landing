@@ -64,19 +64,12 @@ export default function HomePage() {
     <>
       <header className="mx-auto w-full max-w-[1400px] px-4 pt-6 sm:px-6 lg:px-10">
         <section className="ad-box mb-4 rounded-2xl p-4 sm:p-5 lg:min-h-[132px] lg:px-6">
-          <div className="relative overflow-hidden rounded-xl border border-zinc-600/70 bg-[#0b0b0b]/90 p-4 sm:p-5">
-            <div aria-hidden="true" className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_12%_25%,rgba(239,31,45,0.3),transparent_52%),radial-gradient(circle_at_88%_75%,rgba(245,178,27,0.24),transparent_48%)]" />
-            <div className="relative flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-              <div className="max-w-3xl space-y-2 text-left">
-                <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-[#f5b21b]">ESPACIO PUBLICITARIO</p>
-                <h2 className="text-xl font-extrabold leading-tight text-zinc-50 sm:text-2xl">Anúnciate en V.E.D.A. MUSIC</h2>
-                <p className="text-sm text-zinc-200">Promociona tu música, evento, marca o negocio urbano en una plataforma visual creada para descubrir movimiento.</p>
-              </div>
-              <div className="flex flex-col items-start gap-3 md:items-end md:text-right">
-                <a href="#contacto-comercial" className="btn-gold">Reservar espacio</a>
-                <p className="text-[11px] uppercase tracking-[0.16em] text-zinc-400">Top Banner · Sponsored Slot</p>
-              </div>
-            </div>
+          <div className="flex items-center justify-center overflow-hidden rounded-xl border border-zinc-600/70 bg-[#0b0b0b]/90 p-2 sm:p-3">
+            <img
+              src="/assets/mgf-vip-ad-728x90.png"
+              alt="MGF Enterprises VIP sponsor leaderboard banner"
+              className="h-auto w-full max-w-[728px] object-contain"
+            />
           </div>
         </section>
 
