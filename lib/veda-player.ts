@@ -17,7 +17,6 @@ export const vedaStations: VedaStation[] = [
     genre: 'Radio Oficial',
     streamUrl: '',
     externalUrl: 'https://www.lamusica.com/stations/woda',
-    artwork: '/assets/veda/player/veda-live.jpg',
     status: 'external',
   },
   {
@@ -27,7 +26,6 @@ export const vedaStations: VedaStation[] = [
     genre: 'Radio Oficial',
     streamUrl: '',
     externalUrl: 'https://www.lamusica.com/en/stations/wmeg',
-    artwork: '/assets/veda/player/urbano-selecta.jpg',
     status: 'external',
   },
   {
@@ -37,7 +35,6 @@ export const vedaStations: VedaStation[] = [
     genre: 'Radio Oficial',
     streamUrl: '',
     externalUrl: 'https://mix107pr.com/',
-    artwork: '/assets/veda/player/clasicos-del-perreo.jpg',
     status: 'external',
   },
 ];
