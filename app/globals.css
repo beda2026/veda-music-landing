@@ -204,3 +204,16 @@ body {
 @media (max-width: 760px) {
   .social-clean { max-width: 100%; }
 }
+
+.veda-bar {
+  width: 4px;
+  border-radius: 9999px;
+  background: linear-gradient(180deg, #f5b21b, #ef1f2d);
+  box-shadow: 0 0 10px rgba(245, 178, 27, 0.35);
+  animation: veda-eq 1s ease-in-out infinite alternate;
+}
+
+@keyframes veda-eq {
+  from { transform: scaleY(0.55); }
+  to { transform: scaleY(1.15); }
+}

@@ -1,4 +1,5 @@
 import VisitCounter from '@/components/VisitCounter';
+import VedaMusicPlayer from '@/components/VedaMusicPlayer';
 import { interviews, photos, releases, services, topTen, videos } from '@/lib/veda-data';
 
 const navLinks = ['Inicio', 'Noticias', 'Música', 'Videos', 'Fotos', 'Entrevistas', 'Contacto'];
@@ -133,6 +134,8 @@ export default function HomePage() {
             </div>
           </aside>
         </section>
+
+        <VedaMusicPlayer />
 
         <section id="videos" className="space-y-4">
           <h2 className="section-title">Últimos Videos</h2>
