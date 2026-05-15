@@ -54,6 +54,16 @@ export type VedaPlatformSource = {
   externalUrl: string;
 };
 
+export type VedaSpotifyPlaylist = {
+  id: string;
+  title: string;
+  tagline: string;
+  ctaLabel?: string;
+  status: 'active' | 'coming-soon';
+  embedUrl: string;
+  externalUrl: string;
+};
+
 export const vedaPlatformSources: VedaPlatformSource[] = [
   {
     id: 'en-vivo',
@@ -65,13 +75,11 @@ export const vedaPlatformSources: VedaPlatformSource[] = [
   },
   {
     id: 'spotify',
-    title: 'Baila Reggaeton',
-    tagline: 'Playlist oficial de Spotify con reggaetón, urbano y perreo.',
-    ctaLabel: 'Escuchar en Spotify',
-    isExternal: true,
+    title: 'Spotify',
+    tagline: 'Playlists oficiales de Spotify seleccionadas para ti.',
     status: 'live',
-    embedUrl: 'https://open.spotify.com/embed/playlist/37i9dQZF1DWY7IeIP1cdjF?utm_source=generator',
-    externalUrl: 'https://open.spotify.com/playlist/37i9dQZF1DWY7IeIP1cdjF',
+    embedUrl: '',
+    externalUrl: '',
   },
   {
     id: 'youtube',
@@ -88,5 +96,26 @@ export const vedaPlatformSources: VedaPlatformSource[] = [
     status: 'coming-soon',
     embedUrl: '',
     externalUrl: '',
+  },
+];
+
+export const vedaSpotifyPlaylists: VedaSpotifyPlaylist[] = [
+  {
+    id: 'baila-reggaeton',
+    title: 'Baila Reggaeton',
+    tagline: 'Playlist oficial de Spotify con reggaetón, urbano y perreo.',
+    ctaLabel: 'Escuchar en Spotify',
+    status: 'active',
+    embedUrl: 'https://open.spotify.com/embed/playlist/37i9dQZF1DWY7IeIP1cdjF?utm_source=generator',
+    externalUrl: 'https://open.spotify.com/playlist/37i9dQZF1DWY7IeIP1cdjF',
+  },
+  {
+    id: 'old-school-reggaeton',
+    title: 'Old School Reggaeton',
+    tagline: 'Clásicos del reggaetón y perreo de antes.',
+    ctaLabel: 'Escuchar en Spotify',
+    status: 'active',
+    embedUrl: 'https://open.spotify.com/embed/playlist/37i9dQZF1DX8SfyqmSFDwe?utm_source=generator',
+    externalUrl: 'https://open.spotify.com/playlist/37i9dQZF1DX8SfyqmSFDwe',
   },
 ];
