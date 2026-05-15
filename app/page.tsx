@@ -226,7 +226,6 @@ export default function HomePage() {
           </div>
           <div className="text-sm text-zinc-300">
             <div className="mt-3"><VisitCounter /></div>
-            <div className="mt-3"><SocialButtons /></div>
           </div>
           <form className="flex items-center gap-2" aria-label="newsletter">
             <input type="email" placeholder="Tu correo electrónico" className="w-full rounded-xl border border-zinc-700 bg-[#101010] px-3 py-2 text-sm text-zinc-200 placeholder:text-zinc-500" />
