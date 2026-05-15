@@ -8,6 +8,16 @@ export type VedaStation = {
   status?: 'live' | 'coming-soon';
 };
 
+export type VedaPlatformSource = {
+  id: string;
+  platform: 'spotify' | 'youtube' | 'soundcloud';
+  title: string;
+  tagline: string;
+  embedUrl?: string;
+  externalUrl?: string;
+  status: 'active' | 'coming-soon';
+};
+
 export const vedaStations: VedaStation[] = [
   {
     id: 'veda-live',
@@ -52,6 +62,36 @@ export const vedaStations: VedaStation[] = [
     genre: 'Contenido VEDA',
     streamUrl: '',
     artwork: '/assets/veda/player/entrevistas-drops.jpg',
+    status: 'coming-soon',
+  },
+];
+
+export const vedaPlatformSources: VedaPlatformSource[] = [
+  {
+    id: 'veda-spotify',
+    platform: 'spotify',
+    title: 'VEDA Music en Spotify',
+    tagline: 'Playlists, estrenos y selecciones urbanas de VEDA Music.',
+    embedUrl: '',
+    externalUrl: '',
+    status: 'coming-soon',
+  },
+  {
+    id: 'veda-youtube',
+    platform: 'youtube',
+    title: 'VEDA Music en YouTube',
+    tagline: 'Videos, entrevistas, estrenos y contenido urbano visual.',
+    embedUrl: '',
+    externalUrl: '',
+    status: 'coming-soon',
+  },
+  {
+    id: 'veda-soundcloud',
+    platform: 'soundcloud',
+    title: 'VEDA Music en SoundCloud',
+    tagline: 'Mixes, previews, drops y sonidos independientes.',
+    embedUrl: '',
+    externalUrl: '',
     status: 'coming-soon',
   },
 ];
