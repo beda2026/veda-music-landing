@@ -235,7 +235,7 @@ export default function HomePage() {
           </div>
         </section>
 
-        <section className="space-y-5">
+        <section className="space-y-5 pt-3 md:pt-5">
           <div>
             <h2 className="section-title">PROMOCIONA TU MOVIMIENTO</h2>
             <p className="mt-2 max-w-3xl text-zinc-300">Espacios para artistas, marcas, eventos, estudios y negocios que quieren conectar con la cultura urbana.</p>
@@ -264,7 +264,7 @@ export default function HomePage() {
               {promoPackages.map((pack) => (
                 <div key={pack} className="rounded-xl border border-zinc-700 bg-[#121212] px-4 py-3 text-sm text-zinc-200">
                   {pack}
-                  <span className="mt-1 block text-xs uppercase tracking-wide text-zinc-400">Disponible pronto</span>
+                  <span className="mt-1 block text-xs uppercase tracking-wide text-zinc-400">Cotización por solicitud</span>
                 </div>
               ))}
             </div>
@@ -290,10 +290,7 @@ export default function HomePage() {
           <div className="text-sm text-zinc-300">
             <div className="mt-3"><VisitCounter /></div>
           </div>
-          <form className="flex items-center gap-2" aria-label="newsletter">
-            <input type="email" placeholder="Tu correo electrónico" className="w-full rounded-xl border border-zinc-700 bg-[#101010] px-3 py-2 text-sm text-zinc-200 placeholder:text-zinc-500" />
-            <button type="submit" className="btn-gold">→</button>
-          </form>
+          <div className="hidden lg:block" aria-hidden="true" />
         </div>
         <p className="border-t border-zinc-800 py-4 text-center text-xs text-zinc-500">© 2026 V.E.D.A. MUSIC. Todos los derechos reservados.</p>
       </footer>
