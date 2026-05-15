@@ -107,8 +107,8 @@ export default function HomePage() {
               <a href="#videos" className="btn-red">Ver lo más nuevo</a>
               <a href="#entrevistas" className="btn-gold">Explorar artistas</a>
             </div>
-            <div className="hero-strip mt-8 w-full rounded-2xl p-4 lg:w-[48%] lg:max-w-[650px]">
-              <div className="text-xs uppercase tracking-[0.22em] text-zinc-300">
+            <div className="hero-strip mt-8">
+              <div className="px-[1px] text-xs uppercase tracking-[0.22em] text-zinc-300">
                 <span>EDITORIAL URBANO</span>
               </div>
             </div>
