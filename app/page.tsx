@@ -4,12 +4,9 @@ import { interviews, photos, releases, services, topTen, videos } from '@/lib/ve
 
 const navLinks = ['Inicio', 'Noticias', 'Música', 'Videos', 'Fotos', 'Entrevistas', 'Contacto'];
 const socialLinks = [
-  { name: 'Facebook', icon: 'facebook' },
-  { name: 'X', icon: 'x' },
-  { name: 'Instagram', icon: 'instagram' },
-  { name: 'YouTube', icon: 'youtube' },
-  { name: 'TikTok', icon: 'tiktok' },
   { name: 'Spotify', icon: 'spotify' },
+  { name: 'YouTube', icon: 'youtube' },
+  { name: 'SoundCloud', icon: 'soundcloud' },
 ] as const;
 const promoCards = [
   {
@@ -44,14 +41,14 @@ function SocialIcon({ icon }: { icon: (typeof socialLinks)[number]['icon'] }) {
   if (icon === 'x') return <path d="M6 6h3.2l3.1 4.5L15.8 6H18l-4.5 5.8L18 18h-3.2l-3.3-4.8L7.8 18H5.5l4.8-6.2L6 6Z" />;
   if (icon === 'instagram') return <><rect x="6.5" y="6.5" width="11" height="11" rx="3" /><circle cx="12" cy="12" r="2.6" /><circle cx="15.7" cy="8.3" r="0.9" fill="currentColor" stroke="none" /></>;
   if (icon === 'youtube') return <><rect x="5.5" y="7.5" width="13" height="9" rx="2.5" /><path d="m11 10 4 2-4 2v-4Z" fill="currentColor" stroke="none" /></>;
-  if (icon === 'tiktok') return <path d="M14.2 7.2c.6.8 1.4 1.3 2.4 1.4V11c-1 0-1.8-.2-2.6-.7V14a4.1 4.1 0 1 1-4.1-4.1c.2 0 .5 0 .7.1v2.3a1.9 1.9 0 1 0 1.2 1.8V6h2.4v1.2Z" />;
+  if (icon === 'soundcloud') return <path d="M6 16h12v1.8H6V16Zm1-5.8h1.6V16H7v-5.8Zm2.3-1h1.6V16H9.3V9.2Zm2.3 1.2h1.6V16h-1.6v-5.6Zm2.3 1.3h1.6V16h-1.6v-4.3Z" />;
   return <path d="M12 6.3a5.7 5.7 0 1 0 0 11.4 5.7 5.7 0 0 0 0-11.4Zm2.6 8.2a3.6 3.6 0 0 1-4.9 1.2A3.5 3.5 0 0 1 8 10.9a3.6 3.6 0 0 1 6.5-.7h1.7c-.4-2.6-2.6-4.6-5.2-4.6A5.4 5.4 0 0 0 12 16.4c2.6 0 4.8-2 5.2-4.6h-2.6Z" />;
 }
 
 function SocialButtons() {
   return (
     <div className="hide-scrollbar social-clean flex items-center gap-2 overflow-x-auto text-zinc-200">
-      <span className="shrink-0 text-xs">SÍGUENOS:</span>
+      <span className="shrink-0 text-xs">PLATAFORMAS:</span>
       {socialLinks.map((item) => (
         <a key={item.name} href="#" aria-label={item.name} className="social-icon-btn">
           <svg viewBox="0 0 24 24" className="h-3.5 w-3.5" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
