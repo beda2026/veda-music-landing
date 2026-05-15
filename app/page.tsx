@@ -10,6 +10,33 @@ const socialLinks = [
   { name: 'TikTok', icon: 'tiktok' },
   { name: 'Spotify', icon: 'spotify' },
 ] as const;
+const promoCards = [
+  {
+    badge: 'ARTISTAS',
+    title: 'Anúnciate',
+    text: 'Coloca tu marca, evento o negocio en espacios visibles dentro de V.E.D.A. MUSIC.',
+    items: ['Top Banner', 'Sponsored Banner', 'Brand Partner'],
+    cta: 'Quiero anunciarme',
+    href: 'mailto:vedamusicpr@gmail.com?subject=Quiero%20anunciarme%20en%20VEDA%20MUSIC',
+  },
+  {
+    badge: 'NEGOCIOS',
+    title: 'Envía tu música',
+    text: 'Comparte tu canción, video o estreno para evaluación editorial.',
+    items: ['Video oficial', 'Estreno musical', 'Artista emergente'],
+    cta: 'Enviar música',
+    href: 'mailto:vedamusicpr@gmail.com?subject=Enviar%20música%20a%20VEDA%20MUSIC',
+  },
+  {
+    badge: 'SPONSORS',
+    title: 'Reserva entrevista',
+    text: 'Coordina entrevistas, cobertura o contenido especial para tu proyecto.',
+    items: ['Entrevista', 'Cobertura de evento', 'Studio / contenido'],
+    cta: 'Reservar entrevista',
+    href: 'mailto:vedamusicpr@gmail.com?subject=Reservar%20entrevista%20en%20VEDA%20MUSIC',
+  },
+] as const;
+const promoPackages = ['Publicación básica', 'Video destacado', 'Banner semanal', 'Banner mensual', 'Sponsor oficial', 'Entrevista / cobertura'];
 
 function SocialIcon({ icon }: { icon: (typeof socialLinks)[number]['icon'] }) {
   if (icon === 'facebook') return <path d="M14 8h2V5h-2c-2.2 0-4 1.8-4 4v2H8v3h2v5h3v-5h2.2l.8-3H13V9c0-.6.4-1 1-1Z" />;
@@ -205,6 +232,42 @@ export default function HomePage() {
           <div className="panel rounded-2xl p-5 text-center">
             <p className="mb-4 text-lg font-semibold text-zinc-100">¿Listo para llevar tu carrera al siguiente nivel?</p>
             <a href="mailto:vedamusicpr@gmail.com" className="btn-red">Contáctanos</a>
+          </div>
+        </section>
+
+        <section className="space-y-5">
+          <div>
+            <h2 className="section-title">PROMOCIONA TU MOVIMIENTO</h2>
+            <p className="mt-2 max-w-3xl text-zinc-300">Espacios para artistas, marcas, eventos, estudios y negocios que quieren conectar con la cultura urbana.</p>
+          </div>
+          <div className="grid gap-4 md:grid-cols-3">
+            {promoCards.map((card) => (
+              <article key={card.title} className="promo-card hover-card rounded-2xl p-5">
+                <span className="promo-badge">{card.badge}</span>
+                <h3 className="mt-4 text-2xl font-bold text-zinc-100">{card.title}</h3>
+                <p className="mt-2 text-sm text-zinc-300">{card.text}</p>
+                <ul className="mt-4 space-y-2 text-sm text-zinc-200">
+                  {card.items.map((item) => (
+                    <li key={item} className="before:mr-2 before:text-[#f5b21b] before:content-['•']">{item}</li>
+                  ))}
+                </ul>
+                <a href={card.href} className="btn-red mt-5 w-full">{card.cta}</a>
+              </article>
+            ))}
+          </div>
+          <div className="promo-packages rounded-2xl p-5">
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <h3 className="text-lg font-bold text-zinc-100">Espacios disponibles</h3>
+              <span className="rounded-full border border-zinc-600 px-3 py-1 text-xs uppercase tracking-wide text-zinc-300">Cotización por solicitud</span>
+            </div>
+            <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+              {promoPackages.map((pack) => (
+                <div key={pack} className="rounded-xl border border-zinc-700 bg-[#121212] px-4 py-3 text-sm text-zinc-200">
+                  {pack}
+                  <span className="mt-1 block text-xs uppercase tracking-wide text-zinc-400">Disponible pronto</span>
+                </div>
+              ))}
+            </div>
           </div>
         </section>
 
