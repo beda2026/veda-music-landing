@@ -96,13 +96,13 @@ export default function HomePage() {
       </header>
 
       <main className="mx-auto flex w-full max-w-[1400px] flex-col gap-8 px-4 py-8 sm:px-6 lg:px-10">
-        <section className="grid gap-4 lg:grid-cols-[minmax(0,1.35fr)_minmax(0,1fr)_300px]">
-          <article className="hero-panel rounded-3xl p-6 lg:p-8">
+        <section className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_300px]">
+          <article className="hero-panel rounded-3xl p-6 lg:col-span-2 lg:p-10">
             <p className="mb-4 text-xs uppercase tracking-[0.25em] text-zinc-300">V.E.D.A. MUSIC · PUERTO RICO</p>
             <h1 className="hero-title text-zinc-50">
               LA NUEVA PLATAFORMA <span className="urbana-accent">URBANA</span>
             </h1>
-            <p className="mt-4 max-w-xl text-zinc-200">Videos, entrevistas, estrenos, fotos y todo lo que mueve la cultura latina con mirada editorial premium.</p>
+            <p className="mt-4 max-w-xl text-zinc-200">Videos, entrevistas, estrenos, fotos y todo lo que mueve la cultura urbana.</p>
             <div className="mt-7 flex flex-wrap gap-3">
               <a href="#videos" className="btn-red">Ver lo más nuevo</a>
               <a href="#entrevistas" className="btn-gold">Explorar artistas</a>
@@ -115,7 +115,7 @@ export default function HomePage() {
             </div>
           </article>
 
-          <article className="panel hover-card rounded-3xl p-5 featured-card">
+          <article className="panel hover-card rounded-3xl p-5 featured-card lg:col-span-1">
             <span className="inline-block rounded-full border border-[#f5b21b] bg-[#f5b21b1a] px-3 py-1 text-xs font-semibold uppercase tracking-wide text-[#f5b21b]">ENTREVISTA / ESTRENO</span>
             <div className="featured-visual my-4 flex h-44 items-center justify-center rounded-2xl border border-zinc-700">
               <span className="text-7xl font-black text-zinc-100">V</span>
