@@ -63,7 +63,7 @@ export default function HomePage() {
   return (
     <>
       <header className="mx-auto w-full max-w-[1400px] px-4 pt-6 sm:px-6 lg:px-10">
-        <section className="ad-box mb-4 rounded-2xl p-4 sm:p-5 lg:min-h-[132px] lg:px-6">
+        <section className="ad-box ad-space-labels relative mb-4 rounded-2xl p-4 sm:p-5 lg:min-h-[132px] lg:px-6">
           <div className="flex items-center justify-center overflow-hidden rounded-xl border border-zinc-600/70 bg-[#0b0b0b]/90 p-2 sm:p-3">
             <img
               src="/assets/mgf-vip-ad-728x90.png"
@@ -141,23 +141,14 @@ export default function HomePage() {
             </a>
           </article>
 
-          <aside className="ad-box flex min-h-[280px] flex-col items-center justify-center rounded-3xl p-4 text-center lg:h-[300px] lg:min-h-[300px]">
-            <a
-              href="https://www.youtube.com/@DimeloKombete"
-              target="_blank"
-              rel="noreferrer"
-              className="group relative block h-[250px] w-full max-w-[336px] overflow-hidden rounded-2xl border border-zinc-600/80 bg-[#111111]/70"
-              aria-label="Dímelo Kombete sponsor banner"
-            >
+          <aside className="ad-box ad-space-labels flex min-h-[280px] flex-col items-center justify-center rounded-3xl p-4 text-center lg:h-[300px] lg:min-h-[300px]">
+            <div className="relative block h-[250px] w-full max-w-[336px] overflow-hidden rounded-2xl border border-zinc-600/80 bg-[#111111]/70" aria-label="Dímelo Kombete sponsor banner">
               <img
                 src="/assets/dimelo-kombete-ad-336x280.png"
                 alt="Dímelo Kombete sponsor banner"
-                className="h-full w-full object-cover transition duration-300 group-hover:scale-[1.01]"
+                className="h-full w-full object-cover"
               />
-              <span className="pointer-events-none absolute left-3 top-3 rounded-full border border-zinc-500/70 bg-black/55 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.14em] text-zinc-200">
-                SPONSORED
-              </span>
-            </a>
+            </div>
           </aside>
         </section>
 
@@ -241,20 +232,14 @@ export default function HomePage() {
                 ))}
               </ol>
             </aside>
-            <aside className="ad-box flex min-h-[250px] flex-col items-center justify-center rounded-2xl p-3">
-              <a
-                href="https://www.instagram.com/mgfesllc_fl/"
-                target="_blank"
-                rel="noreferrer"
-                className="group relative block h-[250px] w-full max-w-[336px] overflow-hidden rounded-2xl border border-zinc-600/80 bg-[#111111]/70"
-                aria-label="MGF Enterprises Services LLC sponsor banner"
-              >
+            <aside className="ad-box ad-space-labels flex min-h-[250px] flex-col items-center justify-center rounded-2xl p-3">
+              <div className="relative block h-[250px] w-full max-w-[336px] overflow-hidden rounded-2xl border border-zinc-600/80 bg-[#111111]/70" aria-label="MGF Enterprises Services LLC sponsor banner">
                 <img
                   src="/assets/mgf-vip-ad-336x280.png"
                   alt="MGF Enterprises VIP sponsor banner"
                   className="h-full w-full object-cover"
                 />
-              </a>
+              </div>
             </aside>
           </div>
         </section>

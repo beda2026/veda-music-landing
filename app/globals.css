@@ -178,6 +178,36 @@ body {
 .btn-red:hover, .btn-gold:hover { filter: brightness(1.08); transform: translateY(-1px); }
 
 .ad-box { border: 1px dashed #4a4a4a; background: #111111cc; color: #a1a1aa; }
+.ad-space-labels { position: relative; overflow: hidden; }
+.ad-space-labels::before,
+.ad-space-labels::after {
+  position: absolute;
+  z-index: 5;
+  pointer-events: none;
+  border: 1px solid rgba(245, 178, 27, 0.45);
+  background: rgba(7, 7, 8, 0.68);
+  color: rgba(245, 245, 245, 0.9);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  line-height: 1;
+  padding: 0.34rem 0.46rem;
+}
+.ad-space-labels::before {
+  content: "ESPACIO PUBLICITARIO";
+  top: 0.55rem;
+  left: 0.55rem;
+  border-color: rgba(245, 178, 27, 0.45);
+  border-radius: 0.5rem;
+}
+.ad-space-labels::after {
+  content: "RESERVA TU ESPACIO";
+  right: 0.55rem;
+  bottom: 0.55rem;
+  border-color: rgba(239, 31, 45, 0.42);
+  border-radius: 0.5rem;
+}
 .section-title { font-size: 1.6rem; font-weight: 800; color: #f8f8f8; }
 .social-clean { white-space: nowrap; }
 .social-icon-btn {
