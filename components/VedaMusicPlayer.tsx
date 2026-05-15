@@ -114,9 +114,9 @@ export default function VedaMusicPlayer() {
         <h2 className="mt-2 text-2xl font-extrabold text-zinc-100 md:text-3xl">Música, estrenos y movimiento urbano en vivo.</h2>
 
         <div className="mt-6 grid gap-5 lg:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)]">
-          <div className="rounded-2xl border border-zinc-700/80 bg-zinc-950/70 p-4">
-            <div className="flex items-start gap-4">
-              <div className="relative h-24 w-24 shrink-0 overflow-hidden rounded-xl border border-zinc-700 bg-[radial-gradient(circle_at_25%_20%,rgba(239,31,45,.35),transparent_45%),radial-gradient(circle_at_80%_70%,rgba(245,178,27,.3),transparent_50%),linear-gradient(145deg,#131313,#1f1f1f)]">
+          <div className="rounded-2xl border border-zinc-700/80 bg-zinc-950/70 p-4 md:p-5">
+            <div className="flex items-start gap-4 md:gap-5">
+              <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-2xl border border-zinc-700 shadow-[0_8px_25px_rgba(0,0,0,.45),inset_0_0_0_1px_rgba(245,178,27,.08)] bg-[radial-gradient(circle_at_25%_20%,rgba(239,31,45,.35),transparent_45%),radial-gradient(circle_at_80%_70%,rgba(245,178,27,.3),transparent_50%),linear-gradient(145deg,#131313,#1f1f1f)] md:h-28 md:w-28">
                 {activeStation.artwork ? (
                   <img
                     src={activeStation.artwork}
@@ -129,15 +129,15 @@ export default function VedaMusicPlayer() {
                 ) : null}
                 <span className="absolute bottom-1 right-1 rounded-full border border-zinc-600 bg-black/60 px-2 py-0.5 text-[10px] uppercase text-zinc-200">V</span>
               </div>
-              <div className="space-y-1">
-                <p className="text-xs uppercase tracking-[0.18em] text-zinc-400">Now Playing</p>
-                <h3 className="text-xl font-bold text-zinc-100">{activeStation.name}</h3>
-                <p className="text-sm text-zinc-300">{activeStation.tagline}</p>
+              <div className="min-w-0 space-y-1.5 pt-0.5">
+                <p className="text-[11px] uppercase tracking-[0.2em] text-zinc-400">Now Playing</p>
+                <h3 className="text-xl font-bold leading-tight text-zinc-100 md:text-2xl">{activeStation.name}</h3>
+                <p className="text-sm leading-snug text-zinc-300">{activeStation.tagline}</p>
                 <p className="text-xs uppercase tracking-[0.12em] text-[#f0d3a0]">{activeStation.genre}</p>
               </div>
             </div>
 
-            <div className="mt-4 flex items-center gap-2" aria-hidden="true">
+            <div className="mt-5 flex items-center gap-2" aria-hidden="true">
               {Array.from({ length: 18 }).map((_, i) => (
                 <span
                   key={i}
@@ -157,16 +157,16 @@ export default function VedaMusicPlayer() {
               {error && <span className="text-[#ff9898]">{error}</span>}
             </div>
 
-            <div className="mt-5 flex flex-wrap items-center gap-2">
-              <button type="button" aria-label="Estación anterior" onClick={goPrev} className="rounded-full border border-zinc-600 px-3 py-2 text-sm text-zinc-100 hover:border-[#f5b21b]">◀</button>
-              <button type="button" aria-label={isPlaying ? 'Pausar estación' : 'Reproducir estación'} disabled={isComingSoon || isLoading} onClick={() => void handleTogglePlay()} className="rounded-full bg-[#ef1f2d] px-5 py-2 text-sm font-semibold text-white disabled:cursor-not-allowed disabled:opacity-40">
+            <div className="mt-5 flex flex-wrap items-center gap-2.5">
+              <button type="button" aria-label="Estación anterior" onClick={goPrev} className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-zinc-600 text-xs text-zinc-100 transition hover:border-[#f5b21b] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#f5b21b]/70">◀</button>
+              <button type="button" aria-label={isPlaying ? 'Pausar estación' : 'Reproducir estación'} disabled={isComingSoon || isLoading} onClick={() => void handleTogglePlay()} className="inline-flex h-11 min-w-11 items-center justify-center rounded-full bg-[#ef1f2d] px-4 text-sm font-semibold text-white shadow-[0_4px_14px_rgba(239,31,45,.35)] transition hover:bg-[#ff3342] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#ff6b76]/70 disabled:cursor-not-allowed disabled:opacity-40">
                 {isLoading ? 'Conectando…' : isPlaying ? 'Pause' : 'Play'}
               </button>
-              <button type="button" aria-label="Siguiente estación" onClick={goNext} className="rounded-full border border-zinc-600 px-3 py-2 text-sm text-zinc-100 hover:border-[#f5b21b]">▶</button>
-              <button type="button" aria-label={isMuted ? 'Activar sonido' : 'Silenciar'} onClick={() => setIsMuted((prev) => !prev)} className="rounded-full border border-zinc-600 px-3 py-2 text-sm text-zinc-100">{isMuted ? 'Unmute' : 'Mute'}</button>
-              <label className="flex items-center gap-2 rounded-full border border-zinc-700 px-3 py-2 text-xs text-zinc-300">
+              <button type="button" aria-label="Siguiente estación" onClick={goNext} className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-zinc-600 text-xs text-zinc-100 transition hover:border-[#f5b21b] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#f5b21b]/70">▶</button>
+              <button type="button" aria-label={isMuted ? 'Activar sonido' : 'Silenciar'} onClick={() => setIsMuted((prev) => !prev)} className="inline-flex h-8 items-center justify-center rounded-full border border-zinc-600 px-2.5 text-[11px] text-zinc-100 transition hover:border-zinc-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-zinc-400/70">{isMuted ? 'Unmute' : 'Mute'}</button>
+              <label className="ml-0.5 flex items-center gap-2 rounded-full border border-zinc-700 px-2.5 py-1.5 text-[11px] text-zinc-300">
                 Vol
-                <input aria-label="Control de volumen" type="range" min={0} max={1} step={0.01} value={volume} onChange={(event) => setVolume(Number(event.target.value))} />
+                <input className="w-20 accent-[#f5b21b] md:w-24" aria-label="Control de volumen" type="range" min={0} max={1} step={0.01} value={volume} onChange={(event) => setVolume(Number(event.target.value))} />
               </label>
             </div>
           </div>
@@ -196,15 +196,15 @@ export default function VedaMusicPlayer() {
         <audio ref={audioRef} preload="none" onWaiting={() => setIsLoading(true)} onPlaying={() => { setIsPlaying(true); setIsLoading(false); }} onPause={() => setIsPlaying(false)} onError={() => { setError('No pudimos conectar esta señal ahora mismo. Intenta otra estación.'); setIsLoading(false); setIsPlaying(false); }} />
       </div>
 
-      <div className="fixed inset-x-0 bottom-0 z-40 border-t border-[#3a3326] bg-black/85 p-3 backdrop-blur md:inset-x-auto md:bottom-5 md:right-5 md:w-[340px] md:rounded-2xl md:border md:p-3" style={{ paddingBottom: 'max(0.75rem, env(safe-area-inset-bottom))' }}>
+      <div className="fixed inset-x-0 bottom-0 z-40 border-t border-[#3a3326] bg-black/80 p-2.5 backdrop-blur md:inset-x-auto md:bottom-5 md:right-5 md:w-[340px] md:rounded-2xl md:border md:p-3" style={{ paddingBottom: 'max(0.75rem, env(safe-area-inset-bottom))' }}>
         <div className="flex items-center gap-3">
-          <div className="h-10 w-10 rounded-lg border border-zinc-700 bg-[linear-gradient(135deg,#1a1a1a,#2a2a2a)]" />
+          <div className="h-11 w-11 rounded-lg border border-zinc-600 shadow-[0_6px_16px_rgba(0,0,0,.4)] bg-[radial-gradient(circle_at_25%_20%,rgba(239,31,45,.28),transparent_45%),radial-gradient(circle_at_80%_70%,rgba(245,178,27,.24),transparent_50%),linear-gradient(135deg,#181818,#262626)]" />
           <div className="min-w-0 flex-1">
             <p className="truncate text-sm font-semibold text-zinc-100">{activeStation.name}</p>
             <p className="text-[11px] uppercase tracking-[0.08em] text-zinc-400">{isComingSoon ? 'Próximamente' : isLive ? 'LIVE' : 'On Air'}</p>
           </div>
-          <button type="button" aria-label={isPlaying ? 'Pausar mini player' : 'Reproducir mini player'} disabled={isComingSoon || isLoading} onClick={() => void handleTogglePlay()} className="rounded-full bg-[#ef1f2d] px-3 py-1.5 text-xs font-semibold text-white disabled:opacity-40">{isPlaying ? 'Pause' : 'Play'}</button>
-          <button type="button" aria-label={isExpanded ? 'Colapsar mini player' : 'Expandir mini player'} onClick={() => setIsExpanded((prev) => !prev)} className="rounded-full border border-zinc-600 px-2 py-1 text-xs text-zinc-200">{isExpanded ? '−' : '+'}</button>
+          <button type="button" aria-label={isPlaying ? 'Pausar mini player' : 'Reproducir mini player'} disabled={isComingSoon || isLoading} onClick={() => void handleTogglePlay()} className="inline-flex h-8 min-w-8 items-center justify-center rounded-full bg-[#ef1f2d] px-2.5 text-[11px] font-semibold text-white shadow-[0_4px_12px_rgba(239,31,45,.35)] disabled:opacity-40">{isPlaying ? 'Pause' : 'Play'}</button>
+          <button type="button" aria-label={isExpanded ? 'Colapsar mini player' : 'Expandir mini player'} onClick={() => setIsExpanded((prev) => !prev)} className="inline-flex h-7 w-7 items-center justify-center rounded-full border border-zinc-600 text-xs text-zinc-200">{isExpanded ? '−' : '+'}</button>
         </div>
         {isExpanded ? <p className="mt-2 text-xs text-zinc-300">{activeStation.tagline}</p> : null}
       </div>
