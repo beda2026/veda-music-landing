@@ -225,9 +225,6 @@ export default function HomePage() {
             <p className="mt-3 text-sm text-zinc-300">Plataforma urbana independiente dedicada a la música, videos, entrevistas, fotos y artistas que están moviendo la cultura.</p>
           </div>
           <div className="text-sm text-zinc-300">
-            <p>vedamusicpr@gmail.com</p>
-            <p>Puerto Rico</p>
-            <p>Disponibles para colaboraciones</p>
             <div className="mt-3"><VisitCounter /></div>
             <div className="mt-3"><SocialButtons /></div>
           </div>

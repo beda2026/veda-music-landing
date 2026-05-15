@@ -20,5 +20,10 @@ export default function VisitCounter() {
     return null;
   }
 
-  return <p className="text-sm text-zinc-400">Visitas en este navegador: {visits}</p>;
+  return (
+    <div className="inline-flex items-center gap-2 rounded-full border border-amber-500/40 bg-gradient-to-r from-[#0f0f10] via-[#141416] to-[#1a1310] px-4 py-2 shadow-[0_0_0_1px_rgba(220,38,38,0.25),0_8px_24px_rgba(0,0,0,0.35)]">
+      <span className="text-xs font-semibold uppercase tracking-[0.2em] text-zinc-200">VISITAS DIGITALES:</span>
+      <span className="text-sm font-bold text-amber-300">{visits}</span>
+    </div>
+  );
 }
