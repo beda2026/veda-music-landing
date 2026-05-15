@@ -20,10 +20,14 @@ export default function VisitCounter() {
     return null;
   }
 
+  const formattedVisits = visits.toString().padStart(6, '0');
+
   return (
-    <div className="inline-flex items-center gap-2 rounded-full border border-amber-500/40 bg-gradient-to-r from-[#0f0f10] via-[#141416] to-[#1a1310] px-4 py-2 shadow-[0_0_0_1px_rgba(220,38,38,0.25),0_8px_24px_rgba(0,0,0,0.35)]">
-      <span className="text-xs font-semibold uppercase tracking-[0.2em] text-zinc-200">VISITAS DIGITALES:</span>
-      <span className="text-sm font-bold text-amber-300">{visits}</span>
+    <div className="inline-flex items-center gap-3 rounded-xl border border-[#f5b21b66] bg-gradient-to-b from-[#0f0e0b] to-[#18130d] px-3 py-2 shadow-[0_0_0_1px_rgba(245,178,27,0.22),0_10px_22px_rgba(0,0,0,0.45),inset_0_1px_0_rgba(255,255,255,0.08)]">
+      <span className="text-[0.62rem] font-semibold uppercase tracking-[0.24em] text-zinc-200">VISITAS DIGITALES</span>
+      <span className="rounded-md border border-[#f5b21b7a] bg-[#0c0b09] px-3 py-1 font-mono text-base font-bold tracking-[0.22em] text-[#f5b21b] shadow-[inset_0_0_10px_rgba(245,178,27,0.22)]">
+        {formattedVisits}
+      </span>
     </div>
   );
 }
