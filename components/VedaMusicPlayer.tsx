@@ -18,6 +18,7 @@ export default function VedaMusicPlayer() {
   const [volume, setVolume] = useState(0.8);
   const [isExpanded, setIsExpanded] = useState(false);
   const [activePlatformId, setActivePlatformId] = useState('en-vivo');
+  const [artworkFailed, setArtworkFailed] = useState(false);
 
   const activePlatform =
     vedaPlatformSources.find((platform) => platform.id === activePlatformId) ?? vedaPlatformSources[0];
@@ -26,6 +27,10 @@ export default function VedaMusicPlayer() {
   const isComingSoon = !hasPlayableStream(activeStation);
   const isExternalOnly = isComingSoon && Boolean(activeStation.externalUrl?.trim());
   const isLive = !isComingSoon && activeStation.status === 'live';
+
+  useEffect(() => {
+    setArtworkFailed(false);
+  }, [activeStation]);
 
   useEffect(() => {
     const saved = window.localStorage.getItem(STORAGE_VOLUME_KEY);
@@ -155,16 +160,26 @@ export default function VedaMusicPlayer() {
           <div className="rounded-2xl border border-zinc-700/80 bg-zinc-950/70 p-4 md:p-5">
             <div className="flex items-start gap-4 md:gap-5">
               <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-2xl border border-zinc-700 shadow-[0_8px_25px_rgba(0,0,0,.45),inset_0_0_0_1px_rgba(245,178,27,.08)] bg-[radial-gradient(circle_at_25%_20%,rgba(239,31,45,.35),transparent_45%),radial-gradient(circle_at_80%_70%,rgba(245,178,27,.3),transparent_50%),linear-gradient(145deg,#131313,#1f1f1f)] md:h-28 md:w-28">
-                {activeStation.artwork ? (
+                {activeStation.artwork && !artworkFailed ? (
                   <img
                     src={activeStation.artwork}
                     alt={`Artwork de ${activeStation.name}`}
                     className="h-full w-full object-cover"
-                    onError={(event) => {
-                      event.currentTarget.style.display = 'none';
-                    }}
+                    onError={() => setArtworkFailed(true)}
                   />
-                ) : null}
+                ) : (
+                  <div className="flex h-full w-full flex-col items-center justify-center bg-[radial-gradient(circle_at_18%_18%,rgba(239,31,45,.38),transparent_48%),radial-gradient(circle_at_80%_78%,rgba(245,178,27,.34),transparent_52%),linear-gradient(145deg,#0f0f0f,#1d1b16)] text-center">
+                    <span className="px-1 text-lg font-black uppercase tracking-[0.08em] text-[#f5d186] md:text-2xl">
+                      {activeStation.name
+                        .split(' ')
+                        .filter(Boolean)
+                        .slice(0, 2)
+                        .map((word) => word[0])
+                        .join('') || 'RADIO'}
+                    </span>
+                    <span className="mt-0.5 text-[9px] font-semibold uppercase tracking-[0.22em] text-[#f29a9a] md:text-[10px]">OFICIAL</span>
+                  </div>
+                )}
                 <span className="absolute bottom-1 right-1 rounded-full border border-zinc-600 bg-black/60 px-2 py-0.5 text-[10px] uppercase text-zinc-200">V</span>
               </div>
               <div className="min-w-0 space-y-1.5 pt-0.5">
