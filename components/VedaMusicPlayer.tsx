@@ -24,6 +24,7 @@ export default function VedaMusicPlayer() {
   const usingLivePlatform = activePlatform.id === 'en-vivo';
   const activeStation = vedaStations[activeIndex];
   const isComingSoon = !hasPlayableStream(activeStation);
+  const isExternalOnly = isComingSoon && Boolean(activeStation.externalUrl?.trim());
   const isLive = !isComingSoon && activeStation.status === 'live';
 
   useEffect(() => {
@@ -109,7 +110,7 @@ export default function VedaMusicPlayer() {
   const goPrev = () => selectStation((activeIndex - 1 + vedaStations.length) % vedaStations.length);
   const goNext = () => selectStation((activeIndex + 1) % vedaStations.length);
 
-  const statusLabel = isLoading ? 'Conectando…' : isLive ? 'LIVE' : 'Próximamente';
+  const statusLabel = isLoading ? 'Conectando…' : isLive ? 'LIVE' : isExternalOnly ? 'Externa oficial' : 'Próximamente';
 
   return (
     <section className="space-y-4 pb-24 md:pb-8" aria-label="VEDA Music Player">
@@ -190,15 +191,24 @@ export default function VedaMusicPlayer() {
 
             <div className="mt-4 flex flex-wrap items-center gap-2 text-xs">
               <span className="rounded-full border border-zinc-600 px-2 py-1 text-zinc-200">Estado: {statusLabel}</span>
-              {isComingSoon && <span className="text-zinc-300">Señal en preparación.</span>}
+              {isExternalOnly && <span className="text-zinc-300">Disponible vía enlace oficial.</span>}
+              {!isExternalOnly && isComingSoon && <span className="text-zinc-300">Señal en preparación.</span>}
               {error && <span className="text-[#ff9898]">{error}</span>}
             </div>
 
             <div className="mt-5 flex flex-wrap items-center gap-2.5">
               <button type="button" aria-label="Estación anterior" onClick={goPrev} className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-zinc-600 text-xs text-zinc-100 transition hover:border-[#f5b21b] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#f5b21b]/70">◀</button>
-              <button type="button" aria-label={isPlaying ? 'Pausar estación' : 'Reproducir estación'} disabled={isComingSoon || isLoading} onClick={() => void handleTogglePlay()} className="inline-flex h-11 min-w-11 items-center justify-center rounded-full bg-[#ef1f2d] px-4 text-sm font-semibold text-white shadow-[0_4px_14px_rgba(239,31,45,.35)] transition hover:bg-[#ff3342] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#ff6b76]/70 disabled:cursor-not-allowed disabled:opacity-40">
-                {isLoading ? 'Conectando…' : isPlaying ? 'Pause' : 'Play'}
-              </button>
+              {hasPlayableStream(activeStation) ? (
+                <button type="button" aria-label={isPlaying ? 'Pausar estación' : 'Reproducir estación'} disabled={isLoading} onClick={() => void handleTogglePlay()} className="inline-flex h-11 min-w-11 items-center justify-center rounded-full bg-[#ef1f2d] px-4 text-sm font-semibold text-white shadow-[0_4px_14px_rgba(239,31,45,.35)] transition hover:bg-[#ff3342] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#ff6b76]/70 disabled:cursor-not-allowed disabled:opacity-40">
+                  {isLoading ? 'Conectando…' : isPlaying ? 'Pause' : 'Play'}
+                </button>
+              ) : activeStation.externalUrl ? (
+                <a href={activeStation.externalUrl} target="_blank" rel="noopener noreferrer" className="inline-flex h-11 items-center justify-center rounded-full bg-[#ef1f2d] px-4 text-sm font-semibold text-white shadow-[0_4px_14px_rgba(239,31,45,.35)] transition hover:bg-[#ff3342] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#ff6b76]/70">
+                  Escuchar oficial
+                </a>
+              ) : (
+                <button type="button" disabled className="inline-flex h-11 min-w-11 items-center justify-center rounded-full bg-[#ef1f2d] px-4 text-sm font-semibold text-white opacity-40">Play</button>
+              )}
               <button type="button" aria-label="Siguiente estación" onClick={goNext} className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-zinc-600 text-xs text-zinc-100 transition hover:border-[#f5b21b] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#f5b21b]/70">▶</button>
               <button type="button" aria-label={isMuted ? 'Activar sonido' : 'Silenciar'} onClick={() => setIsMuted((prev) => !prev)} className="inline-flex h-8 items-center justify-center rounded-full border border-zinc-600 px-2.5 text-[11px] text-zinc-100 transition hover:border-zinc-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-zinc-400/70">{isMuted ? 'Unmute' : 'Mute'}</button>
               <label className="ml-0.5 flex items-center gap-2 rounded-full border border-zinc-700 px-2.5 py-1.5 text-[11px] text-zinc-300">
@@ -222,7 +232,7 @@ export default function VedaMusicPlayer() {
                 >
                   <div className="flex items-center justify-between gap-2">
                     <span className="font-semibold text-zinc-100">{station.name}</span>
-                    <span className="rounded-full border px-2 py-0.5 text-[10px] uppercase tracking-[0.1em] text-zinc-300">{stationComingSoon ? 'Próximamente' : station.status === 'live' ? 'LIVE' : 'Ready'}</span>
+                    <span className="rounded-full border px-2 py-0.5 text-[10px] uppercase tracking-[0.1em] text-zinc-300">{stationComingSoon ? (station.externalUrl ? 'Oficial' : 'Próximamente') : station.status === 'live' ? 'LIVE' : 'Ready'}</span>
                   </div>
                   <p className="mt-1 text-xs text-zinc-400">{station.tagline}</p>
                 </button>
@@ -248,6 +258,7 @@ export default function VedaMusicPlayer() {
         <audio ref={audioRef} preload="none" onWaiting={() => setIsLoading(true)} onPlaying={() => { setIsPlaying(true); setIsLoading(false); }} onPause={() => setIsPlaying(false)} onError={() => { setError('No pudimos conectar esta señal ahora mismo. Intenta otra estación.'); setIsLoading(false); setIsPlaying(false); }} />
       </div>
 
+      {hasPlayableStream(activeStation) ? (
       <div className="fixed inset-x-0 bottom-0 z-40 border-t border-[#3a3326] bg-black/80 p-2.5 backdrop-blur md:inset-x-auto md:bottom-5 md:right-5 md:w-[340px] md:rounded-2xl md:border md:p-3" style={{ paddingBottom: 'max(0.75rem, env(safe-area-inset-bottom))' }}>
         <div className="flex items-center gap-3">
           <div className="h-11 w-11 rounded-lg border border-zinc-600 shadow-[0_6px_16px_rgba(0,0,0,.4)] bg-[radial-gradient(circle_at_25%_20%,rgba(239,31,45,.28),transparent_45%),radial-gradient(circle_at_80%_70%,rgba(245,178,27,.24),transparent_50%),linear-gradient(135deg,#181818,#262626)]" />
@@ -260,6 +271,7 @@ export default function VedaMusicPlayer() {
         </div>
         {isExpanded ? <p className="mt-2 text-xs text-zinc-300">{activeStation.tagline}</p> : null}
       </div>
+      ) : null}
     </section>
   );
 }
