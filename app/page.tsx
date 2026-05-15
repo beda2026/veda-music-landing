@@ -248,10 +248,23 @@ export default function HomePage() {
                 ))}
               </ol>
             </aside>
-            <aside className="ad-box flex min-h-[250px] flex-col items-center justify-center rounded-2xl text-center">
-              <p>SPONSORED CARD</p>
-              <p>300x250</p>
-              <p>Tu promo aquí</p>
+            <aside className="ad-box flex min-h-[250px] flex-col items-center justify-center rounded-2xl p-3">
+              <a
+                href="https://www.instagram.com/mgfesllc_fl/"
+                target="_blank"
+                rel="noreferrer"
+                className="group relative block h-[250px] w-full max-w-[336px] overflow-hidden rounded-2xl border border-zinc-600/80 bg-[#111111]/70"
+                aria-label="MGF Enterprises Services LLC sponsor banner"
+              >
+                <img
+                  src="/assets/mgf-vip-ad-336x280.png"
+                  alt="MGF Enterprises VIP sponsor banner"
+                  className="h-full w-full object-cover"
+                />
+                <span className="pointer-events-none absolute left-3 top-3 rounded-full border border-zinc-500/70 bg-black/55 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.14em] text-zinc-200">
+                  VIP SPONSOR
+                </span>
+              </a>
             </aside>
           </div>
         </section>
