@@ -1,6 +1,6 @@
 'use client';
 
-import { FormEvent, useState } from 'react';
+import { FormEvent, useEffect, useState } from 'react';
 
 const requestTypes = [
   'Espacio publicitario',
@@ -10,6 +10,12 @@ const requestTypes = [
   'Otro',
 ] as const;
 
+const requestTypeBySlug: Record<string, (typeof requestTypes)[number]> = {
+  'espacio-publicitario': 'Espacio publicitario',
+  'enviar-musica': 'Enviar música',
+  'entrevista-cobertura': 'Entrevista / cobertura',
+};
+
 export default function CommercialContactForm() {
   const [nombre, setNombre] = useState('');
   const [email, setEmail] = useState('');
@@ -17,6 +23,22 @@ export default function CommercialContactForm() {
   const [tipo, setTipo] = useState('');
   const [mensaje, setMensaje] = useState('');
   const [error, setError] = useState('');
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+
+    const [section, query] = window.location.hash.split('?');
+    if (section !== '#contacto-comercial' || !query) return;
+
+    const params = new URLSearchParams(query);
+    const tipoSlug = params.get('tipo');
+    if (!tipoSlug) return;
+
+    const selectedType = requestTypeBySlug[tipoSlug];
+    if (selectedType) {
+      setTipo(selectedType);
+    }
+  }, []);
 
   const onSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();

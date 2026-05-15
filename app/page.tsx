@@ -16,7 +16,7 @@ const promoCards = [
     text: 'Coloca tu marca, evento o negocio en espacios visibles dentro de V.E.D.A. MUSIC.',
     items: ['Top Banner', 'Sponsored Banner', 'Brand Partner'],
     cta: 'Quiero anunciarme',
-    href: '#contacto-comercial',
+    href: '#contacto-comercial?tipo=espacio-publicitario',
   },
   {
     badge: 'NEGOCIOS',
@@ -24,7 +24,7 @@ const promoCards = [
     text: 'Comparte tu canción, video o estreno para evaluación editorial.',
     items: ['Video oficial', 'Estreno musical', 'Artista emergente'],
     cta: 'Enviar música',
-    href: '#contacto-comercial',
+    href: '#contacto-comercial?tipo=enviar-musica',
   },
   {
     badge: 'SPONSORS',
@@ -32,7 +32,7 @@ const promoCards = [
     text: 'Coordina entrevistas, cobertura o contenido especial para tu proyecto.',
     items: ['Entrevista', 'Cobertura de evento', 'Studio / contenido'],
     cta: 'Reservar entrevista',
-    href: '#contacto-comercial',
+    href: '#contacto-comercial?tipo=entrevista-cobertura',
   },
 ] as const;
 const promoPackages = ['Publicación básica', 'Video destacado', 'Banner semanal', 'Banner mensual', 'Sponsor oficial', 'Entrevista / cobertura'];
@@ -284,7 +284,7 @@ export default function HomePage() {
 
         <section className="space-y-5 pt-3 md:pt-5">
           <div>
-            <h2 className="section-title">PROMOCIONA TU MOVIMIENTO</h2>
+            <h2 className="section-title">Promociona tu movimiento</h2>
             <p className="mt-2 max-w-3xl text-zinc-300">Espacios para artistas, marcas, eventos, estudios y negocios que quieren conectar con la cultura urbana.</p>
           </div>
           <div className="grid gap-4 md:grid-cols-3">
