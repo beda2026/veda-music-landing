@@ -45,7 +45,10 @@ export const vedaStations: VedaStation[] = [
 
 export type VedaPlatformSource = {
   id: string;
-  label: string;
+  title: string;
+  tagline: string;
+  ctaLabel?: string;
+  isExternal?: boolean;
   status: 'live' | 'coming-soon';
   embedUrl: string;
   externalUrl: string;
@@ -54,28 +57,34 @@ export type VedaPlatformSource = {
 export const vedaPlatformSources: VedaPlatformSource[] = [
   {
     id: 'en-vivo',
-    label: 'En Vivo',
+    title: 'En Vivo',
+    tagline: 'Transmisión oficial en vivo de VEDA Music Player.',
     status: 'live',
     embedUrl: '',
     externalUrl: '',
   },
   {
     id: 'spotify',
-    label: 'Spotify',
-    status: 'coming-soon',
-    embedUrl: '',
-    externalUrl: '',
+    title: 'Baila Reggaeton',
+    tagline: 'Playlist oficial de Spotify con reggaetón, urbano y perreo.',
+    ctaLabel: 'Escuchar en Spotify',
+    isExternal: true,
+    status: 'live',
+    embedUrl: 'https://open.spotify.com/embed/playlist/37i9dQZF1DWY7IeIP1cdjF?utm_source=generator',
+    externalUrl: 'https://open.spotify.com/playlist/37i9dQZF1DWY7IeIP1cdjF',
   },
   {
     id: 'youtube',
-    label: 'YouTube',
+    title: 'YouTube',
+    tagline: 'Canal de video oficial disponible próximamente.',
     status: 'coming-soon',
     embedUrl: '',
     externalUrl: '',
   },
   {
     id: 'soundcloud',
-    label: 'SoundCloud',
+    title: 'SoundCloud',
+    tagline: 'Perfil de SoundCloud en preparación.',
     status: 'coming-soon',
     embedUrl: '',
     externalUrl: '',

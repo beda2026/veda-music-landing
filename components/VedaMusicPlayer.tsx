@@ -137,7 +137,7 @@ export default function VedaMusicPlayer() {
                     : 'border-zinc-700 bg-zinc-900/70 text-zinc-300 hover:border-zinc-500'
                 }`}
               >
-                {platform.label}
+                {platform.id === 'spotify' ? 'Spotify' : platform.title}
               </button>
             );
           })}
@@ -240,6 +240,34 @@ export default function VedaMusicPlayer() {
             })}
           </div>
             </div>
+          ) : activePlatform.id === 'spotify' && activePlatform.status === 'live' ? (
+            <div
+              id={`veda-platform-panel-${activePlatform.id}`}
+              role="tabpanel"
+              aria-labelledby={`veda-platform-tab-${activePlatform.id}`}
+              className="space-y-4 rounded-2xl border border-zinc-700/80 bg-zinc-950/70 p-4 md:p-6"
+            >
+              <p className="text-xs uppercase tracking-[0.18em] text-[#f0d3a0]">Spotify · Playlist externa</p>
+              <h3 className="text-xl font-semibold text-zinc-100">{activePlatform.title}</h3>
+              <p className="text-sm text-zinc-300">{activePlatform.tagline}</p>
+              <iframe
+                src={activePlatform.embedUrl}
+                width="100%"
+                height="352"
+                allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+                loading="lazy"
+                title={activePlatform.title}
+                className="rounded-xl border border-zinc-800"
+              />
+              <a
+                href={activePlatform.externalUrl}
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex rounded-full border border-[#1db954] bg-[#1db954]/10 px-4 py-2 text-sm font-semibold text-[#66ffa5] transition hover:bg-[#1db954]/20"
+              >
+                {activePlatform.ctaLabel ?? 'Escuchar en Spotify'}
+              </a>
+            </div>
           ) : (
             <div
               id={`veda-platform-panel-${activePlatform.id}`}
@@ -247,10 +275,10 @@ export default function VedaMusicPlayer() {
               aria-labelledby={`veda-platform-tab-${activePlatform.id}`}
               className="rounded-2xl border border-zinc-700/80 bg-zinc-950/70 p-6 text-center"
             >
-              <p className="text-xs uppercase tracking-[0.18em] text-[#f0d3a0]">{activePlatform.label}</p>
+              <p className="text-xs uppercase tracking-[0.18em] text-[#f0d3a0]">{activePlatform.title}</p>
               <p className="mt-3 text-lg font-semibold text-zinc-100">Próximamente</p>
               <p className="mt-2 text-sm text-zinc-400">
-                Este contenedor oficial de VEDA Music Player estará disponible pronto.
+                {activePlatform.tagline || 'Este contenedor oficial de VEDA Music Player estará disponible pronto.'}
               </p>
             </div>
           )}
