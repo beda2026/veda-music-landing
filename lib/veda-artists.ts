@@ -64,10 +64,10 @@ export const vedaArtists: VedaArtist[] = [
     name: 'Tego Calderón',
     slug: 'tego-calderon',
     country: 'Puerto Rico',
-    category: 'Rap / Reggaetón / Afrocaribeño',
+    category: 'Rap / Reggaetón / Urbano',
     image: '/assets/artists/tego-calderon.png',
     shortBio:
-      'Una voz distinta del movimiento urbano, reconocida por su lírica social, identidad afrocaribeña y fusión musical.',
+      'Una voz distinta del movimiento urbano, reconocido por su lírica social, identidad callejera y estilo único.',
     biography:
       'Tego Calderón es una de las figuras más respetadas de la música urbana latina. Su propuesta se distinguió desde el inicio por mezclar rap, reggaetón, bomba, plena, salsa, reggae y comentario social. Con El Abayarde, Tego presentó una visión distinta del género: menos enfocada en la fórmula comercial y más conectada con identidad, calle, raza, cultura y conciencia. Su estilo vocal, su presencia y su forma de escribir lo convirtieron en una figura de culto dentro y fuera de Puerto Rico.',
     trajectory: [
