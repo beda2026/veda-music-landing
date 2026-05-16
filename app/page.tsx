@@ -45,21 +45,25 @@ const brandPartners = [
     name: 'José Barber Shop & Tattoo',
     image: '/assets/auspicios/jose-barber-shop-tattoo.png',
     href: 'https://www.instagram.com/jose_barbershopandtattoo?igsh=MTYyMHh2bDZ0d2tqdg%3D%3D&utm_source=qr',
+    logoClassName: 'scale-[1.45] object-cover object-center',
   },
   {
     name: 'Guerrero Promotions Ent',
     image: '/assets/auspicios/guerrero-promotions-ent.png',
     href: 'https://www.instagram.com/guerreropromotions.ent?igsh=MXMyOGx6M3g4dmgzcg%3D%3D&utm_source=qr',
+    logoClassName: 'scale-[1.35] object-cover object-center',
   },
   {
     name: 'Yenco PR',
     image: '/assets/auspicios/yenco-pr.png',
     href: 'https://www.instagram.com/yenco_pr?igsh=dHI3NXl6MWNwdGQ3&utm_source=qr',
+    logoClassName: 'scale-[1.25] object-cover object-center',
   },
   {
     name: 'Torneo A.T',
     image: '/assets/auspicios/torneo-at.png',
     href: 'https://www.instagram.com/torneo_a.t?igsh=MTA1cjZoMWxyejg0aw%3D%3D&utm_source=qr',
+    logoClassName: 'scale-[1.45] object-cover object-center',
   },
 ] as const;
 
@@ -389,11 +393,11 @@ export default function HomePage() {
                 key={partner.name}
                 className="group rounded-2xl border border-zinc-700/80 bg-[#141414]/85 p-4 shadow-[0_8px_28px_rgba(0,0,0,0.35)] backdrop-blur-sm transition hover:-translate-y-0.5 hover:border-[#f5b21b]/55 hover:shadow-[0_12px_30px_rgba(245,178,27,0.12)]"
               >
-                <div className="flex h-32 items-center justify-center rounded-xl border border-zinc-700/70 bg-[#0f0f0f]/80 p-3">
+                <div className="relative h-[190px] overflow-hidden rounded-xl border border-white/10 bg-black/60 flex items-center justify-center">
                   <img
                     src={partner.image}
                     alt={`${partner.name} logo`}
-                    className="max-h-full max-w-full object-contain"
+                    className={`h-full w-full ${partner.logoClassName}`}
                     loading="lazy"
                   />
                 </div>
