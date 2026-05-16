@@ -101,11 +101,6 @@ export default function HomePage() {
               className="h-auto w-full max-w-[728px] object-contain"
             />
           </div>
-          <div className="mt-6 rounded-2xl border border-[#f5b21b]/35 bg-[#121212]/85 p-5 text-center shadow-[0_8px_28px_rgba(0,0,0,0.35)] backdrop-blur-sm">
-            <p className="text-lg font-semibold text-zinc-100">¿Quieres promocionar tu marca aquí?</p>
-            <p className="mx-auto mt-2 max-w-2xl text-sm text-zinc-300">Solicita un espacio publicitario para tu negocio, evento, lanzamiento o proyecto.</p>
-            <a href="#contacto-comercial?tipo=espacio-publicitario" className="btn-gold mt-4 inline-flex">Solicitar publicidad</a>
-          </div>
         </section>
 
         <div className="panel mb-4 flex flex-col gap-3 rounded-2xl p-3 lg:flex-row lg:items-center lg:justify-between">
