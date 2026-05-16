@@ -3,6 +3,7 @@ import VedaMusicPlayer from '@/components/VedaMusicPlayer';
 import CommercialContactForm from '@/components/CommercialContactForm';
 import SubscribeForm from '@/components/SubscribeForm';
 import VideoThumbnail from '@/components/VideoThumbnail';
+import ServicesSectionModal from '@/components/ServicesSectionModal';
 import Link from 'next/link';
 import { interviews, releases, services, topTen, videos } from '@/lib/veda-data';
 import { vedaArtists } from '@/lib/veda-artists';
@@ -293,46 +294,7 @@ export default function HomePage() {
           </div>
         </section>
 
-        <section id="contacto" className="space-y-4">
-          <h2 className="section-title">Nuestros Servicios</h2>
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {services.map((service) => (
-              <article key={service.title} className="panel hover-card rounded-2xl p-4 service-card">
-                <h3 className="font-semibold text-zinc-100">{service.title}</h3>
-                <p className="mt-2 text-sm text-zinc-300">{service.description}</p>
-              </article>
-            ))}
-          </div>
-          <div className="panel rounded-2xl p-5 text-center">
-            <p className="mb-4 text-lg font-semibold text-zinc-100">¿Listo para llevar tu carrera al siguiente nivel?</p>
-            <a href="#contacto-comercial" className="btn-red">Contáctanos</a>
-          </div>
-        </section>
-
-        <section id="sobre-nosotros" className="space-y-5">
-          <div className="panel rounded-2xl p-6">
-            <h2 className="section-title">Sobre V.E.D.A. MUSIC</h2>
-            <div className="mt-4 space-y-4 text-sm leading-relaxed text-zinc-300 sm:text-base">
-              <p>V.E.D.A. MUSIC es una plataforma digital enfocada en música, cultura urbana, entrevistas, estrenos y descubrimiento de talento. Nacemos para conectar artistas, creadores, marcas y público en un espacio visual, moderno y directo.</p>
-              <p>Nuestro enfoque combina contenido editorial, promoción musical, espacios publicitarios y cobertura urbana para darle visibilidad a proyectos que forman parte del movimiento latino y caribeño.</p>
-              <p>Más que una página de música, V.E.D.A. MUSIC funciona como un punto de encuentro para artistas emergentes, marcas locales, eventos, entrevistas y contenido que representa la calle, la cultura y la evolución del sonido urbano.</p>
-            </div>
-          </div>
-          <div className="grid gap-4 md:grid-cols-3">
-            <article className="panel hover-card rounded-2xl p-5">
-              <h3 className="text-lg font-semibold text-zinc-100">Música &amp; Estrenos</h3>
-              <p className="mt-2 text-sm text-zinc-300">Espacio para destacar canciones, videos, playlists y nuevos lanzamientos.</p>
-            </article>
-            <article className="panel hover-card rounded-2xl p-5">
-              <h3 className="text-lg font-semibold text-zinc-100">Cultura Urbana</h3>
-              <p className="mt-2 text-sm text-zinc-300">Cobertura visual y editorial de movimientos, artistas, eventos y comunidades.</p>
-            </article>
-            <article className="panel hover-card rounded-2xl p-5">
-              <h3 className="text-lg font-semibold text-zinc-100">Publicidad &amp; Alianzas</h3>
-              <p className="mt-2 text-sm text-zinc-300">Opciones para marcas, negocios y proyectos que buscan visibilidad dentro del público urbano.</p>
-            </article>
-          </div>
-        </section>
+        <ServicesSectionModal services={services} />
 
         <section id="contacto-comercial" className="space-y-4">
           <div>
@@ -415,7 +377,6 @@ export default function HomePage() {
           </div>
         </section>
       </main>
-
       <footer className="border-t border-zinc-800 bg-[#0c0c0c]">
         <div className="mx-auto grid w-full max-w-[1400px] gap-6 px-4 py-10 sm:px-6 lg:grid-cols-3 lg:px-10">
           <div>
