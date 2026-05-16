@@ -1,3 +1,6 @@
+import { existsSync } from 'node:fs';
+import path from 'node:path';
+
 export type VedaArtist = {
   name: string;
   slug: string;
@@ -234,3 +237,12 @@ export const vedaArtists: VedaArtist[] = [
       'Karol G representa una nueva etapa de liderazgo femenino dentro de la música latina. Su éxito conecta identidad, emoción, espectáculo y una comunidad global que la reconoce como voz principal del urbano contemporáneo.',
   },
 ];
+
+export function getArtistImageOrFallback(image?: string) {
+  if (!image) return null;
+
+  const normalized = image.startsWith('/') ? image.slice(1) : image;
+  const imagePath = path.join(process.cwd(), 'public', normalized.replace(/^assets\//, 'assets/'));
+
+  return existsSync(imagePath) ? image : null;
+}
