@@ -40,6 +40,28 @@ const promoCards = [
   },
 ] as const;
 const promoPackages = ['Publicación básica', 'Video destacado', 'Banner semanal', 'Banner mensual', 'Sponsor oficial', 'Entrevista / cobertura'];
+const brandPartners = [
+  {
+    name: 'José Barber Shop & Tattoo',
+    image: '/assets/auspicios/jose-barber-shop-tattoo.png',
+    href: 'https://www.instagram.com/jose_barbershopandtattoo?igsh=MTYyMHh2bDZ0d2tqdg%3D%3D&utm_source=qr',
+  },
+  {
+    name: 'Guerrero Promotions Ent',
+    image: '/assets/auspicios/guerrero-promotions-ent.png',
+    href: 'https://www.instagram.com/guerreropromotions.ent?igsh=MXMyOGx6M3g4dmgzcg%3D%3D&utm_source=qr',
+  },
+  {
+    name: 'Yenco PR',
+    image: '/assets/auspicios/yenco-pr.png',
+    href: 'https://www.instagram.com/yenco_pr?igsh=dHI3NXl6MWNwdGQ3&utm_source=qr',
+  },
+  {
+    name: 'Torneo A.T',
+    image: '/assets/auspicios/torneo-at.png',
+    href: 'https://www.instagram.com/torneo_a.t?igsh=MTA1cjZoMWxyejg0aw%3D%3D&utm_source=qr',
+  },
+] as const;
 
 function SocialIcon({ icon }: { icon: (typeof socialLinks)[number]['icon'] }) {
   if (icon === 'youtube') return <><rect x="5.5" y="7.5" width="13" height="9" rx="2.5" /><path d="m11 10 4 2-4 2v-4Z" fill="currentColor" stroke="none" /></>;
@@ -354,11 +376,37 @@ export default function HomePage() {
 
         <SubscribeForm />
 
-        <section className="ad-box rounded-2xl p-5 text-center">
-          <p className="mb-4 font-semibold">BRAND PARTNERS · PATROCINADORES OFICIALES</p>
-          <div className="grid gap-3 sm:grid-cols-5">
-            {Array.from({ length: 5 }).map((_, idx) => (
-              <div key={`slot-${idx}`} className="rounded-xl border border-zinc-700 bg-[#151515] p-4 text-sm text-zinc-300">Tu logo aquí</div>
+        <section className="ad-box rounded-3xl border border-[#f5b21b]/25 bg-gradient-to-br from-[#101010]/90 via-[#151515]/95 to-[#0d0d0d]/95 p-6 md:p-7">
+          <div className="text-center">
+            <h2 className="section-title">Auspicios &amp; Aliados</h2>
+            <p className="mt-2 text-sm text-zinc-300 md:text-base">
+              Marcas, negocios y movimientos que conectan con la cultura urbana.
+            </p>
+          </div>
+          <div className="mt-6 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+            {brandPartners.map((partner) => (
+              <article
+                key={partner.name}
+                className="group rounded-2xl border border-zinc-700/80 bg-[#141414]/85 p-4 shadow-[0_8px_28px_rgba(0,0,0,0.35)] backdrop-blur-sm transition hover:-translate-y-0.5 hover:border-[#f5b21b]/55 hover:shadow-[0_12px_30px_rgba(245,178,27,0.12)]"
+              >
+                <div className="flex h-32 items-center justify-center rounded-xl border border-zinc-700/70 bg-[#0f0f0f]/80 p-3">
+                  <img
+                    src={partner.image}
+                    alt={`${partner.name} logo`}
+                    className="max-h-full max-w-full object-contain"
+                    loading="lazy"
+                  />
+                </div>
+                <h3 className="mt-4 text-base font-semibold text-zinc-100">{partner.name}</h3>
+                <a
+                  href={partner.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="mt-3 inline-flex rounded-full border border-[#f5b21b]/45 px-3 py-1.5 text-xs font-semibold uppercase tracking-wide text-[#f5b21b] transition hover:border-[#f5b21b] hover:bg-[#f5b21b14]"
+                >
+                  Ver Instagram
+                </a>
+              </article>
             ))}
           </div>
         </section>
