@@ -2,6 +2,7 @@ import VisitCounter from '@/components/VisitCounter';
 import VedaMusicPlayer from '@/components/VedaMusicPlayer';
 import CommercialContactForm from '@/components/CommercialContactForm';
 import SubscribeForm from '@/components/SubscribeForm';
+import VideoThumbnail from '@/components/VideoThumbnail';
 import { interviews, photos, releases, services, topTen, videos } from '@/lib/veda-data';
 
 const navLinks = ['Inicio', 'Noticias', 'Música', 'Videos', 'Fotos', 'Entrevistas', 'Nosotros', 'Contacto'];
@@ -159,19 +160,25 @@ export default function HomePage() {
 
         <section id="videos" className="space-y-4">
           <h2 className="section-title">Últimos Videos</h2>
-          <div className="grid gap-4 md:grid-cols-3">
-            {videos.map((video, idx) => (
-              <article key={video.title} className="panel hover-card rounded-2xl p-4 media-card">
-                <div className="video-thumb mb-3 flex h-40 rounded-xl border border-zinc-700 p-4" data-idx={idx}>
-                  <span className="media-initial">{video.title.charAt(0)}</span>
-                  <span className="video-play">▶</span>
-                  <span className="media-badge">VIDEO</span>
-                </div>
-                <h3 className="font-semibold text-zinc-100">{video.title}</h3>
-                <p className="mt-1 text-sm text-zinc-400">{video.category}</p>
-                <p className="mt-1 text-sm text-zinc-300">{video.meta}</p>
-              </article>
-            ))}
+          <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+            {videos.map((video) => {
+              const card = (
+                <article className="panel hover-card rounded-2xl p-4 media-card">
+                  <VideoThumbnail title={video.title} thumbnail={video.thumbnail} fallbackThumbnail={video.fallbackThumbnail} />
+                  <h3 className="font-semibold text-zinc-100">{video.title}</h3>
+                  <p className="mt-1 text-sm text-zinc-400">{video.category}</p>
+                  <p className="mt-1 text-sm text-zinc-300">{video.meta}</p>
+                </article>
+              );
+
+              return video.href ? (
+                <a key={video.title} href={video.href} target="_blank" rel="noreferrer" className="block">
+                  {card}
+                </a>
+              ) : (
+                <div key={video.title}>{card}</div>
+              );
+            })}
           </div>
         </section>
 
