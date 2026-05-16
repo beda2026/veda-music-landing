@@ -3,9 +3,11 @@ import VedaMusicPlayer from '@/components/VedaMusicPlayer';
 import CommercialContactForm from '@/components/CommercialContactForm';
 import SubscribeForm from '@/components/SubscribeForm';
 import VideoThumbnail from '@/components/VideoThumbnail';
-import { interviews, photos, releases, services, topTen, videos } from '@/lib/veda-data';
+import Link from 'next/link';
+import { interviews, releases, services, topTen, videos } from '@/lib/veda-data';
+import { vedaArtists } from '@/lib/veda-artists';
 
-const navLinks = ['Inicio', 'Noticias', 'Música', 'Videos', 'Fotos', 'Entrevistas', 'Nosotros', 'Contacto'];
+const navLinks = ['Inicio', 'Noticias', 'Música', 'Videos', 'Artistas', 'Entrevistas', 'Nosotros', 'Contacto'];
 const socialLinks = [
   { name: 'Spotify', icon: 'spotify' },
   { name: 'YouTube', icon: 'youtube' },
@@ -90,7 +92,7 @@ export default function HomePage() {
           </div>
           <nav className="hide-scrollbar -mx-2 flex gap-3 overflow-x-auto px-2 text-sm font-medium text-zinc-200 lg:flex-wrap lg:overflow-visible">
             {navLinks.map((link) => (
-              <a key={link} href={link === 'Inicio' ? '#' : link === 'Contacto' ? '#contacto-comercial' : link === 'Nosotros' ? '#sobre-nosotros' : `#${link.toLowerCase()}`} className="whitespace-nowrap rounded-full border border-zinc-700 px-3 py-1.5 transition hover:border-[#ef1f2d] hover:text-white">
+              <a key={link} href={link === 'Inicio' ? '#' : link === 'Contacto' ? '#contacto-comercial' : link === 'Nosotros' ? '#sobre-nosotros' : link === 'Artistas' ? '/artistas' : `#${link.toLowerCase()}`} className="whitespace-nowrap rounded-full border border-zinc-700 px-3 py-1.5 transition hover:border-[#ef1f2d] hover:text-white">
                 {link}
               </a>
             ))}
@@ -182,16 +184,25 @@ export default function HomePage() {
           </div>
         </section>
 
-        <section className="space-y-4">
-          <h2 className="section-title">Fotos Recientes</h2>
-          <div className="grid gap-4 md:grid-cols-3">
-            {photos.map((photo, idx) => (
-              <article key={photo.title} className="panel hover-card rounded-2xl p-4 media-card">
-                <div className="photo-thumb mb-3 h-36 rounded-xl border border-zinc-700 p-3" data-idx={idx}>
-                  <span className="media-badge">GALERÍA</span>
+        <section id="artistas-destacados" className="space-y-4">
+          <h2 className="section-title">Artistas Destacados</h2>
+          <p className="text-sm text-zinc-300">Perfiles editoriales, trayectoria musical y figuras clave del movimiento urbano.</p>
+          <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-5">
+            {vedaArtists.map((artist) => (
+              <article key={artist.slug} className="panel hover-card rounded-2xl p-4 media-card">
+                <div className="mb-3 h-36 overflow-hidden rounded-xl border border-zinc-700 bg-gradient-to-br from-[#2a0d10] via-[#171717] to-[#1b1508]">
+                  {artist.image ? (
+                    <img src={artist.image} alt={artist.name} className="h-full w-full object-cover" />
+                  ) : (
+                    <div className="flex h-full items-end p-3">
+                      <span className="rounded-full border border-[#f5b21b]/60 bg-black/40 px-2 py-1 text-[10px] font-semibold tracking-[0.12em] text-[#f5b21b]">V.E.D.A. ARTIST</span>
+                    </div>
+                  )}
                 </div>
-                <h3 className="font-semibold text-zinc-100">{photo.title}</h3>
-                <p className="mt-2 text-sm text-zinc-300">{photo.meta}</p>
+                <h3 className="font-semibold text-zinc-100">{artist.name}</h3>
+                <p className="mt-1 text-xs uppercase tracking-wide text-zinc-400">{artist.country} · {artist.category}</p>
+                <p className="mt-2 text-sm text-zinc-300">{artist.shortBio}</p>
+                <Link href={`/artistas/${artist.slug}`} className="mt-3 inline-block rounded-full border border-[#ef1f2d]/60 px-3.5 py-1.5 text-sm font-semibold text-zinc-100 transition hover:border-[#f5b21b]">Ver perfil</Link>
               </article>
             ))}
           </div>
