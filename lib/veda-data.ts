@@ -1,7 +1,52 @@
 export const videos = [
-  { title: 'iZaak ft. Dei V y Topboy TGR – Flow', meta: 'Video oficial · 03:07', category: 'Estreno urbano' },
-  { title: 'Juliito – La Droga', meta: 'Video oficial · 03:15', category: 'Video destacado' },
-  { title: 'Kali Uchis – Labios Mordidos', meta: 'Video oficial · 02:48', category: 'Novedad latina' },
+  {
+    title: 'Shakira x Burna Boy – Dai Dai',
+    meta: 'Video oficial · FIFA World Cup Official Song 2026',
+    category: 'Estreno latino',
+    href: 'https://www.youtube.com/watch?v=X9CsK_nuqdE',
+    thumbnail: 'https://img.youtube.com/vi/X9CsK_nuqdE/maxresdefault.jpg',
+    fallbackThumbnail: 'https://img.youtube.com/vi/X9CsK_nuqdE/hqdefault.jpg',
+  },
+  {
+    title: 'Daddy Yankee x Shenseea – Echo',
+    meta: 'Video oficial · FIFA World Cup Official Song 2026',
+    category: 'Estreno urbano',
+    href: 'https://www.youtube.com/watch?v=bqT0dq9SSZo',
+    thumbnail: 'https://img.youtube.com/vi/bqT0dq9SSZo/maxresdefault.jpg',
+    fallbackThumbnail: 'https://img.youtube.com/vi/bqT0dq9SSZo/hqdefault.jpg',
+  },
+  {
+    title: 'Sech – BBL',
+    meta: 'Video oficial · Estreno urbano',
+    category: 'Video destacado',
+    href: 'https://www.youtube.com/watch?v=FynTKeT3MhU',
+    thumbnail: 'https://img.youtube.com/vi/FynTKeT3MhU/maxresdefault.jpg',
+    fallbackThumbnail: 'https://img.youtube.com/vi/FynTKeT3MhU/hqdefault.jpg',
+  },
+  {
+    title: 'Belinda x Los Ángeles Azules – Por Ella',
+    meta: 'Video oficial · Estreno latino',
+    category: 'Novedad latina',
+    href: 'https://www.youtube.com/watch?v=eu8IIeVKNmQ',
+    thumbnail: 'https://img.youtube.com/vi/eu8IIeVKNmQ/maxresdefault.jpg',
+    fallbackThumbnail: 'https://img.youtube.com/vi/eu8IIeVKNmQ/hqdefault.jpg',
+  },
+  {
+    title: 'KAROL G, Greg Gonzalez – Después de ti',
+    meta: 'Visualizer · Estreno latino',
+    category: 'Novedad latina',
+    href: 'https://www.youtube.com/watch?v=7RaXYyhyEiw',
+    thumbnail: 'https://img.youtube.com/vi/7RaXYyhyEiw/maxresdefault.jpg',
+    fallbackThumbnail: 'https://img.youtube.com/vi/7RaXYyhyEiw/hqdefault.jpg',
+  },
+  {
+    title: 'Clarent – Dime Baby',
+    meta: 'Video oficial · Estreno urbano',
+    category: 'Estreno urbano',
+    href: 'https://www.youtube.com/watch?v=TjSXaEQ4EqY',
+    thumbnail: 'https://img.youtube.com/vi/TjSXaEQ4EqY/maxresdefault.jpg',
+    fallbackThumbnail: 'https://img.youtube.com/vi/TjSXaEQ4EqY/hqdefault.jpg',
+  },
 ];
 
 export const photos = [
