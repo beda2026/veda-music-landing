@@ -5,6 +5,11 @@ export default function ArtistasPage() {
   return (
     <main className="mx-auto w-full max-w-[1400px] px-4 py-10 sm:px-6 lg:px-10">
       <section className="space-y-4">
+        <div className="flex flex-wrap gap-3">
+          <Link href="/#artistas-destacados" className="inline-block rounded-full border border-zinc-600 px-4 py-2 text-sm font-semibold text-zinc-200 transition hover:border-[#f5b21b]">
+            Volver al inicio V.E.D.A.
+          </Link>
+        </div>
         <h1 className="section-title">Artistas Destacados</h1>
         <p className="max-w-3xl text-sm text-zinc-300">
           Explora biografías, trayectorias, álbumes y el impacto cultural de artistas que han marcado la música urbana.
