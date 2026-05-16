@@ -16,6 +16,17 @@ const requestTypeBySlug: Record<string, (typeof requestTypes)[number]> = {
   'entrevista-cobertura': 'Entrevista / cobertura',
 };
 
+const parseContactHash = (hashValue: string) => {
+  const [section, query] = hashValue.split('?');
+  if (section !== '#contacto-comercial') return null;
+
+  const params = new URLSearchParams(query || '');
+  const tipoSlug = params.get('tipo');
+  const selectedType = tipoSlug ? requestTypeBySlug[tipoSlug] : undefined;
+
+  return { selectedType };
+};
+
 export default function CommercialContactForm() {
   const [nombre, setNombre] = useState('');
   const [email, setEmail] = useState('');
@@ -36,19 +47,18 @@ export default function CommercialContactForm() {
   useEffect(() => {
     if (typeof window === 'undefined') return;
 
-    const [section, query] = window.location.hash.split('?');
-    if (section !== '#contacto-comercial') return;
+    const openFromHash = () => {
+      const parsedHash = parseContactHash(window.location.hash);
+      if (!parsedHash) return;
 
-    if (query) {
-      const params = new URLSearchParams(query);
-      const tipoSlug = params.get('tipo');
-      if (tipoSlug) {
-        const selectedType = requestTypeBySlug[tipoSlug];
-        if (selectedType) setTipo(selectedType);
-      }
-    }
+      if (parsedHash.selectedType) setTipo(parsedHash.selectedType);
+      setIsModalOpen(true);
+    };
 
-    setIsModalOpen(true);
+    openFromHash();
+    window.addEventListener('hashchange', openFromHash);
+
+    return () => window.removeEventListener('hashchange', openFromHash);
   }, []);
 
   useEffect(() => {
