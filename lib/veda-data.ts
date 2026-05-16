@@ -28,7 +28,7 @@ export const videos = [
     meta: 'Video oficial · Estreno latino',
     category: 'Novedad latina',
     href: 'https://www.youtube.com/watch?v=eu8IIeVKNmQ',
-    thumbnail: 'https://img.youtube.com/vi/eu8IIeVKNmQ/maxresdefault.jpg',
+    thumbnail: '/assets/belinda-los-angeles-azules-por-ella-thumb.png',
     fallbackThumbnail: 'https://img.youtube.com/vi/eu8IIeVKNmQ/hqdefault.jpg',
   },
   {
