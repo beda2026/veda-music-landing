@@ -62,6 +62,19 @@ export default function CommercialContactForm() {
   }, []);
 
   useEffect(() => {
+    if (typeof window === 'undefined') return;
+
+    const onOpenCommercialContact = () => {
+      setIsModalOpen(true);
+    };
+
+    window.addEventListener('openCommercialContact', onOpenCommercialContact);
+    return () => {
+      window.removeEventListener('openCommercialContact', onOpenCommercialContact);
+    };
+  }, []);
+
+  useEffect(() => {
     if (!isModalOpen) return;
 
     const onKeyDown = (event: KeyboardEvent) => {
