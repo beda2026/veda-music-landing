@@ -181,8 +181,7 @@ body {
 .ad-space-labels {
   position: relative;
 }
-.ad-space-labels::before,
-.ad-space-labels::after {
+.ad-space-labels::before {
   position: absolute;
   left: 0.9rem;
   z-index: 2;
@@ -200,10 +199,6 @@ body {
 .ad-space-labels::before {
   content: 'ESPACIO PUBLICITARIO';
   top: 0.65rem;
-}
-.ad-space-labels::after {
-  content: 'RESERVA TU ESPACIO';
-  bottom: 0.65rem;
 }
 .section-title { font-size: 1.6rem; font-weight: 800; color: #f8f8f8; }
 .social-clean { white-space: nowrap; }
