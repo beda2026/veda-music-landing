@@ -105,8 +105,8 @@ export default function VedaMusicPlayer() {
 
   return (
     <section className="space-y-3" aria-label="VEDA Music Player">
-      <div className="relative overflow-hidden rounded-[1.6rem] border border-yellow-500/15 bg-black/50 px-5 py-6 shadow-[0_0_35px_rgba(255,40,80,.16),0_0_40px_rgba(255,190,60,.1)] backdrop-blur-md md:px-6 md:py-8 xl:px-8 xl:py-10">
-        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_12%_15%,rgba(244,63,94,.16),transparent_35%),radial-gradient(circle_at_88%_20%,rgba(245,158,11,.14),transparent_40%),linear-gradient(145deg,rgba(10,10,10,.8),rgba(20,20,20,.86))]" />
+      <div className="relative overflow-hidden rounded-[1.6rem] border border-yellow-500/15 bg-black/30 px-5 py-6 shadow-[0_0_35px_rgba(255,40,80,.16),0_0_40px_rgba(255,190,60,.1)] backdrop-blur-xl md:px-6 md:py-8 xl:px-8 xl:py-10">
+        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_12%_15%,rgba(244,63,94,.09),transparent_35%),radial-gradient(circle_at_88%_20%,rgba(245,158,11,.08),transparent_40%),linear-gradient(145deg,rgba(10,10,10,.45),rgba(20,20,20,.5))]" />
         <div className="relative">
           <p className="text-xs uppercase tracking-[0.24em] text-[#f0d3a0]">VEDA Music Player</p>
           <h2 className="mt-1.5 text-xl font-extrabold text-zinc-100 md:text-2xl xl:text-3xl">Música, estrenos y movimiento urbano en vivo.</h2>
@@ -115,7 +115,7 @@ export default function VedaMusicPlayer() {
             {vedaPlatformSources.map((platform) => {
               const selected = platform.id === activePlatform.id;
               return (
-                <button key={platform.id} type="button" role="tab" aria-selected={selected} onClick={() => setActivePlatformId(platform.id)} className={`rounded-full border px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.14em] transition ${selected ? 'border-yellow-400/80 bg-yellow-500/10 text-yellow-200 shadow-[0_0_20px_rgba(245,158,11,.25)]' : 'border-white/10 bg-black/45 text-zinc-300 hover:border-zinc-500'}`}>
+                <button key={platform.id} type="button" role="tab" aria-selected={selected} onClick={() => setActivePlatformId(platform.id)} className={`rounded-full border px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.14em] transition ${selected ? 'border-yellow-400/80 bg-yellow-500/10 text-yellow-200 shadow-[0_0_20px_rgba(245,158,11,.25)]' : 'border-white/10 bg-black/30 text-zinc-300 hover:border-zinc-500'}`}>
                   {platform.id === 'spotify' ? 'Spotify' : platform.title}
                 </button>
               );
@@ -129,7 +129,7 @@ export default function VedaMusicPlayer() {
                   {vedaStations.map((station, idx) => {
                     const selected = idx === activeIndex;
                     return (
-                      <button key={station.id} type="button" onClick={() => selectStation(idx)} className={`group w-full rounded-xl border px-4 py-3 text-left transition backdrop-blur-md ${selected ? 'border-yellow-400/70 bg-neutral-950/45 shadow-[0_0_20px_rgba(245,158,11,.18)]' : 'border-white/10 bg-black/45 hover:border-rose-400/50 hover:bg-black/50'}`}>
+                      <button key={station.id} type="button" onClick={() => selectStation(idx)} className={`group w-full rounded-xl border px-4 py-3 text-left transition backdrop-blur-xl ${selected ? 'border-yellow-400/70 bg-neutral-950/45 shadow-[0_0_20px_rgba(245,158,11,.18)]' : 'border-white/10 bg-black/30 hover:border-rose-400/50 hover:bg-black/30'}`}>
                         <div className="flex items-center gap-3">
                           <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg border border-zinc-600 bg-gradient-to-br from-zinc-950 to-zinc-800 text-sm font-black tracking-wider text-yellow-100 md:h-14 md:w-14">{station.name.split(' ').map((w) => w[0]).join('').slice(0, 3)}</div>
                           <div className="min-w-0 flex-1">
@@ -145,14 +145,14 @@ export default function VedaMusicPlayer() {
                   })}
                 </div>
 
-                <div className="relative mx-auto w-full max-w-[560px] overflow-hidden rounded-[1.35rem] border border-white/10 bg-[linear-gradient(160deg,rgba(24,24,24,.58),rgba(13,13,13,.5)_55%,rgba(31,27,20,.55))] p-3.5 shadow-[inset_0_0_0_1px_rgba(255,255,255,.05),inset_0_10px_40px_rgba(0,0,0,.4),0_14px_30px_rgba(0,0,0,.5)] backdrop-blur-md md:p-4.5 lg:p-5">
-                  <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_20%_0%,rgba(244,63,94,.2),transparent_45%),radial-gradient(circle_at_100%_20%,rgba(245,158,11,.2),transparent_42%)]" />
+                <div className="relative mx-auto w-full max-w-[560px] overflow-hidden rounded-[1.35rem] border border-white/10 bg-[linear-gradient(160deg,rgba(24,24,24,.42),rgba(13,13,13,.36)_55%,rgba(31,27,20,.4))] p-3.5 shadow-[inset_0_0_0_1px_rgba(255,255,255,.05),inset_0_10px_40px_rgba(0,0,0,.32),0_14px_30px_rgba(0,0,0,.38)] backdrop-blur-xl md:p-4.5 lg:p-5">
+                  <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_20%_0%,rgba(244,63,94,.11),transparent_45%),radial-gradient(circle_at_100%_20%,rgba(245,158,11,.10),transparent_42%)]" />
                   <div className="relative grid gap-2.5 md:grid-cols-[1fr_auto]">
-                    <div className="rounded-lg border border-white/10 bg-black/45 p-2.5 backdrop-blur-md">
+                    <div className="rounded-lg border border-white/10 bg-black/30 p-2.5 backdrop-blur-xl">
                       <p className="text-[10px] uppercase tracking-[0.22em] text-zinc-400">Station</p>
                       <p className="mt-1.5 text-xl font-black text-yellow-100 md:text-2xl">{activeStation.name.split(' ').map((w) => w[0]).join('').slice(0, 4)}</p>
                     </div>
-                    <div className="rounded-lg border border-white/10 bg-black/45 p-2.5 backdrop-blur-md">
+                    <div className="rounded-lg border border-white/10 bg-black/30 p-2.5 backdrop-blur-xl">
                       <p className="text-[10px] uppercase tracking-[0.22em] text-zinc-400">NOW PLAYING</p>
                       <p className="mt-1 text-base font-bold text-white md:text-lg">{activeStation.name}</p>
                       <p className="text-xs text-zinc-300 md:text-sm">{activeStation.tagline}</p>
@@ -187,18 +187,18 @@ export default function VedaMusicPlayer() {
                     </label>
                   </div>
 
-                  <p className="mt-3 rounded-lg border border-white/10 bg-black/45 px-2.5 py-1.5 text-center text-[11px] text-zinc-300 backdrop-blur-md md:text-xs">Estado: Externa oficial | Disponible vía enlace oficial.</p>
+                  <p className="mt-3 rounded-lg border border-white/10 bg-black/30 px-2.5 py-1.5 text-center text-[11px] text-zinc-300 backdrop-blur-xl md:text-xs">Estado: Externa oficial | Disponible vía enlace oficial.</p>
                   {error ? <p className="mt-2 text-center text-xs text-rose-300">{error}</p> : null}
                 </div>
               </div>
             ) : activePlatform.id === 'spotify' && activePlatform.status === 'live' ? (
-              <div className="space-y-4 rounded-2xl border border-white/10 bg-black/45 p-4 backdrop-blur-md md:p-6">
+              <div className="space-y-4 rounded-2xl border border-white/10 bg-black/30 p-4 backdrop-blur-xl md:p-6">
                 <p className="text-xs uppercase tracking-[0.18em] text-[#f0d3a0]">Spotify · Playlist externa</p>
                 <h3 className="text-xl font-semibold text-zinc-100">{activePlatform.title}</h3>
                 <p className="text-sm text-zinc-300">{activePlatform.tagline}</p>
                 <div className="grid gap-4 lg:grid-cols-2">
                   {vedaSpotifyPlaylists.map((playlist) => (
-                    <article key={playlist.id} className="space-y-3 rounded-xl border border-white/10 bg-black/45 p-3.5 backdrop-blur-md md:p-4">
+                    <article key={playlist.id} className="space-y-3 rounded-xl border border-white/10 bg-black/30 p-3.5 backdrop-blur-xl md:p-4">
                       <h4 className="text-lg font-semibold text-zinc-100">{playlist.title}</h4><p className="text-sm text-zinc-300">{playlist.tagline}</p>
                       <div className="overflow-hidden rounded-xl border border-zinc-800"><iframe src={playlist.embedUrl} width="100%" height="352" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy" title={playlist.title} className="block" /></div>
                       <a href={playlist.externalUrl} target="_blank" rel="noreferrer" className="inline-flex rounded-full border border-[#1db954] bg-[#1db954]/10 px-4 py-2 text-sm font-semibold text-[#66ffa5] transition hover:bg-[#1db954]/20">{playlist.ctaLabel ?? 'Escuchar en Spotify'}</a>
@@ -207,7 +207,7 @@ export default function VedaMusicPlayer() {
                 </div>
               </div>
             ) : (
-              <div className="rounded-2xl border border-white/10 bg-black/45 p-6 text-center backdrop-blur-md">
+              <div className="rounded-2xl border border-white/10 bg-black/30 p-6 text-center backdrop-blur-xl">
                 <p className="text-xs uppercase tracking-[0.18em] text-[#f0d3a0]">{activePlatform.title}</p>
                 <p className="mt-3 text-lg font-semibold text-zinc-100">Próximamente</p>
                 <p className="mt-2 text-sm text-zinc-400">{activePlatform.tagline || 'Este contenedor oficial de VEDA Music Player estará disponible pronto.'}</p>
@@ -216,9 +216,9 @@ export default function VedaMusicPlayer() {
           </div>
 
           <div className="mt-3 flex flex-wrap gap-1.5 text-[10px] uppercase tracking-[0.1em] text-zinc-300">
-            <span className="rounded-full border border-white/10 bg-black/45 px-2.5 py-0.5 backdrop-blur-md">Enlaces oficiales</span>
-            <span className="rounded-full border border-white/10 bg-black/45 px-2.5 py-0.5 backdrop-blur-md">Contenido verificado</span>
-            <span className="rounded-full border border-white/10 bg-black/45 px-2.5 py-0.5 backdrop-blur-md">Transmitiendo 24/7</span>
+            <span className="rounded-full border border-white/10 bg-black/30 px-2.5 py-0.5 backdrop-blur-xl">Enlaces oficiales</span>
+            <span className="rounded-full border border-white/10 bg-black/30 px-2.5 py-0.5 backdrop-blur-xl">Contenido verificado</span>
+            <span className="rounded-full border border-white/10 bg-black/30 px-2.5 py-0.5 backdrop-blur-xl">Transmitiendo 24/7</span>
           </div>
         </div>
 
