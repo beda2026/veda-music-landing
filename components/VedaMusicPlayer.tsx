@@ -31,21 +31,13 @@ export default function VedaMusicPlayer() {
               <p className="text-lg font-bold text-white md:text-xl">V.E.D.A. Music Radio</p>
             </div>
 
-            <div className="flex flex-wrap items-center justify-center gap-2 md:justify-start">
+            <div className="flex items-center justify-center md:justify-start">
               <button
                 type="button"
                 onClick={toggleSpotifyEmbed}
                 className="inline-flex h-10 items-center justify-center rounded-full border border-yellow-500/60 bg-yellow-500/10 px-4 text-xs font-semibold text-yellow-100 transition hover:bg-yellow-500/20 md:h-11 md:text-sm"
               >
                 {isSpotifyOpen ? 'Cerrar' : 'Escuchar aquí'}
-              </button>
-
-              <button
-                type="button"
-                onClick={toggleSpotifyEmbed}
-                className="inline-flex h-10 items-center justify-center rounded-full border border-white/15 bg-black/30 px-4 text-xs font-semibold text-zinc-100 transition hover:border-yellow-400/50 hover:text-yellow-200 md:h-11 md:text-sm"
-              >
-                Spotify
               </button>
             </div>
 
@@ -76,8 +68,9 @@ export default function VedaMusicPlayer() {
           </div>
         </div>
 
-        {/* Conservamos la data de estaciones para uso futuro, sin render visible por ahora. */}
+        {/* Conservamos la data de plataformas para uso futuro, sin render visible por ahora. */}
         <span className="sr-only">{vedaStations.length} estaciones cargadas para futuras versiones.</span>
+        <span className="sr-only">Plataformas preparadas: Spotify, Apple Music, YouTube Music y SoundCloud.</span>
       </div>
     </section>
   );
