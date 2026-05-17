@@ -22,6 +22,10 @@ export default function VedaMusicPlayer() {
   const [activePlatformId, setActivePlatformId] = useState<string | null>(null);
   const [activePlatformPanel, setActivePlatformPanel] = useState<string | null>(null);
 
+  const isExternalEmbedActive = activePlatformPanel === 'spotify' || activePlatformId !== null;
+  const canControlInternalAudio = hasPlayableStream(activeStation) && !isExternalEmbedActive;
+
+
   const platformPlayers = [
     {
       id: 'spotify',
@@ -206,10 +210,14 @@ export default function VedaMusicPlayer() {
               ) : activeStation.externalUrl ? (
                 <a href={activeStation.externalUrl} target="_blank" rel="noopener noreferrer" className="inline-flex h-10 items-center justify-center rounded-full border border-yellow-500/60 bg-yellow-500/10 px-4 text-xs font-semibold text-yellow-100 transition hover:bg-yellow-500/20 md:h-11 md:text-sm">Escuchar oficial</a>
               ) : null}
-              <button type="button" aria-label={isMuted ? 'Activar sonido' : 'Silenciar'} onClick={() => setIsMuted((prev) => !prev)} className="inline-flex h-9 items-center justify-center rounded-full border border-zinc-600 px-2.5 text-[11px] text-zinc-100 md:h-10 md:px-3 md:text-xs">{isMuted ? 'Unmute' : 'Mute'}</button>
-              <label className="flex items-center gap-1.5 rounded-full border border-zinc-700 px-2 py-1 text-[11px] text-zinc-300 md:text-xs">Vol
-                <input className="w-16 accent-yellow-500 md:w-20" aria-label="Control de volumen" type="range" min={0} max={1} step={0.01} value={volume} onChange={(event) => setVolume(Number(event.target.value))} />
-              </label>
+              {canControlInternalAudio ? (
+                <>
+                  <button type="button" aria-label={isMuted ? 'Activar sonido' : 'Silenciar'} onClick={() => setIsMuted((prev) => !prev)} className="inline-flex h-9 items-center justify-center rounded-full border border-zinc-600 px-2.5 text-[11px] text-zinc-100 md:h-10 md:px-3 md:text-xs">{isMuted ? 'Unmute' : 'Mute'}</button>
+                  <label className="flex items-center gap-1.5 rounded-full border border-zinc-700 px-2 py-1 text-[11px] text-zinc-300 md:text-xs">Vol
+                    <input className="w-16 accent-yellow-500 md:w-20" aria-label="Control de volumen" type="range" min={0} max={1} step={0.01} value={volume} onChange={(event) => setVolume(Number(event.target.value))} />
+                  </label>
+                </>
+              ) : null}
             </div>
 
             <div className="space-y-1.5">
