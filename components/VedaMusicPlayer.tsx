@@ -19,6 +19,25 @@ export default function VedaMusicPlayer() {
 
   const activeStation = vedaStations[activeIndex];
   const isComingSoon = !hasPlayableStream(activeStation);
+  const existingSpotifyHref = '';
+  const musicPlatforms = [
+    {
+      label: 'Spotify',
+      href: existingSpotifyHref || 'https://open.spotify.com/search/VEDA%20Music',
+    },
+    {
+      label: 'Apple Music',
+      href: 'https://music.apple.com/us/search?term=VEDA%20Music',
+    },
+    {
+      label: 'YouTube Music',
+      href: 'https://music.youtube.com/search?q=VEDA%20Music',
+    },
+    {
+      label: 'SoundCloud',
+      href: 'https://soundcloud.com/search?q=VEDA%20Music',
+    },
+  ];
 
   useEffect(() => {
     const saved = window.localStorage.getItem(STORAGE_VOLUME_KEY);
@@ -151,7 +170,22 @@ export default function VedaMusicPlayer() {
               </label>
             </div>
 
-            <p className="rounded-lg border border-white/10 bg-black/45 px-2.5 py-1.5 text-center text-[11px] text-zinc-300 backdrop-blur-md md:text-xs md:text-left">Estado: Externa oficial | Disponible vía enlace oficial.</p>
+            <div className="space-y-1.5">
+              <p className="text-[10px] uppercase tracking-[0.2em] text-zinc-400">Plataformas</p>
+              <div className="flex flex-wrap justify-center gap-2 md:justify-start">
+                {musicPlatforms.map((platform) => (
+                  <a
+                    key={platform.label}
+                    href={platform.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="rounded-full border border-white/10 bg-black/25 px-3 py-1.5 text-xs text-zinc-200 backdrop-blur-md transition hover:border-yellow-400/40 hover:text-yellow-200"
+                  >
+                    {platform.label}
+                  </a>
+                ))}
+              </div>
+            </div>
             {error ? <p className="text-center text-xs text-rose-300 md:text-left">{error}</p> : null}
           </div>
         </div>
