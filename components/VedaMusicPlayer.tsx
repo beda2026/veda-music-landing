@@ -20,7 +20,7 @@ export default function VedaMusicPlayer() {
   const activeStation = vedaStations[activeIndex];
   const isComingSoon = !hasPlayableStream(activeStation);
   const [activePlatformId, setActivePlatformId] = useState<string | null>(null);
-  const [activePlatformPanel, setActivePlatformPanel] = useState<string | null>(null);
+  const [activePlatformPanel, setActivePlatformPanel] = useState<string | null>('spotify');
 
   const platformPlayers = [
     {
@@ -180,36 +180,8 @@ export default function VedaMusicPlayer() {
           <div className="space-y-3 text-center md:text-left">
             <div className="rounded-xl border border-white/10 bg-black/40 p-3 backdrop-blur-md">
               <p className="text-[10px] uppercase tracking-[0.22em] text-zinc-400">NOW PLAYING</p>
-              <p className="mt-1 text-lg font-bold text-white md:text-xl">{activeStation.name}</p>
-              <p className="text-xs text-zinc-300 md:text-sm">{activeStation.tagline}</p>
-            </div>
-
-            <div className="flex flex-wrap justify-center gap-2 md:justify-start">
-              {vedaStations.map((station, idx) => {
-                const selected = idx === activeIndex;
-                return (
-                  <button
-                    key={station.id}
-                    type="button"
-                    onClick={() => selectStation(idx)}
-                    className={`rounded-full border px-3 py-1.5 text-xs font-semibold transition md:text-sm ${selected ? 'border-yellow-400/75 bg-yellow-500/12 text-yellow-100 shadow-[0_0_16px_rgba(245,158,11,.24)]' : 'border-white/20 bg-black/45 text-zinc-300 hover:border-zinc-500'}`}
-                  >
-                    {station.name}
-                  </button>
-                );
-              })}
-            </div>
-
-            <div className="flex flex-wrap items-center justify-center gap-2 md:justify-start">
-              {hasPlayableStream(activeStation) ? (
-                <button type="button" aria-label={isPlaying ? 'Pausar estación' : 'Reproducir estación'} disabled={isLoading} onClick={() => void handleTogglePlay()} className="inline-flex h-10 min-w-11 items-center justify-center rounded-full bg-rose-600 px-5 text-xs font-bold text-white shadow-[0_0_20px_rgba(244,63,94,.42)] transition hover:bg-rose-500 disabled:opacity-40 md:h-11 md:text-sm">{isLoading ? 'Conectando…' : isPlaying ? 'Pause' : 'Play'}</button>
-              ) : activeStation.externalUrl ? (
-                <a href={activeStation.externalUrl} target="_blank" rel="noopener noreferrer" className="inline-flex h-10 items-center justify-center rounded-full border border-yellow-500/60 bg-yellow-500/10 px-4 text-xs font-semibold text-yellow-100 transition hover:bg-yellow-500/20 md:h-11 md:text-sm">Escuchar oficial</a>
-              ) : null}
-              <button type="button" aria-label={isMuted ? 'Activar sonido' : 'Silenciar'} onClick={() => setIsMuted((prev) => !prev)} className="inline-flex h-9 items-center justify-center rounded-full border border-zinc-600 px-2.5 text-[11px] text-zinc-100 md:h-10 md:px-3 md:text-xs">{isMuted ? 'Unmute' : 'Mute'}</button>
-              <label className="flex items-center gap-1.5 rounded-full border border-zinc-700 px-2 py-1 text-[11px] text-zinc-300 md:text-xs">Vol
-                <input className="w-16 accent-yellow-500 md:w-20" aria-label="Control de volumen" type="range" min={0} max={1} step={0.01} value={volume} onChange={(event) => setVolume(Number(event.target.value))} />
-              </label>
+              <p className="mt-1 text-lg font-bold text-white md:text-xl">{activePlatformPanel === 'spotify' ? 'V.E.D.A. Music Radio' : activeStation.name}</p>
+              <p className="text-xs text-zinc-300 md:text-sm">{activePlatformPanel === 'spotify' ? 'Playlist urbana oficial dentro de V.E.D.A. Music.' : activeStation.tagline}</p>
             </div>
 
             <div className="space-y-1.5">
@@ -221,17 +193,21 @@ export default function VedaMusicPlayer() {
                     type="button"
                     onClick={() => {
                       if (platform.id === 'spotify') {
-                        setActivePlatformPanel((prev) => (prev === 'spotify' ? null : 'spotify'));
+                        setActivePlatformPanel('spotify');
                         return;
                       }
                       setActivePlatformId(platform.id);
                     }}
-                    className={`rounded-full border bg-black/25 px-3 py-1.5 text-xs backdrop-blur-md transition ${activePlatformPanel === platform.id ? 'border-yellow-400/70 text-yellow-200' : 'border-white/10 text-zinc-200 hover:border-yellow-400/40 hover:text-yellow-200'}`}
+                    className={`rounded-full border bg-black/25 px-3 py-1.5 text-xs backdrop-blur-md transition ${activePlatformPanel === platform.id ? 'border-yellow-400/50 bg-yellow-500/10 text-yellow-200' : 'border-white/10 text-zinc-200 hover:border-yellow-400/40 hover:text-yellow-200'}`}
                   >
                     {platform.label}
                   </button>
                 ))}
               </div>
+            </div>
+
+            <div className="flex flex-wrap items-center justify-center gap-2 md:justify-start">
+              <button type="button" onClick={() => setActivePlatformPanel('spotify')} className="inline-flex h-10 items-center justify-center rounded-full border border-yellow-500/60 bg-yellow-500/10 px-4 text-xs font-semibold text-yellow-100 transition hover:bg-yellow-500/20 md:h-11 md:text-sm">Escuchar aquí</button>
             </div>
 
             {activePlatformPanel === 'spotify' ? (
@@ -240,7 +216,7 @@ export default function VedaMusicPlayer() {
                   title="Spotify embedded player"
                   src="https://open.spotify.com/embed/playlist/5EOsQIRYI2Ily29tygRg7T?utm_source=generator"
                   width="100%"
-                  height="152"
+                  height="352"
                   frameBorder="0"
                   allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
                   loading="lazy"
@@ -251,6 +227,35 @@ export default function VedaMusicPlayer() {
                 </div>
               </div>
             ) : null}
+
+            <div className="space-y-1.5">
+              <p className="text-[10px] uppercase tracking-[0.2em] text-zinc-400">Emisoras oficiales</p>
+              <div className="flex flex-wrap justify-center gap-2 md:justify-start">
+                {vedaStations.map((station, idx) => {
+                  const selected = idx === activeIndex;
+                  return (
+                    <button
+                      key={station.id}
+                      type="button"
+                      onClick={() => selectStation(idx)}
+                      className={`rounded-full border px-3 py-1.5 text-xs font-semibold transition md:text-sm ${selected ? 'border-yellow-400/75 bg-yellow-500/12 text-yellow-100 shadow-[0_0_16px_rgba(245,158,11,.24)]' : 'border-white/20 bg-black/45 text-zinc-300 hover:border-zinc-500'}`}
+                    >
+                      {station.name}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            <div className="flex flex-wrap items-center justify-center gap-2 md:justify-start">
+              {hasPlayableStream(activeStation) ? (
+                <button type="button" aria-label={isPlaying ? 'Pausar estación' : 'Reproducir estación'} disabled={isLoading} onClick={() => void handleTogglePlay()} className="inline-flex h-10 min-w-11 items-center justify-center rounded-full bg-rose-600 px-5 text-xs font-bold text-white shadow-[0_0_20px_rgba(244,63,94,.42)] transition hover:bg-rose-500 disabled:opacity-40 md:h-11 md:text-sm">{isLoading ? 'Conectando…' : isPlaying ? 'Pause' : 'Play'}</button>
+              ) : null}
+              <button type="button" aria-label={isMuted ? 'Activar sonido' : 'Silenciar'} onClick={() => setIsMuted((prev) => !prev)} className="inline-flex h-9 items-center justify-center rounded-full border border-zinc-600 px-2.5 text-[11px] text-zinc-100 md:h-10 md:px-3 md:text-xs">{isMuted ? 'Unmute' : 'Mute'}</button>
+              <label className="flex items-center gap-1.5 rounded-full border border-zinc-700 px-2 py-1 text-[11px] text-zinc-300 md:text-xs">Vol
+                <input className="w-16 accent-yellow-500 md:w-20" aria-label="Control de volumen" type="range" min={0} max={1} step={0.01} value={volume} onChange={(event) => setVolume(Number(event.target.value))} />
+              </label>
+            </div>
 
             {error ? <p className="text-center text-xs text-rose-300 md:text-left">{error}</p> : null}
           </div>
