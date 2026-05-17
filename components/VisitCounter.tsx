@@ -2,18 +2,53 @@
 
 import { useEffect, useState } from 'react';
 
+const SESSION_KEY = 'veda_music_visit_counted';
+const OFFICIAL_HOSTS = new Set(['vedamusicpr.net', 'www.vedamusicpr.net']);
+
 export default function VisitCounter() {
   const [mounted, setMounted] = useState(false);
   const [visits, setVisits] = useState(0);
 
   useEffect(() => {
-    const key = 'veda_music_visits';
-    const stored = localStorage.getItem(key);
-    const current = stored ? Number.parseInt(stored, 10) : 0;
-    const next = Number.isNaN(current) ? 1 : current + 1;
-    localStorage.setItem(key, String(next));
-    setVisits(next);
-    setMounted(true);
+    let active = true;
+
+    const updateViews = async () => {
+      const host = window.location.hostname.toLowerCase();
+      const isOfficialHost = OFFICIAL_HOSTS.has(host);
+      const alreadyCounted = sessionStorage.getItem(SESSION_KEY) === '1';
+      const method = isOfficialHost && !alreadyCounted ? 'POST' : 'GET';
+
+      try {
+        const response = await fetch('/api/visits', {
+          method,
+          cache: 'no-store',
+          headers: method === 'POST' ? { 'Content-Type': 'application/json' } : undefined,
+        });
+
+        if (response.ok) {
+          const data = (await response.json()) as { views?: number };
+          if (typeof data.views === 'number' && active) {
+            setVisits(data.views);
+          }
+
+          if (method === 'POST') {
+            sessionStorage.setItem(SESSION_KEY, '1');
+          }
+        }
+      } catch {
+        // Silent fallback to avoid breaking the landing page UI.
+      } finally {
+        if (active) {
+          setMounted(true);
+        }
+      }
+    };
+
+    updateViews();
+
+    return () => {
+      active = false;
+    };
   }, []);
 
   if (!mounted) {
