@@ -29,7 +29,7 @@ export default function SubscribeForm() {
             value={email}
             onChange={(event) => setEmail(event.target.value)}
             placeholder="tuemail@ejemplo.com"
-            className="h-12 w-full rounded-full border border-zinc-600 bg-black/60 px-5 text-sm text-zinc-100 outline-none transition focus:border-[#f5b21b]"
+            className="h-12 w-full rounded-full border border-zinc-600 bg-black/40 backdrop-blur-md px-5 text-sm text-zinc-100 outline-none transition focus:border-[#f5b21b]"
           />
           <button type="submit" className="btn-gold h-12 w-full sm:w-auto sm:px-8">Suscribirme</button>
         </form>

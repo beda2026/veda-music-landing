@@ -133,7 +133,7 @@ export default function CommercialContactForm() {
 
   return (
     <>
-      <div className="panel relative rounded-2xl border border-[#f5b21b]/30 bg-[#121212]/85 p-5 sm:p-6">
+      <div className="panel relative rounded-2xl border border-[#f5b21b]/30 bg-black/40 backdrop-blur-md p-5 sm:p-6">
         <div aria-hidden="true" className="pointer-events-none absolute inset-0 rounded-2xl bg-[radial-gradient(circle_at_20%_18%,rgba(245,178,27,0.15),transparent_42%),radial-gradient(circle_at_82%_78%,rgba(239,31,45,0.1),transparent_40%)]" />
         <div className="relative flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
           <div>
@@ -146,12 +146,12 @@ export default function CommercialContactForm() {
       </div>
 
       {isModalOpen ? (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/75 px-4 py-6 backdrop-blur-sm" onClick={closeModal}>
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/45 px-4 py-6 backdrop-blur-sm" onClick={closeModal}>
           <div
             role="dialog"
             aria-modal="true"
             aria-labelledby="contacto-comercial-title"
-            className="panel relative w-full max-w-[760px] max-h-[90vh] overflow-y-auto rounded-2xl border border-[#f5b21b]/30 bg-[#090909]/95 p-5 sm:p-7"
+            className="panel relative w-full max-w-[760px] max-h-[90vh] overflow-y-auto rounded-2xl border border-[#f5b21b]/30 bg-black/45 backdrop-blur-lg p-5 sm:p-7"
             onClick={(event) => event.stopPropagation()}
           >
             <button
@@ -171,22 +171,22 @@ export default function CommercialContactForm() {
               <div className="grid gap-4 md:grid-cols-2">
                 <label className="space-y-2 text-sm text-zinc-200">
                   <span>Nombre *</span>
-                  <input required value={nombre} onChange={(e) => setNombre(e.target.value)} className="w-full rounded-xl border border-zinc-700 bg-[#101010]/85 px-4 py-2.5 text-zinc-100 outline-none transition focus:border-[#ef1f2d]" />
+                  <input required value={nombre} onChange={(e) => setNombre(e.target.value)} className="w-full rounded-xl border border-zinc-700 bg-black/35 backdrop-blur-md px-4 py-2.5 text-zinc-100 outline-none transition focus:border-[#ef1f2d]" />
                 </label>
 
                 <label className="space-y-2 text-sm text-zinc-200">
                   <span>Correo electrónico *</span>
-                  <input required type="email" value={email} onChange={(e) => setEmail(e.target.value)} className="w-full rounded-xl border border-zinc-700 bg-[#101010]/85 px-4 py-2.5 text-zinc-100 outline-none transition focus:border-[#ef1f2d]" />
+                  <input required type="email" value={email} onChange={(e) => setEmail(e.target.value)} className="w-full rounded-xl border border-zinc-700 bg-black/35 backdrop-blur-md px-4 py-2.5 text-zinc-100 outline-none transition focus:border-[#ef1f2d]" />
                 </label>
 
                 <label className="space-y-2 text-sm text-zinc-200">
                   <span>Teléfono / WhatsApp</span>
-                  <input value={telefono} onChange={(e) => setTelefono(e.target.value)} className="w-full rounded-xl border border-zinc-700 bg-[#101010]/85 px-4 py-2.5 text-zinc-100 outline-none transition focus:border-[#f5b21b]" />
+                  <input value={telefono} onChange={(e) => setTelefono(e.target.value)} className="w-full rounded-xl border border-zinc-700 bg-black/35 backdrop-blur-md px-4 py-2.5 text-zinc-100 outline-none transition focus:border-[#f5b21b]" />
                 </label>
 
                 <label className="space-y-2 text-sm text-zinc-200">
                   <span>Tipo de solicitud *</span>
-                  <select required value={tipo} onChange={(e) => setTipo(e.target.value)} className="w-full rounded-xl border border-zinc-700 bg-[#101010]/85 px-4 py-2.5 text-zinc-100 outline-none transition focus:border-[#f5b21b]">
+                  <select required value={tipo} onChange={(e) => setTipo(e.target.value)} className="w-full rounded-xl border border-zinc-700 bg-black/35 backdrop-blur-md px-4 py-2.5 text-zinc-100 outline-none transition focus:border-[#f5b21b]">
                     <option value="">Selecciona una opción</option>
                     {requestTypes.map((option) => (
                       <option key={option} value={option}>{option}</option>
@@ -196,7 +196,7 @@ export default function CommercialContactForm() {
 
                 <label className="space-y-2 text-sm text-zinc-200 md:col-span-2">
                   <span>Mensaje *</span>
-                  <textarea required value={mensaje} onChange={(e) => setMensaje(e.target.value)} rows={4} className="w-full rounded-xl border border-zinc-700 bg-[#101010]/85 px-4 py-3 text-zinc-100 outline-none transition focus:border-[#ef1f2d]" />
+                  <textarea required value={mensaje} onChange={(e) => setMensaje(e.target.value)} rows={4} className="w-full rounded-xl border border-zinc-700 bg-black/35 backdrop-blur-md px-4 py-3 text-zinc-100 outline-none transition focus:border-[#ef1f2d]" />
                 </label>
               </div>
 
