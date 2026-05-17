@@ -28,32 +28,40 @@ export default function VedaMusicPlayer() {
       label: 'Spotify',
       title: 'Spotify',
       description: 'Escucha playlists y música relacionada sin salir de V.E.D.A. Music.',
-      embedUrl: '',
+      embedUrl: 'https://open.spotify.com/embed/playlist/37i9dQZF1DWY7IeIP1cdjF?utm_source=generator',
       externalUrl: 'https://open.spotify.com/search/VEDA%20Music',
+      iframeTitle: 'Spotify embedded player',
+      type: 'spotify',
     },
     {
       id: 'apple-music',
       label: 'Apple Music',
       title: 'Apple Music',
       description: 'Explora música y playlists desde Apple Music dentro de V.E.D.A.',
-      embedUrl: '',
+      embedUrl: 'https://embed.music.apple.com/us/playlist/energy/pl.u-9N9LXtdN5dB',
       externalUrl: 'https://music.apple.com/us/search?term=VEDA%20Music',
+      iframeTitle: 'Apple Music embedded player',
+      type: 'apple',
     },
     {
       id: 'youtube-music',
       label: 'YouTube Music',
       title: 'YouTube Music',
-      description: 'Reproduce videos, canciones o playlists relacionados desde YouTube.',
-      embedUrl: '',
+      description: 'Reproduce videos, canciones o playlists relacionados desde YouTube dentro de V.E.D.A.',
+      embedUrl: 'https://www.youtube.com/embed/videoseries?list=PLFgquLnL59amEA43CkLM1dVf8Wb28AY7i',
       externalUrl: 'https://music.youtube.com/search?q=VEDA%20Music',
+      iframeTitle: 'YouTube embedded player',
+      type: 'youtube',
     },
     {
       id: 'soundcloud',
       label: 'SoundCloud',
       title: 'SoundCloud',
       description: 'Escucha contenido y playlists desde SoundCloud sin salir de la landing.',
-      embedUrl: '',
+      embedUrl: 'https://w.soundcloud.com/player/?url=https%3A//soundcloud.com/majesticcasual/majestic-casual-weekly-vibes-38&color=%23ff5500&inverse=false&auto_play=false&show_user=true',
       externalUrl: 'https://soundcloud.com/search?q=VEDA%20Music',
+      iframeTitle: 'SoundCloud embedded player',
+      type: 'soundcloud',
     },
   ];
   const activePlatform = platformPlayers.find((platform) => platform.id === activePlatformId) ?? null;
@@ -253,16 +261,23 @@ export default function VedaMusicPlayer() {
             {activePlatform.embedUrl ? (
               <div className="overflow-hidden rounded-2xl border border-white/10 bg-black/40">
                 <iframe
-                  title={`${activePlatform.title} embed`}
+                  title={activePlatform.iframeTitle}
                   src={activePlatform.embedUrl}
-                  className="h-[360px] w-full"
-                  allow={activePlatform.id === 'youtube-music' ? 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share' : activePlatform.id === 'soundcloud' ? 'autoplay' : 'encrypted-media'}
-                  allowFullScreen={activePlatform.id === 'youtube-music'}
+                  className={`w-full rounded-2xl border border-white/10 bg-black/40 ${activePlatform.type === 'youtube' ? 'aspect-video h-auto' : ''}`}
+                  height={activePlatform.type === 'spotify' ? 352 : activePlatform.type === 'apple' ? 450 : activePlatform.type === 'soundcloud' ? 300 : undefined}
+                  allow={
+                    activePlatform.type === 'apple'
+                      ? 'encrypted-media *; fullscreen *; clipboard-write *;'
+                      : activePlatform.type === 'soundcloud'
+                        ? 'autoplay'
+                        : 'autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture'
+                  }
+                  allowFullScreen={activePlatform.type === 'youtube'}
                 />
               </div>
             ) : (
               <div className="rounded-2xl border border-white/10 bg-black/40 p-4 text-sm text-zinc-300">
-                Este reproductor se activará cuando conectemos el enlace oficial.
+                Falta conectar el enlace embed oficial de esta plataforma.
               </div>
             )}
 
