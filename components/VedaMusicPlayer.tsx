@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, type MouseEvent } from 'react';
 import type { VedaStation } from '@/lib/veda-player';
 import { vedaStations } from '@/lib/veda-player';
 
@@ -10,6 +10,7 @@ const hasPlayableStream = (station: VedaStation) => Boolean(station.streamUrl.tr
 
 export default function VedaMusicPlayer() {
   const audioRef = useRef<HTMLAudioElement | null>(null);
+  const platformModalRef = useRef<HTMLDivElement | null>(null);
   const [activeIndex, setActiveIndex] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -19,25 +20,43 @@ export default function VedaMusicPlayer() {
 
   const activeStation = vedaStations[activeIndex];
   const isComingSoon = !hasPlayableStream(activeStation);
-  const existingSpotifyHref = '';
-  const musicPlatforms = [
+  const [activePlatformId, setActivePlatformId] = useState<string | null>(null);
+
+  const platformPlayers = [
     {
+      id: 'spotify',
       label: 'Spotify',
-      href: existingSpotifyHref || 'https://open.spotify.com/search/VEDA%20Music',
+      title: 'Spotify',
+      description: 'Escucha playlists y música relacionada sin salir de V.E.D.A. Music.',
+      embedUrl: '',
+      externalUrl: 'https://open.spotify.com/search/VEDA%20Music',
     },
     {
+      id: 'apple-music',
       label: 'Apple Music',
-      href: 'https://music.apple.com/us/search?term=VEDA%20Music',
+      title: 'Apple Music',
+      description: 'Explora música y playlists desde Apple Music dentro de V.E.D.A.',
+      embedUrl: '',
+      externalUrl: 'https://music.apple.com/us/search?term=VEDA%20Music',
     },
     {
+      id: 'youtube-music',
       label: 'YouTube Music',
-      href: 'https://music.youtube.com/search?q=VEDA%20Music',
+      title: 'YouTube Music',
+      description: 'Reproduce videos, canciones o playlists relacionados desde YouTube.',
+      embedUrl: '',
+      externalUrl: 'https://music.youtube.com/search?q=VEDA%20Music',
     },
     {
+      id: 'soundcloud',
       label: 'SoundCloud',
-      href: 'https://soundcloud.com/search?q=VEDA%20Music',
+      title: 'SoundCloud',
+      description: 'Escucha contenido y playlists desde SoundCloud sin salir de la landing.',
+      embedUrl: '',
+      externalUrl: 'https://soundcloud.com/search?q=VEDA%20Music',
     },
   ];
+  const activePlatform = platformPlayers.find((platform) => platform.id === activePlatformId) ?? null;
 
   useEffect(() => {
     const saved = window.localStorage.getItem(STORAGE_VOLUME_KEY);
@@ -59,6 +78,19 @@ export default function VedaMusicPlayer() {
     if (!audioRef.current) return;
     audioRef.current.muted = isMuted;
   }, [isMuted]);
+
+  useEffect(() => {
+    if (!activePlatform) return;
+
+    const handleEscape = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setActivePlatformId(null);
+      }
+    };
+
+    window.addEventListener('keydown', handleEscape);
+    return () => window.removeEventListener('keydown', handleEscape);
+  }, [activePlatform]);
 
   const handleTogglePlay = async () => {
     if (!audioRef.current || isComingSoon) return;
@@ -119,6 +151,14 @@ export default function VedaMusicPlayer() {
     }
   };
 
+  const closePlatformModal = () => setActivePlatformId(null);
+
+  const handlePlatformOverlayClick = (event: MouseEvent<HTMLDivElement>) => {
+    if (event.target === platformModalRef.current) {
+      closePlatformModal();
+    }
+  };
+
   return (
     <section aria-label="VEDA Music Player" className="px-1">
       <div className="relative mx-auto w-full max-w-4xl overflow-hidden rounded-[2rem] border border-yellow-500/20 bg-black/45 p-5 shadow-[0_0_35px_rgba(255,40,80,.14),0_0_40px_rgba(255,190,60,.12)] backdrop-blur-lg md:p-6">
@@ -173,16 +213,15 @@ export default function VedaMusicPlayer() {
             <div className="space-y-1.5">
               <p className="text-[10px] uppercase tracking-[0.2em] text-zinc-400">Plataformas</p>
               <div className="flex flex-wrap justify-center gap-2 md:justify-start">
-                {musicPlatforms.map((platform) => (
-                  <a
-                    key={platform.label}
-                    href={platform.href}
-                    target="_blank"
-                    rel="noopener noreferrer"
+                {platformPlayers.map((platform) => (
+                  <button
+                    key={platform.id}
+                    type="button"
+                    onClick={() => setActivePlatformId(platform.id)}
                     className="rounded-full border border-white/10 bg-black/25 px-3 py-1.5 text-xs text-zinc-200 backdrop-blur-md transition hover:border-yellow-400/40 hover:text-yellow-200"
                   >
                     {platform.label}
-                  </a>
+                  </button>
                 ))}
               </div>
             </div>
@@ -192,6 +231,47 @@ export default function VedaMusicPlayer() {
 
         <audio ref={audioRef} preload="none" onWaiting={() => setIsLoading(true)} onPlaying={() => { setIsPlaying(true); setIsLoading(false); }} onPause={() => setIsPlaying(false)} onError={() => { setError('No pudimos conectar esta señal ahora mismo. Intenta otra estación.'); setIsLoading(false); setIsPlaying(false); }} />
       </div>
+
+      {activePlatform ? (
+        <div
+          ref={platformModalRef}
+          role="dialog"
+          aria-modal="true"
+          aria-label={activePlatform.title}
+          onClick={handlePlatformOverlayClick}
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/45 p-4"
+        >
+          <div className="w-[92vw] max-w-3xl max-h-[85vh] overflow-y-auto rounded-2xl border border-yellow-500/15 bg-black/45 p-5 shadow-[0_0_35px_rgba(255,40,80,.14),0_0_40px_rgba(255,190,60,.12)] backdrop-blur-xl md:p-6">
+            <div className="mb-4 flex items-start justify-between gap-3">
+              <div>
+                <h3 className="text-lg font-bold text-white md:text-xl">{activePlatform.title}</h3>
+                <p className="mt-1 text-sm text-zinc-300">{activePlatform.description}</p>
+              </div>
+              <button type="button" onClick={closePlatformModal} aria-label="Cerrar modal" className="rounded-full border border-white/20 px-2.5 py-1 text-sm text-zinc-200 transition hover:border-yellow-400/45 hover:text-yellow-200">✕</button>
+            </div>
+
+            {activePlatform.embedUrl ? (
+              <div className="overflow-hidden rounded-2xl border border-white/10 bg-black/40">
+                <iframe
+                  title={`${activePlatform.title} embed`}
+                  src={activePlatform.embedUrl}
+                  className="h-[360px] w-full"
+                  allow={activePlatform.id === 'youtube-music' ? 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share' : activePlatform.id === 'soundcloud' ? 'autoplay' : 'encrypted-media'}
+                  allowFullScreen={activePlatform.id === 'youtube-music'}
+                />
+              </div>
+            ) : (
+              <div className="rounded-2xl border border-white/10 bg-black/40 p-4 text-sm text-zinc-300">
+                Este reproductor se activará cuando conectemos el enlace oficial.
+              </div>
+            )}
+
+            <div className="mt-4">
+              <a href={activePlatform.externalUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center justify-center rounded-full border border-yellow-500/60 bg-yellow-500/10 px-4 py-2 text-xs font-semibold text-yellow-100 transition hover:bg-yellow-500/20 md:text-sm">{activePlatform.embedUrl ? 'Abrir en plataforma' : 'Abrir búsqueda'}</a>
+            </div>
+          </div>
+        </div>
+      ) : null}
     </section>
   );
 }
