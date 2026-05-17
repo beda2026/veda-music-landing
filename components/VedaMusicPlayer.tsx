@@ -28,8 +28,8 @@ export default function VedaMusicPlayer() {
       label: 'Spotify',
       title: 'Spotify',
       description: 'Escucha playlists y música relacionada sin salir de V.E.D.A. Music.',
-      embedUrl: 'https://open.spotify.com/embed/playlist/37i9dQZF1DWY7IeIP1cdjF?utm_source=generator',
-      externalUrl: 'https://open.spotify.com/search/VEDA%20Music',
+      embedUrl: 'https://open.spotify.com/embed/playlist/5EOsQIRYI2Ily29tygRg7T?utm_source=generator',
+      externalUrl: 'https://open.spotify.com/playlist/5EOsQIRYI2Ily29tygRg7T',
       iframeTitle: 'Spotify embedded player',
       type: 'spotify',
     },
@@ -258,13 +258,26 @@ export default function VedaMusicPlayer() {
               <button type="button" onClick={closePlatformModal} aria-label="Cerrar modal" className="rounded-full border border-white/20 px-2.5 py-1 text-sm text-zinc-200 transition hover:border-yellow-400/45 hover:text-yellow-200">✕</button>
             </div>
 
-            {activePlatform.embedUrl ? (
+            {activePlatform.type === 'spotify' ? (
+              <div className="overflow-hidden rounded-2xl border border-white/10 bg-black/40">
+                <iframe
+                  title={activePlatform.iframeTitle}
+                  src={activePlatform.embedUrl}
+                  width="100%"
+                  height="152"
+                  frameBorder="0"
+                  allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+                  loading="lazy"
+                  className="w-full rounded-2xl border border-white/10 bg-black/40"
+                />
+              </div>
+            ) : activePlatform.embedUrl ? (
               <div className="overflow-hidden rounded-2xl border border-white/10 bg-black/40">
                 <iframe
                   title={activePlatform.iframeTitle}
                   src={activePlatform.embedUrl}
                   className={`w-full rounded-2xl border border-white/10 bg-black/40 ${activePlatform.type === 'youtube' ? 'aspect-video h-auto' : ''}`}
-                  height={activePlatform.type === 'spotify' ? 352 : activePlatform.type === 'apple' ? 450 : activePlatform.type === 'soundcloud' ? 300 : undefined}
+                  height={activePlatform.type === 'apple' ? 450 : activePlatform.type === 'soundcloud' ? 300 : undefined}
                   allow={
                     activePlatform.type === 'apple'
                       ? 'encrypted-media *; fullscreen *; clipboard-write *;'
@@ -282,7 +295,7 @@ export default function VedaMusicPlayer() {
             )}
 
             <div className="mt-4">
-              <a href={activePlatform.externalUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center justify-center rounded-full border border-yellow-500/60 bg-yellow-500/10 px-4 py-2 text-xs font-semibold text-yellow-100 transition hover:bg-yellow-500/20 md:text-sm">{activePlatform.embedUrl ? 'Abrir en plataforma' : 'Abrir búsqueda'}</a>
+              <a href={activePlatform.externalUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center justify-center rounded-full border border-yellow-500/60 bg-yellow-500/10 px-4 py-2 text-xs font-semibold text-yellow-100 transition hover:bg-yellow-500/20 md:text-sm">{activePlatform.type === 'spotify' ? 'Abrir en Spotify' : activePlatform.embedUrl ? 'Abrir en plataforma' : 'Abrir búsqueda'}</a>
             </div>
           </div>
         </div>
