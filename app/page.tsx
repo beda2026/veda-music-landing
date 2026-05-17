@@ -383,7 +383,7 @@ export default function HomePage() {
           </div>
         </section>
       </main>
-      <footer className="border-t border-zinc-800 bg-[#0c0c0c]">
+      <footer className="border-t border-zinc-800 bg-black/70 backdrop-blur-sm">
         <div className="mx-auto grid w-full max-w-[1400px] gap-6 px-4 py-10 sm:px-6 lg:grid-cols-3 lg:px-10">
           <div>
             <h2 className="text-2xl font-black text-zinc-100">V.E.D.A. MUSIC</h2>
