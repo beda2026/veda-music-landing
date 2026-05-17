@@ -104,14 +104,14 @@ export default function VedaMusicPlayer() {
   };
 
   return (
-    <section className="space-y-4" aria-label="VEDA Music Player">
-      <div className="relative overflow-hidden rounded-[2rem] border border-yellow-500/20 bg-black/70 p-5 shadow-[0_0_35px_rgba(255,40,80,.16),0_0_40px_rgba(255,190,60,.1)] backdrop-blur-md md:p-8">
+    <section className="space-y-3" aria-label="VEDA Music Player">
+      <div className="relative overflow-hidden rounded-[1.6rem] border border-yellow-500/20 bg-black/70 px-5 py-6 shadow-[0_0_35px_rgba(255,40,80,.16),0_0_40px_rgba(255,190,60,.1)] backdrop-blur-md md:px-6 md:py-8 xl:px-8 xl:py-10">
         <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_12%_15%,rgba(244,63,94,.16),transparent_35%),radial-gradient(circle_at_88%_20%,rgba(245,158,11,.14),transparent_40%),linear-gradient(145deg,rgba(10,10,10,.8),rgba(20,20,20,.86))]" />
         <div className="relative">
           <p className="text-xs uppercase tracking-[0.24em] text-[#f0d3a0]">VEDA Music Player</p>
-          <h2 className="mt-2 text-2xl font-extrabold text-zinc-100 md:text-4xl">Música, estrenos y movimiento urbano en vivo.</h2>
+          <h2 className="mt-1.5 text-xl font-extrabold text-zinc-100 md:text-2xl xl:text-3xl">Música, estrenos y movimiento urbano en vivo.</h2>
 
-          <div role="tablist" aria-label="Plataformas oficiales de VEDA Music Player" className="mt-5 flex flex-wrap gap-2">
+          <div role="tablist" aria-label="Plataformas oficiales de VEDA Music Player" className="mt-4 flex flex-wrap gap-2">
             {vedaPlatformSources.map((platform) => {
               const selected = platform.id === activePlatform.id;
               return (
@@ -122,22 +122,22 @@ export default function VedaMusicPlayer() {
             })}
           </div>
 
-          <div className="mt-6">
+          <div className="mt-4">
             {usingLivePlatform ? (
-              <div className="grid gap-5 xl:grid-cols-[minmax(0,1fr)_minmax(0,1.15fr)]">
-                <div className="space-y-3">
+              <div className="grid gap-3 lg:grid-cols-[minmax(0,0.95fr)_minmax(0,1fr)]">
+                <div className="space-y-2.5">
                   {vedaStations.map((station, idx) => {
                     const selected = idx === activeIndex;
                     return (
-                      <button key={station.id} type="button" onClick={() => selectStation(idx)} className={`group w-full rounded-2xl border p-4 text-left transition ${selected ? 'border-yellow-400/70 bg-zinc-900/85 shadow-[0_0_24px_rgba(245,158,11,.2)]' : 'border-zinc-700/90 bg-zinc-900/70 hover:border-rose-400/50 hover:bg-zinc-900/85'}`}>
-                        <div className="flex items-center gap-4">
-                          <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-xl border border-zinc-600 bg-gradient-to-br from-zinc-950 to-zinc-800 text-base font-black tracking-wider text-yellow-100">{station.name.split(' ').map((w) => w[0]).join('').slice(0, 3)}</div>
+                      <button key={station.id} type="button" onClick={() => selectStation(idx)} className={`group w-full rounded-xl border px-4 py-3 text-left transition ${selected ? 'border-yellow-400/70 bg-zinc-900/85 shadow-[0_0_20px_rgba(245,158,11,.18)]' : 'border-zinc-700/90 bg-zinc-900/70 hover:border-rose-400/50 hover:bg-zinc-900/85'}`}>
+                        <div className="flex items-center gap-3">
+                          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg border border-zinc-600 bg-gradient-to-br from-zinc-950 to-zinc-800 text-sm font-black tracking-wider text-yellow-100 md:h-14 md:w-14">{station.name.split(' ').map((w) => w[0]).join('').slice(0, 3)}</div>
                           <div className="min-w-0 flex-1">
                             <div className="flex items-center justify-between gap-3">
-                              <h3 className="truncate text-lg font-bold text-white">{station.name}</h3>
+                              <h3 className="truncate text-base font-bold text-white md:text-lg">{station.name}</h3>
                               <span className="rounded-full border border-yellow-500/40 bg-yellow-500/10 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.1em] text-yellow-200">OFICIAL</span>
                             </div>
-                            <p className="mt-1 text-sm text-zinc-300">{station.tagline}</p>
+                            <p className="mt-0.5 text-xs text-zinc-300 md:text-sm">{station.tagline}</p>
                           </div>
                         </div>
                       </button>
@@ -145,49 +145,49 @@ export default function VedaMusicPlayer() {
                   })}
                 </div>
 
-                <div className="relative overflow-hidden rounded-[1.7rem] border border-zinc-600/80 bg-[linear-gradient(160deg,#181818,#0d0d0d_55%,#1f1b14)] p-4 shadow-[inset_0_0_0_1px_rgba(255,255,255,.05),inset_0_10px_40px_rgba(0,0,0,.4),0_14px_30px_rgba(0,0,0,.5)] md:p-6">
+                <div className="relative mx-auto w-full max-w-[560px] overflow-hidden rounded-[1.35rem] border border-zinc-600/80 bg-[linear-gradient(160deg,#181818,#0d0d0d_55%,#1f1b14)] p-3.5 shadow-[inset_0_0_0_1px_rgba(255,255,255,.05),inset_0_10px_40px_rgba(0,0,0,.4),0_14px_30px_rgba(0,0,0,.5)] md:p-4.5 lg:p-5">
                   <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_20%_0%,rgba(244,63,94,.2),transparent_45%),radial-gradient(circle_at_100%_20%,rgba(245,158,11,.2),transparent_42%)]" />
-                  <div className="relative grid gap-4 md:grid-cols-[1fr_auto]">
-                    <div className="rounded-xl border border-zinc-700 bg-zinc-950/70 p-3">
+                  <div className="relative grid gap-2.5 md:grid-cols-[1fr_auto]">
+                    <div className="rounded-lg border border-zinc-700 bg-zinc-950/70 p-2.5">
                       <p className="text-[10px] uppercase tracking-[0.22em] text-zinc-400">Station</p>
-                      <p className="mt-2 text-2xl font-black text-yellow-100">{activeStation.name.split(' ').map((w) => w[0]).join('').slice(0, 4)}</p>
+                      <p className="mt-1.5 text-xl font-black text-yellow-100 md:text-2xl">{activeStation.name.split(' ').map((w) => w[0]).join('').slice(0, 4)}</p>
                     </div>
-                    <div className="rounded-xl border border-zinc-700 bg-zinc-950/70 p-3">
+                    <div className="rounded-lg border border-zinc-700 bg-zinc-950/70 p-2.5">
                       <p className="text-[10px] uppercase tracking-[0.22em] text-zinc-400">NOW PLAYING</p>
-                      <p className="mt-1 text-lg font-bold text-white">{activeStation.name}</p>
-                      <p className="text-sm text-zinc-300">{activeStation.tagline}</p>
+                      <p className="mt-1 text-base font-bold text-white md:text-lg">{activeStation.name}</p>
+                      <p className="text-xs text-zinc-300 md:text-sm">{activeStation.tagline}</p>
                     </div>
                   </div>
 
-                  <div className="relative mt-5 flex items-center justify-center">
-                    <div className="h-56 w-56 rounded-full border border-zinc-700 bg-[radial-gradient(circle_at_48%_45%,#2d2d2d,#090909_66%)] p-4 shadow-[inset_0_8px_20px_rgba(255,255,255,.07),inset_0_-10px_20px_rgba(0,0,0,.6),0_0_30px_rgba(239,68,68,.2)] md:h-64 md:w-64">
+                  <div className="relative mt-3 flex items-center justify-center">
+                    <div className="h-36 w-36 rounded-full border border-zinc-700 bg-[radial-gradient(circle_at_48%_45%,#2d2d2d,#090909_66%)] p-3 shadow-[inset_0_8px_20px_rgba(255,255,255,.07),inset_0_-10px_20px_rgba(0,0,0,.6),0_0_24px_rgba(239,68,68,.18)] md:h-44 md:w-44 lg:h-48 lg:w-48">
                       <div className={`flex h-full w-full items-center justify-center rounded-full border border-yellow-500/30 bg-[conic-gradient(from_0deg,rgba(245,158,11,.6),rgba(244,63,94,.45),rgba(245,158,11,.6))] p-4 ${isPlaying ? 'animate-[spin_16s_linear_infinite]' : ''}`}>
                         <div className="flex h-full w-full items-center justify-center rounded-full bg-[radial-gradient(circle,#0f0f0f_25%,#1e1e1e_62%,#080808_100%)] text-center">
-                          <span className="text-lg font-black tracking-[0.3em] text-yellow-100">VEDA</span>
+                          <span className="text-sm font-black tracking-[0.22em] text-yellow-100 md:text-base">VEDA</span>
                         </div>
                       </div>
                     </div>
                   </div>
 
-                  <div className="mt-4 flex flex-wrap items-center justify-center gap-2">
+                  <div className="mt-2 hidden flex-wrap items-center justify-center gap-1.5 lg:flex">
                     <button type="button" disabled className="hidden rounded-lg border border-zinc-700 px-2.5 py-1 text-[10px] uppercase tracking-[0.12em] text-zinc-500 md:inline-block">AUDIO PROFILE</button>
                     <button type="button" disabled className="hidden rounded-lg border border-zinc-700 px-2.5 py-1 text-[10px] uppercase tracking-[0.12em] text-zinc-500 md:inline-block">DSP MODE</button>
                     <button type="button" disabled className="hidden rounded-lg border border-zinc-700 px-2.5 py-1 text-[10px] uppercase tracking-[0.12em] text-zinc-500 md:inline-block">NETWORK</button>
                   </div>
 
-                  <div className="mt-4 flex flex-wrap items-center justify-center gap-2.5">
+                  <div className="mt-3 flex flex-wrap items-center justify-center gap-2">
                     {hasPlayableStream(activeStation) ? (
-                      <button type="button" aria-label={isPlaying ? 'Pausar estación' : 'Reproducir estación'} disabled={isLoading} onClick={() => void handleTogglePlay()} className="inline-flex h-14 min-w-14 items-center justify-center rounded-full bg-rose-600 px-6 text-sm font-bold text-white shadow-[0_0_25px_rgba(244,63,94,.45)] transition hover:bg-rose-500 disabled:opacity-40">{isLoading ? 'Conectando…' : isPlaying ? 'Pause' : 'Play'}</button>
+                      <button type="button" aria-label={isPlaying ? 'Pausar estación' : 'Reproducir estación'} disabled={isLoading} onClick={() => void handleTogglePlay()} className="inline-flex h-11 min-w-11 items-center justify-center rounded-full bg-rose-600 px-5 text-xs font-bold text-white shadow-[0_0_22px_rgba(244,63,94,.45)] transition hover:bg-rose-500 disabled:opacity-40 md:text-sm">{isLoading ? 'Conectando…' : isPlaying ? 'Pause' : 'Play'}</button>
                     ) : activeStation.externalUrl ? (
-                      <a href={activeStation.externalUrl} target="_blank" rel="noopener noreferrer" className="inline-flex h-12 items-center justify-center rounded-full border border-yellow-500/60 bg-yellow-500/10 px-5 text-sm font-semibold text-yellow-100 transition hover:bg-yellow-500/20">Escuchar oficial</a>
+                      <a href={activeStation.externalUrl} target="_blank" rel="noopener noreferrer" className="inline-flex h-10 items-center justify-center rounded-full border border-yellow-500/60 bg-yellow-500/10 px-4 text-xs font-semibold text-yellow-100 transition hover:bg-yellow-500/20 md:h-11 md:text-sm">Escuchar oficial</a>
                     ) : null}
-                    <button type="button" aria-label={isMuted ? 'Activar sonido' : 'Silenciar'} onClick={() => setIsMuted((prev) => !prev)} className="inline-flex h-10 items-center justify-center rounded-full border border-zinc-600 px-3 text-xs text-zinc-100">{isMuted ? 'Unmute' : 'Mute'}</button>
-                    <label className="flex items-center gap-2 rounded-full border border-zinc-700 px-2.5 py-1.5 text-xs text-zinc-300">Vol
-                      <input className="w-20 accent-yellow-500" aria-label="Control de volumen" type="range" min={0} max={1} step={0.01} value={volume} onChange={(event) => setVolume(Number(event.target.value))} />
+                    <button type="button" aria-label={isMuted ? 'Activar sonido' : 'Silenciar'} onClick={() => setIsMuted((prev) => !prev)} className="inline-flex h-9 items-center justify-center rounded-full border border-zinc-600 px-2.5 text-[11px] text-zinc-100 md:h-10 md:px-3 md:text-xs">{isMuted ? 'Unmute' : 'Mute'}</button>
+                    <label className="flex items-center gap-1.5 rounded-full border border-zinc-700 px-2 py-1 text-[11px] text-zinc-300 md:text-xs">Vol
+                      <input className="w-16 accent-yellow-500 md:w-20" aria-label="Control de volumen" type="range" min={0} max={1} step={0.01} value={volume} onChange={(event) => setVolume(Number(event.target.value))} />
                     </label>
                   </div>
 
-                  <p className="mt-4 rounded-lg border border-zinc-700 bg-zinc-950/60 px-3 py-2 text-center text-xs text-zinc-300">Estado: Externa oficial | Disponible vía enlace oficial.</p>
+                  <p className="mt-3 rounded-lg border border-zinc-700 bg-zinc-950/60 px-2.5 py-1.5 text-center text-[11px] text-zinc-300 md:text-xs">Estado: Externa oficial | Disponible vía enlace oficial.</p>
                   {error ? <p className="mt-2 text-center text-xs text-rose-300">{error}</p> : null}
                 </div>
               </div>
@@ -215,10 +215,10 @@ export default function VedaMusicPlayer() {
             )}
           </div>
 
-          <div className="mt-5 flex flex-wrap gap-2 text-[11px] uppercase tracking-[0.1em] text-zinc-300">
-            <span className="rounded-full border border-zinc-700 bg-zinc-900/70 px-3 py-1">Enlaces oficiales</span>
-            <span className="rounded-full border border-zinc-700 bg-zinc-900/70 px-3 py-1">Contenido verificado</span>
-            <span className="rounded-full border border-zinc-700 bg-zinc-900/70 px-3 py-1">Transmitiendo 24/7</span>
+          <div className="mt-3 flex flex-wrap gap-1.5 text-[10px] uppercase tracking-[0.1em] text-zinc-300">
+            <span className="rounded-full border border-zinc-700 bg-zinc-900/70 px-2.5 py-0.5">Enlaces oficiales</span>
+            <span className="rounded-full border border-zinc-700 bg-zinc-900/70 px-2.5 py-0.5">Contenido verificado</span>
+            <span className="rounded-full border border-zinc-700 bg-zinc-900/70 px-2.5 py-0.5">Transmitiendo 24/7</span>
           </div>
         </div>
 
