@@ -132,19 +132,50 @@ export default function HomePage() {
 
       <main className="mx-auto flex w-full max-w-[1400px] flex-col gap-8 px-4 py-8 sm:px-6 lg:px-10">
         <section className="grid gap-4 lg:grid-cols-[minmax(0,65fr)_minmax(0,35fr)] lg:items-stretch">
-          <article className="hero-panel rounded-3xl p-6 lg:col-span-2 lg:p-10">
-            <p className="mb-4 text-xs uppercase tracking-[0.25em] text-zinc-300">V.E.D.A. MUSIC · PUERTO RICO</p>
-            <h1 className="hero-title text-zinc-50">
-              LA NUEVA PLATAFORMA <span className="urbana-accent">URBANA</span>
-            </h1>
-            <p className="mt-4 max-w-xl text-zinc-200">Videos, entrevistas, estrenos, fotos y todo lo que mueve la cultura urbana.</p>
-            <div className="mt-7 flex flex-wrap gap-3">
-              <a href="#videos" className="btn-red">Ver lo más nuevo</a>
-              <a href="#entrevistas" className="btn-gold">Explorar artistas</a>
-            </div>
-            <div className="hero-strip mt-8">
-              <div className="px-[1px] text-xs uppercase tracking-[0.22em] text-zinc-300">
-                <span>EDITORIAL URBANO</span>
+          <article className="relative isolate overflow-hidden rounded-[2rem] border border-white/10 bg-black/30 p-5 shadow-[0_24px_80px_rgba(0,0,0,0.35)] backdrop-blur-xl lg:col-span-2 lg:p-7">
+            <div className="pointer-events-none absolute inset-y-0 left-0 w-full bg-gradient-to-r from-black/55 via-black/25 to-transparent lg:w-2/3" aria-hidden="true" />
+
+            <div className="relative grid items-center gap-8 lg:grid-cols-[1.05fr_0.95fr] lg:gap-10">
+              <div className="z-10 py-2 lg:py-4">
+                <p className="mb-4 text-xs uppercase tracking-[0.25em] text-zinc-300">V.E.D.A. MUSIC · PUERTO RICO</p>
+                <h1 className="hero-title text-zinc-50">
+                  LA NUEVA PLATAFORMA <span className="urbana-accent">URBANA</span>
+                </h1>
+                <p className="mt-4 max-w-xl text-zinc-200">Videos, entrevistas, estrenos, fotos y todo lo que mueve la cultura urbana.</p>
+                <div className="mt-7 flex flex-wrap gap-3">
+                  <a href="#videos" className="btn-red">Ver lo más nuevo</a>
+                  <a href="#entrevistas" className="btn-gold">Explorar artistas</a>
+                </div>
+                <div className="hero-strip mt-6">
+                  <div className="px-[1px] text-xs uppercase tracking-[0.22em] text-zinc-300">
+                    <span>EDITORIAL URBANO</span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="relative h-[270px] overflow-hidden rounded-[1.5rem] border border-white/10 bg-black/20 shadow-[0_14px_45px_rgba(0,0,0,0.35)] sm:h-[320px] lg:h-[410px]">
+                <img
+                  src="/assets/veda-music-hero-reggaeton-classics.png"
+                  alt="Collage editorial de VEDA Music"
+                  className="h-full w-full object-cover object-[68%_center]"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/45 via-black/10 to-transparent" aria-hidden="true" />
+
+                <div className="absolute left-4 top-4 rounded-full border border-white/10 bg-black/35 px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.18em] text-zinc-100 backdrop-blur-md">
+                  CULTURA URBANA
+                </div>
+
+                <div className="absolute bottom-4 left-4 flex flex-wrap gap-2">
+                  {['Música', 'Videos', 'Entrevistas'].map((chip) => (
+                    <span key={chip} className="rounded-full border border-white/10 bg-black/35 px-2.5 py-1 text-[10px] uppercase tracking-[0.12em] text-zinc-200 backdrop-blur-md">
+                      {chip}
+                    </span>
+                  ))}
+                </div>
+
+                <p className="absolute bottom-4 right-4 text-[11px] uppercase tracking-[0.12em] text-zinc-200/90">
+                  Estrenos · entrevistas · artistas · movimiento
+                </p>
               </div>
             </div>
           </article>
