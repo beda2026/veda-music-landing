@@ -105,7 +105,7 @@ export default function VedaMusicPlayer() {
 
   return (
     <section className="space-y-4" aria-label="VEDA Music Player">
-      <div className="relative overflow-hidden rounded-[2rem] border border-yellow-500/20 bg-black/70 p-5 shadow-[0_0_35px_rgba(255,40,80,.16),0_0_40px_rgba(255,190,60,.1)] backdrop-blur-md md:p-8">
+      <div className="relative overflow-hidden rounded-[2rem] border border-yellow-500/20 bg-black/48 p-5 shadow-[0_0_35px_rgba(255,40,80,.16),0_0_40px_rgba(255,190,60,.1)] backdrop-blur-md md:p-8">
         <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_12%_15%,rgba(244,63,94,.16),transparent_35%),radial-gradient(circle_at_88%_20%,rgba(245,158,11,.14),transparent_40%),linear-gradient(145deg,rgba(10,10,10,.8),rgba(20,20,20,.86))]" />
         <div className="relative">
           <p className="text-xs uppercase tracking-[0.24em] text-[#f0d3a0]">VEDA Music Player</p>
@@ -115,7 +115,7 @@ export default function VedaMusicPlayer() {
             {vedaPlatformSources.map((platform) => {
               const selected = platform.id === activePlatform.id;
               return (
-                <button key={platform.id} type="button" role="tab" aria-selected={selected} onClick={() => setActivePlatformId(platform.id)} className={`rounded-full border px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.14em] transition ${selected ? 'border-yellow-400/80 bg-yellow-500/10 text-yellow-200 shadow-[0_0_20px_rgba(245,158,11,.25)]' : 'border-zinc-700 bg-zinc-900/70 text-zinc-300 hover:border-zinc-500'}`}>
+                <button key={platform.id} type="button" role="tab" aria-selected={selected} onClick={() => setActivePlatformId(platform.id)} className={`rounded-full border px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.14em] transition ${selected ? 'border-yellow-400/80 bg-yellow-500/10 text-yellow-200 shadow-[0_0_20px_rgba(245,158,11,.25)]' : 'border-zinc-700 bg-zinc-900/48 text-zinc-300 hover:border-zinc-500'}`}>
                   {platform.id === 'spotify' ? 'Spotify' : platform.title}
                 </button>
               );
@@ -129,7 +129,7 @@ export default function VedaMusicPlayer() {
                   {vedaStations.map((station, idx) => {
                     const selected = idx === activeIndex;
                     return (
-                      <button key={station.id} type="button" onClick={() => selectStation(idx)} className={`group w-full rounded-2xl border p-4 text-left transition ${selected ? 'border-yellow-400/70 bg-zinc-900/85 shadow-[0_0_24px_rgba(245,158,11,.2)]' : 'border-zinc-700/90 bg-zinc-900/70 hover:border-rose-400/50 hover:bg-zinc-900/85'}`}>
+                      <button key={station.id} type="button" onClick={() => selectStation(idx)} className={`group w-full rounded-2xl border p-4 text-left transition ${selected ? 'border-yellow-400/70 bg-zinc-900/58 shadow-[0_0_24px_rgba(245,158,11,.2)]' : 'border-zinc-700/90 bg-zinc-900/48 hover:border-rose-400/50 hover:bg-zinc-900/58'}`}>
                         <div className="flex items-center gap-4">
                           <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-xl border border-zinc-600 bg-gradient-to-br from-zinc-950 to-zinc-800 text-base font-black tracking-wider text-yellow-100">{station.name.split(' ').map((w) => w[0]).join('').slice(0, 3)}</div>
                           <div className="min-w-0 flex-1">
@@ -148,11 +148,11 @@ export default function VedaMusicPlayer() {
                 <div className="relative overflow-hidden rounded-[1.7rem] border border-zinc-600/80 bg-[linear-gradient(160deg,#181818,#0d0d0d_55%,#1f1b14)] p-4 shadow-[inset_0_0_0_1px_rgba(255,255,255,.05),inset_0_10px_40px_rgba(0,0,0,.4),0_14px_30px_rgba(0,0,0,.5)] md:p-6">
                   <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_20%_0%,rgba(244,63,94,.2),transparent_45%),radial-gradient(circle_at_100%_20%,rgba(245,158,11,.2),transparent_42%)]" />
                   <div className="relative grid gap-4 md:grid-cols-[1fr_auto]">
-                    <div className="rounded-xl border border-zinc-700 bg-zinc-950/70 p-3">
+                    <div className="rounded-xl border border-zinc-700 bg-zinc-950/50 backdrop-blur-sm p-3">
                       <p className="text-[10px] uppercase tracking-[0.22em] text-zinc-400">Station</p>
                       <p className="mt-2 text-2xl font-black text-yellow-100">{activeStation.name.split(' ').map((w) => w[0]).join('').slice(0, 4)}</p>
                     </div>
-                    <div className="rounded-xl border border-zinc-700 bg-zinc-950/70 p-3">
+                    <div className="rounded-xl border border-zinc-700 bg-zinc-950/50 backdrop-blur-sm p-3">
                       <p className="text-[10px] uppercase tracking-[0.22em] text-zinc-400">NOW PLAYING</p>
                       <p className="mt-1 text-lg font-bold text-white">{activeStation.name}</p>
                       <p className="text-sm text-zinc-300">{activeStation.tagline}</p>
@@ -187,18 +187,18 @@ export default function VedaMusicPlayer() {
                     </label>
                   </div>
 
-                  <p className="mt-4 rounded-lg border border-zinc-700 bg-zinc-950/60 px-3 py-2 text-center text-xs text-zinc-300">Estado: Externa oficial | Disponible vía enlace oficial.</p>
+                  <p className="mt-4 rounded-lg border border-zinc-700 bg-zinc-950/45 backdrop-blur-sm px-3 py-2 text-center text-xs text-zinc-300">Estado: Externa oficial | Disponible vía enlace oficial.</p>
                   {error ? <p className="mt-2 text-center text-xs text-rose-300">{error}</p> : null}
                 </div>
               </div>
             ) : activePlatform.id === 'spotify' && activePlatform.status === 'live' ? (
-              <div className="space-y-4 rounded-2xl border border-zinc-700/80 bg-zinc-950/70 p-4 md:p-6">
+              <div className="space-y-4 rounded-2xl border border-zinc-700/80 bg-zinc-950/50 backdrop-blur-sm p-4 md:p-6">
                 <p className="text-xs uppercase tracking-[0.18em] text-[#f0d3a0]">Spotify · Playlist externa</p>
                 <h3 className="text-xl font-semibold text-zinc-100">{activePlatform.title}</h3>
                 <p className="text-sm text-zinc-300">{activePlatform.tagline}</p>
                 <div className="grid gap-4 lg:grid-cols-2">
                   {vedaSpotifyPlaylists.map((playlist) => (
-                    <article key={playlist.id} className="space-y-3 rounded-xl border border-zinc-800 bg-zinc-900/50 p-3.5 md:p-4">
+                    <article key={playlist.id} className="space-y-3 rounded-xl border border-zinc-800 bg-zinc-900/42 backdrop-blur-sm p-3.5 md:p-4">
                       <h4 className="text-lg font-semibold text-zinc-100">{playlist.title}</h4><p className="text-sm text-zinc-300">{playlist.tagline}</p>
                       <div className="overflow-hidden rounded-xl border border-zinc-800"><iframe src={playlist.embedUrl} width="100%" height="352" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy" title={playlist.title} className="block" /></div>
                       <a href={playlist.externalUrl} target="_blank" rel="noreferrer" className="inline-flex rounded-full border border-[#1db954] bg-[#1db954]/10 px-4 py-2 text-sm font-semibold text-[#66ffa5] transition hover:bg-[#1db954]/20">{playlist.ctaLabel ?? 'Escuchar en Spotify'}</a>
@@ -207,7 +207,7 @@ export default function VedaMusicPlayer() {
                 </div>
               </div>
             ) : (
-              <div className="rounded-2xl border border-zinc-700/80 bg-zinc-950/70 p-6 text-center">
+              <div className="rounded-2xl border border-zinc-700/80 bg-zinc-950/50 backdrop-blur-sm p-6 text-center">
                 <p className="text-xs uppercase tracking-[0.18em] text-[#f0d3a0]">{activePlatform.title}</p>
                 <p className="mt-3 text-lg font-semibold text-zinc-100">Próximamente</p>
                 <p className="mt-2 text-sm text-zinc-400">{activePlatform.tagline || 'Este contenedor oficial de VEDA Music Player estará disponible pronto.'}</p>
@@ -216,9 +216,9 @@ export default function VedaMusicPlayer() {
           </div>
 
           <div className="mt-5 flex flex-wrap gap-2 text-[11px] uppercase tracking-[0.1em] text-zinc-300">
-            <span className="rounded-full border border-zinc-700 bg-zinc-900/70 px-3 py-1">Enlaces oficiales</span>
-            <span className="rounded-full border border-zinc-700 bg-zinc-900/70 px-3 py-1">Contenido verificado</span>
-            <span className="rounded-full border border-zinc-700 bg-zinc-900/70 px-3 py-1">Transmitiendo 24/7</span>
+            <span className="rounded-full border border-zinc-700 bg-zinc-900/48 px-3 py-1">Enlaces oficiales</span>
+            <span className="rounded-full border border-zinc-700 bg-zinc-900/48 px-3 py-1">Contenido verificado</span>
+            <span className="rounded-full border border-zinc-700 bg-zinc-900/48 px-3 py-1">Transmitiendo 24/7</span>
           </div>
         </div>
 
