@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState, type MouseEvent } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import type { VedaStation } from '@/lib/veda-player';
 import { vedaStations } from '@/lib/veda-player';
 
@@ -10,7 +10,6 @@ const hasPlayableStream = (station: VedaStation) => Boolean(station.streamUrl.tr
 
 export default function VedaMusicPlayer() {
   const audioRef = useRef<HTMLAudioElement | null>(null);
-  const platformModalRef = useRef<HTMLDivElement | null>(null);
   const [activeIndex, setActiveIndex] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -21,6 +20,7 @@ export default function VedaMusicPlayer() {
   const activeStation = vedaStations[activeIndex];
   const isComingSoon = !hasPlayableStream(activeStation);
   const [activePlatformId, setActivePlatformId] = useState<string | null>(null);
+  const [activePlatformPanel, setActivePlatformPanel] = useState<string | null>(null);
 
   const platformPlayers = [
     {
@@ -88,7 +88,7 @@ export default function VedaMusicPlayer() {
   }, [isMuted]);
 
   useEffect(() => {
-    if (!activePlatform) return;
+    if (!activePlatformId) return;
 
     const handleEscape = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
@@ -98,7 +98,7 @@ export default function VedaMusicPlayer() {
 
     window.addEventListener('keydown', handleEscape);
     return () => window.removeEventListener('keydown', handleEscape);
-  }, [activePlatform]);
+  }, [activePlatformId]);
 
   const handleTogglePlay = async () => {
     if (!audioRef.current || isComingSoon) return;
@@ -161,12 +161,6 @@ export default function VedaMusicPlayer() {
 
   const closePlatformModal = () => setActivePlatformId(null);
 
-  const handlePlatformOverlayClick = (event: MouseEvent<HTMLDivElement>) => {
-    if (event.target === platformModalRef.current) {
-      closePlatformModal();
-    }
-  };
-
   return (
     <section aria-label="VEDA Music Player" className="px-1">
       <div className="relative mx-auto w-full max-w-4xl overflow-hidden rounded-[2rem] border border-yellow-500/20 bg-black/45 p-5 shadow-[0_0_35px_rgba(255,40,80,.14),0_0_40px_rgba(255,190,60,.12)] backdrop-blur-lg md:p-6">
@@ -225,14 +219,39 @@ export default function VedaMusicPlayer() {
                   <button
                     key={platform.id}
                     type="button"
-                    onClick={() => setActivePlatformId(platform.id)}
-                    className="rounded-full border border-white/10 bg-black/25 px-3 py-1.5 text-xs text-zinc-200 backdrop-blur-md transition hover:border-yellow-400/40 hover:text-yellow-200"
+                    onClick={() => {
+                      if (platform.id === 'spotify') {
+                        setActivePlatformPanel((prev) => (prev === 'spotify' ? null : 'spotify'));
+                        return;
+                      }
+                      setActivePlatformId(platform.id);
+                    }}
+                    className={`rounded-full border bg-black/25 px-3 py-1.5 text-xs backdrop-blur-md transition ${activePlatformPanel === platform.id ? 'border-yellow-400/70 text-yellow-200' : 'border-white/10 text-zinc-200 hover:border-yellow-400/40 hover:text-yellow-200'}`}
                   >
                     {platform.label}
                   </button>
                 ))}
               </div>
             </div>
+
+            {activePlatformPanel === 'spotify' ? (
+              <div className="mt-4 max-w-full overflow-hidden rounded-2xl border border-yellow-500/15 bg-black/25 backdrop-blur-md">
+                <iframe
+                  title="Spotify embedded player"
+                  src="https://open.spotify.com/embed/playlist/5EOsQIRYI2Ily29tygRg7T?utm_source=generator"
+                  width="100%"
+                  height="152"
+                  frameBorder="0"
+                  allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+                  loading="lazy"
+                  className="w-full rounded-2xl border border-white/10 bg-black/40"
+                />
+                <div className="p-3">
+                  <a href="https://open.spotify.com/playlist/5EOsQIRYI2Ily29tygRg7T" target="_blank" rel="noopener noreferrer" className="inline-flex items-center justify-center rounded-full border border-yellow-500/60 bg-yellow-500/10 px-4 py-2 text-xs font-semibold text-yellow-100 transition hover:bg-yellow-500/20 md:text-sm">Abrir en Spotify</a>
+                </div>
+              </div>
+            ) : null}
+
             {error ? <p className="text-center text-xs text-rose-300 md:text-left">{error}</p> : null}
           </div>
         </div>
@@ -240,13 +259,16 @@ export default function VedaMusicPlayer() {
         <audio ref={audioRef} preload="none" onWaiting={() => setIsLoading(true)} onPlaying={() => { setIsPlaying(true); setIsLoading(false); }} onPause={() => setIsPlaying(false)} onError={() => { setError('No pudimos conectar esta señal ahora mismo. Intenta otra estación.'); setIsLoading(false); setIsPlaying(false); }} />
       </div>
 
-      {activePlatform ? (
+      {activePlatform && activePlatform.type !== 'spotify' ? (
         <div
-          ref={platformModalRef}
           role="dialog"
           aria-modal="true"
           aria-label={activePlatform.title}
-          onClick={handlePlatformOverlayClick}
+          onClick={(event) => {
+            if (event.target === event.currentTarget) {
+              closePlatformModal();
+            }
+          }}
           className="fixed inset-0 z-50 flex items-center justify-center bg-black/45 p-4"
         >
           <div className="w-[92vw] max-w-3xl max-h-[85vh] overflow-y-auto rounded-2xl border border-yellow-500/15 bg-black/45 p-5 shadow-[0_0_35px_rgba(255,40,80,.14),0_0_40px_rgba(255,190,60,.12)] backdrop-blur-xl md:p-6">
@@ -258,20 +280,7 @@ export default function VedaMusicPlayer() {
               <button type="button" onClick={closePlatformModal} aria-label="Cerrar modal" className="rounded-full border border-white/20 px-2.5 py-1 text-sm text-zinc-200 transition hover:border-yellow-400/45 hover:text-yellow-200">✕</button>
             </div>
 
-            {activePlatform.type === 'spotify' ? (
-              <div className="overflow-hidden rounded-2xl border border-white/10 bg-black/40">
-                <iframe
-                  title={activePlatform.iframeTitle}
-                  src={activePlatform.embedUrl}
-                  width="100%"
-                  height="152"
-                  frameBorder="0"
-                  allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
-                  loading="lazy"
-                  className="w-full rounded-2xl border border-white/10 bg-black/40"
-                />
-              </div>
-            ) : activePlatform.embedUrl ? (
+            {activePlatform.embedUrl ? (
               <div className="overflow-hidden rounded-2xl border border-white/10 bg-black/40">
                 <iframe
                   title={activePlatform.iframeTitle}
@@ -295,7 +304,7 @@ export default function VedaMusicPlayer() {
             )}
 
             <div className="mt-4">
-              <a href={activePlatform.externalUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center justify-center rounded-full border border-yellow-500/60 bg-yellow-500/10 px-4 py-2 text-xs font-semibold text-yellow-100 transition hover:bg-yellow-500/20 md:text-sm">{activePlatform.type === 'spotify' ? 'Abrir en Spotify' : activePlatform.embedUrl ? 'Abrir en plataforma' : 'Abrir búsqueda'}</a>
+              <a href={activePlatform.externalUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center justify-center rounded-full border border-yellow-500/60 bg-yellow-500/10 px-4 py-2 text-xs font-semibold text-yellow-100 transition hover:bg-yellow-500/20 md:text-sm">{activePlatform.embedUrl ? 'Abrir en plataforma' : 'Abrir búsqueda'}</a>
             </div>
           </div>
         </div>
