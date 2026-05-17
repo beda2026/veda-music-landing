@@ -1,116 +1,13 @@
 "use client";
 
-import { useEffect, useRef, useState } from 'react';
-import type { VedaStation } from '@/lib/veda-player';
+import { useState } from 'react';
 import { vedaStations } from '@/lib/veda-player';
 
-const STORAGE_VOLUME_KEY = 'veda-player-volume';
-
-const hasPlayableStream = (station: VedaStation) => Boolean(station.streamUrl.trim());
-
-const PLATFORM_IDS_WITHOUT_INTERNAL_AUDIO = new Set(['spotify', 'apple-music', 'youtube-music', 'soundcloud']);
-
 export default function VedaMusicPlayer() {
-  const audioRef = useRef<HTMLAudioElement | null>(null);
-  const [activeIndex, setActiveIndex] = useState(0);
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState('');
-  const [isMuted, setIsMuted] = useState(false);
-  const [volume, setVolume] = useState(0.8);
+  const [isSpotifyOpen, setIsSpotifyOpen] = useState(false);
 
-  const activeStation = vedaStations[activeIndex];
-  const isComingSoon = !hasPlayableStream(activeStation);
-  const [activePlatformId, setActivePlatformId] = useState('spotify');
-
-  const platformPlayers = [
-    { id: 'spotify', label: 'Spotify' },
-    { id: 'apple-music', label: 'Apple Music' },
-    { id: 'youtube-music', label: 'YouTube Music' },
-    { id: 'soundcloud', label: 'SoundCloud' },
-  ];
-
-  const shouldShowAudioControls = !PLATFORM_IDS_WITHOUT_INTERNAL_AUDIO.has(activePlatformId) && hasPlayableStream(activeStation);
-
-  useEffect(() => {
-    const saved = window.localStorage.getItem(STORAGE_VOLUME_KEY);
-    if (!saved) return;
-    const parsed = Number(saved);
-    if (!Number.isNaN(parsed) && parsed >= 0 && parsed <= 1) {
-      setVolume(parsed);
-      if (audioRef.current) audioRef.current.volume = parsed;
-    }
-  }, []);
-
-  useEffect(() => {
-    if (!audioRef.current) return;
-    audioRef.current.volume = volume;
-    window.localStorage.setItem(STORAGE_VOLUME_KEY, String(volume));
-  }, [volume]);
-
-  useEffect(() => {
-    if (!audioRef.current) return;
-    audioRef.current.muted = isMuted;
-  }, [isMuted]);
-
-  const handleTogglePlay = async () => {
-    if (!audioRef.current || isComingSoon) return;
-    setError('');
-
-    if (isPlaying) {
-      audioRef.current.pause();
-      setIsPlaying(false);
-      setIsLoading(false);
-      return;
-    }
-
-    try {
-      setIsLoading(true);
-      if (audioRef.current.src !== activeStation.streamUrl) {
-        audioRef.current.src = activeStation.streamUrl;
-      }
-      await audioRef.current.play();
-      setIsPlaying(true);
-    } catch {
-      setError('No pudimos conectar esta señal ahora mismo. Intenta otra estación.');
-      setIsPlaying(false);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const handlePlayForStation = async (streamUrl: string) => {
-    if (!audioRef.current) return;
-    try {
-      setIsLoading(true);
-      audioRef.current.src = streamUrl;
-      await audioRef.current.play();
-      setIsPlaying(true);
-      setError('');
-    } catch {
-      setError('No pudimos conectar esta señal ahora mismo. Intenta otra estación.');
-      setIsPlaying(false);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const selectStation = (nextIndex: number) => {
-    if (!audioRef.current) return;
-    const wasPlaying = isPlaying;
-    audioRef.current.pause();
-    setIsPlaying(false);
-    setIsLoading(false);
-    setError('');
-    setActiveIndex(nextIndex);
-    setActivePlatformId('station');
-
-    const nextStation = vedaStations[nextIndex];
-    if (wasPlaying && hasPlayableStream(nextStation)) {
-      setTimeout(() => {
-        void handlePlayForStation(nextStation.streamUrl);
-      }, 0);
-    }
+  const toggleSpotifyEmbed = () => {
+    setIsSpotifyOpen((prev) => !prev);
   };
 
   return (
@@ -118,10 +15,10 @@ export default function VedaMusicPlayer() {
       <div className="relative mx-auto w-full max-w-4xl overflow-hidden rounded-[2rem] border border-yellow-500/20 bg-black/45 p-5 shadow-[0_0_35px_rgba(255,40,80,.14),0_0_40px_rgba(255,190,60,.12)] backdrop-blur-lg md:p-6">
         <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_14%_16%,rgba(244,63,94,.16),transparent_36%),radial-gradient(circle_at_88%_16%,rgba(245,158,11,.13),transparent_40%),linear-gradient(145deg,rgba(8,8,8,.76),rgba(17,17,17,.78))]" />
 
-        <div className="relative grid items-center gap-5 md:grid-cols-[auto_minmax(0,1fr)] md:gap-6">
+        <div className="relative grid items-center gap-4 md:grid-cols-[auto_minmax(0,1fr)] md:gap-6">
           <div className="mx-auto">
             <div className="h-32 w-32 rounded-full border border-zinc-700 bg-[radial-gradient(circle_at_48%_45%,#2d2d2d,#090909_66%)] p-2.5 shadow-[inset_0_8px_20px_rgba(255,255,255,.06),inset_0_-10px_20px_rgba(0,0,0,.6),0_0_24px_rgba(239,68,68,.16)] md:h-36 md:w-36">
-              <div className={`flex h-full w-full items-center justify-center rounded-full border border-yellow-500/35 bg-[conic-gradient(from_0deg,rgba(245,158,11,.55),rgba(244,63,94,.43),rgba(245,158,11,.55))] p-3 ${isPlaying ? 'animate-[spin_16s_linear_infinite]' : ''}`}>
+              <div className="flex h-full w-full items-center justify-center rounded-full border border-yellow-500/35 bg-[conic-gradient(from_0deg,rgba(245,158,11,.55),rgba(244,63,94,.43),rgba(245,158,11,.55))] p-3">
                 <div className="flex h-full w-full items-center justify-center rounded-full bg-[radial-gradient(circle,#0f0f0f_25%,#1e1e1e_62%,#080808_100%)] text-center">
                   <span className="text-sm font-black tracking-[0.22em] text-yellow-100">VEDA</span>
                 </div>
@@ -134,28 +31,26 @@ export default function VedaMusicPlayer() {
               <p className="text-lg font-bold text-white md:text-xl">V.E.D.A. Music Radio</p>
             </div>
 
-            <div className="space-y-1.5">
-              <p className="text-[10px] uppercase tracking-[0.2em] text-zinc-400">Plataformas</p>
-              <div className="flex flex-wrap justify-center gap-2 md:justify-start">
-                {platformPlayers.map((platform) => (
-                  <button
-                    key={platform.id}
-                    type="button"
-                    onClick={() => setActivePlatformId(platform.id)}
-                    className={`rounded-full border bg-black/25 px-3 py-1.5 text-xs backdrop-blur-md transition ${activePlatformId === platform.id ? 'border-yellow-400/50 bg-yellow-500/10 text-yellow-200' : 'border-white/10 text-zinc-200 hover:border-yellow-400/40 hover:text-yellow-200'}`}
-                  >
-                    {platform.label}
-                  </button>
-                ))}
-              </div>
-            </div>
-
             <div className="flex flex-wrap items-center justify-center gap-2 md:justify-start">
-              <button type="button" onClick={() => setActivePlatformId('spotify')} className="inline-flex h-10 items-center justify-center rounded-full border border-yellow-500/60 bg-yellow-500/10 px-4 text-xs font-semibold text-yellow-100 transition hover:bg-yellow-500/20 md:h-11 md:text-sm">Escuchar aquí</button>
+              <button
+                type="button"
+                onClick={toggleSpotifyEmbed}
+                className="inline-flex h-10 items-center justify-center rounded-full border border-yellow-500/60 bg-yellow-500/10 px-4 text-xs font-semibold text-yellow-100 transition hover:bg-yellow-500/20 md:h-11 md:text-sm"
+              >
+                {isSpotifyOpen ? 'Cerrar' : 'Escuchar aquí'}
+              </button>
+
+              <button
+                type="button"
+                onClick={toggleSpotifyEmbed}
+                className="inline-flex h-10 items-center justify-center rounded-full border border-white/15 bg-black/30 px-4 text-xs font-semibold text-zinc-100 transition hover:border-yellow-400/50 hover:text-yellow-200 md:h-11 md:text-sm"
+              >
+                Spotify
+              </button>
             </div>
 
-            {activePlatformId === 'spotify' ? (
-              <div className="mt-4 max-w-full overflow-hidden rounded-2xl border border-yellow-500/15 bg-black/40 backdrop-blur-md">
+            {isSpotifyOpen ? (
+              <div className="max-w-full overflow-hidden rounded-2xl border border-yellow-500/15 bg-black/40 backdrop-blur-md">
                 <iframe
                   title="Spotify embedded player"
                   src="https://open.spotify.com/embed/playlist/5EOsQIRYI2Ily29tygRg7T?utm_source=generator&theme=0"
@@ -167,45 +62,22 @@ export default function VedaMusicPlayer() {
                   className="w-full rounded-2xl border-0 bg-black"
                 />
                 <div className="p-3">
-                  <a href="https://open.spotify.com/playlist/5EOsQIRYI2Ily29tygRg7T" target="_blank" rel="noopener noreferrer" className="inline-flex items-center justify-center rounded-full border border-yellow-500/60 bg-yellow-500/10 px-4 py-2 text-xs font-semibold text-yellow-100 transition hover:bg-yellow-500/20 md:text-sm">Abrir en Spotify</a>
+                  <a
+                    href="https://open.spotify.com/playlist/5EOsQIRYI2Ily29tygRg7T"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center justify-center rounded-full border border-yellow-500/60 bg-yellow-500/10 px-4 py-2 text-xs font-semibold text-yellow-100 transition hover:bg-yellow-500/20 md:text-sm"
+                  >
+                    Abrir en Spotify
+                  </a>
                 </div>
               </div>
             ) : null}
-
-            <div className="space-y-1.5">
-              <p className="text-[10px] uppercase tracking-[0.2em] text-zinc-400">EMISORAS OFICIALES</p>
-              <div className="flex flex-wrap justify-center gap-2 md:justify-start">
-                {vedaStations.map((station, idx) => {
-                  const selected = idx === activeIndex;
-                  return (
-                    <button
-                      key={station.id}
-                      type="button"
-                      onClick={() => selectStation(idx)}
-                      className={`rounded-full border px-3 py-1.5 text-xs font-semibold transition md:text-sm ${selected ? 'border-yellow-400/75 bg-yellow-500/12 text-yellow-100 shadow-[0_0_16px_rgba(245,158,11,.24)]' : 'border-white/20 bg-black/45 text-zinc-300 hover:border-zinc-500'}`}
-                    >
-                      {station.name}
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-
-            {shouldShowAudioControls ? (
-              <div className="flex flex-wrap items-center justify-center gap-2 md:justify-start">
-                <button type="button" aria-label={isPlaying ? 'Pausar estación' : 'Reproducir estación'} disabled={isLoading} onClick={() => void handleTogglePlay()} className="inline-flex h-10 min-w-11 items-center justify-center rounded-full bg-rose-600 px-5 text-xs font-bold text-white shadow-[0_0_20px_rgba(244,63,94,.42)] transition hover:bg-rose-500 disabled:opacity-40 md:h-11 md:text-sm">{isLoading ? 'Conectando…' : isPlaying ? 'Pause' : 'Play'}</button>
-                <button type="button" aria-label={isMuted ? 'Activar sonido' : 'Silenciar'} onClick={() => setIsMuted((prev) => !prev)} className="inline-flex h-9 items-center justify-center rounded-full border border-zinc-600 px-2.5 text-[11px] text-zinc-100 md:h-10 md:px-3 md:text-xs">{isMuted ? 'Unmute' : 'Mute'}</button>
-                <label className="flex items-center gap-1.5 rounded-full border border-zinc-700 px-2 py-1 text-[11px] text-zinc-300 md:text-xs">Vol
-                  <input className="w-16 accent-yellow-500 md:w-20" aria-label="Control de volumen" type="range" min={0} max={1} step={0.01} value={volume} onChange={(event) => setVolume(Number(event.target.value))} />
-                </label>
-              </div>
-            ) : null}
-
-            {error ? <p className="text-center text-xs text-rose-300 md:text-left">{error}</p> : null}
           </div>
         </div>
 
-        <audio ref={audioRef} preload="none" onWaiting={() => setIsLoading(true)} onPlaying={() => { setIsPlaying(true); setIsLoading(false); }} onPause={() => setIsPlaying(false)} onError={() => { setError('No pudimos conectar esta señal ahora mismo. Intenta otra estación.'); setIsLoading(false); setIsPlaying(false); }} />
+        {/* Conservamos la data de estaciones para uso futuro, sin render visible por ahora. */}
+        <span className="sr-only">{vedaStations.length} estaciones cargadas para futuras versiones.</span>
       </div>
     </section>
   );
