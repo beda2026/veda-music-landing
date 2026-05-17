@@ -94,7 +94,7 @@ export default function HomePage() {
     <>
       <header className="mx-auto w-full max-w-[1400px] px-4 pt-6 sm:px-6 lg:px-10">
         <section className="ad-box ad-space-labels mb-4 rounded-2xl p-4 sm:p-5 lg:min-h-[132px] lg:px-6">
-          <div className="flex items-center justify-center overflow-hidden rounded-xl border border-zinc-600/70 bg-[#0b0b0b]/90 p-2 sm:p-3">
+          <div className="flex items-center justify-center overflow-hidden rounded-xl border border-zinc-600/70 bg-black/45 backdrop-blur-md p-2 sm:p-3">
             <img
               src="/assets/mgf-vip-ad-728x90.png"
               alt="MGF Enterprises VIP sponsor leaderboard banner"
@@ -173,7 +173,7 @@ export default function HomePage() {
 
           <aside className="ad-box ad-space-labels flex min-h-[280px] flex-col items-center justify-center rounded-3xl p-4 text-center lg:h-[300px] lg:min-h-[300px]">
             <div
-              className="relative block h-[250px] w-full max-w-[336px] overflow-hidden rounded-2xl border border-zinc-600/80 bg-[#111111]/70"
+              className="relative block h-[250px] w-full max-w-[336px] overflow-hidden rounded-2xl border border-zinc-600/80 bg-black/40 backdrop-blur-md"
               aria-label="Dímelo Kombete sponsor banner"
             >
               <img
@@ -217,7 +217,7 @@ export default function HomePage() {
           <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-5">
             {vedaArtists.map((artist) => (
               <article key={artist.slug} className="panel hover-card rounded-2xl p-4 media-card">
-                <div className="mb-3 h-36 overflow-hidden rounded-xl border border-zinc-700 bg-gradient-to-br from-[#2a0d10] via-[#171717] to-[#1b1508]">
+                <div className="mb-3 h-36 overflow-hidden rounded-xl border border-zinc-700 bg-gradient-to-br from-black/45 via-red-950/15 to-yellow-950/10 backdrop-blur-md">
                   {artist.image ? (
                     <img src={artist.image} alt={artist.name} className="h-full w-full object-cover" />
                   ) : (
@@ -260,7 +260,7 @@ export default function HomePage() {
             <h2 className="section-title mb-4">Estrenos / Música Nueva</h2>
             <div className="space-y-3">
               {releases.map((release) => (
-                <article key={release} className="hover-card rounded-xl border border-zinc-700 bg-[#121212] p-3 before:mr-2 before:text-[#f5b21b] before:content-['●']">
+                <article key={release} className="hover-card rounded-xl border border-white/10 bg-black/40 backdrop-blur-md p-3 before:mr-2 before:text-[#f5b21b] before:content-['●']">
                   {release}
                 </article>
               ))}
@@ -281,7 +281,7 @@ export default function HomePage() {
             </aside>
             <aside className="ad-box ad-space-labels flex min-h-[250px] flex-col items-center justify-center rounded-2xl p-3">
               <div
-                className="relative block h-[250px] w-full max-w-[336px] overflow-hidden rounded-2xl border border-zinc-600/80 bg-[#111111]/70"
+                className="relative block h-[250px] w-full max-w-[336px] overflow-hidden rounded-2xl border border-zinc-600/80 bg-black/40 backdrop-blur-md"
                 aria-label="MGF Enterprises Services LLC sponsor banner"
               >
                 <img
@@ -331,7 +331,7 @@ export default function HomePage() {
             </div>
             <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
               {promoPackages.map((pack) => (
-                <div key={pack} className="rounded-xl border border-zinc-700 bg-[#121212] px-4 py-3 text-sm text-zinc-200">
+                <div key={pack} className="rounded-xl border border-white/10 bg-black/40 backdrop-blur-md px-4 py-3 text-sm text-zinc-200">
                   {pack}
                   <span className="mt-1 block text-xs uppercase tracking-wide text-zinc-400">Cotización por solicitud</span>
                 </div>
@@ -342,7 +342,7 @@ export default function HomePage() {
 
         <SubscribeForm />
 
-        <section className="ad-box rounded-3xl border border-[#f5b21b]/25 bg-gradient-to-br from-[#101010]/90 via-[#151515]/95 to-[#0d0d0d]/95 p-6 md:p-7">
+        <section className="ad-box rounded-3xl border border-[#f5b21b]/25 bg-gradient-to-br from-black/45 via-red-950/15 to-yellow-950/10 backdrop-blur-lg p-6 md:p-7">
           <div className="text-center">
             <h2 className="section-title">Auspicios &amp; Publicidad</h2>
             <p className="mt-2 text-sm text-zinc-300 md:text-base">
@@ -353,9 +353,9 @@ export default function HomePage() {
             {brandPartners.map((partner) => (
               <article
                 key={partner.name}
-                className="group rounded-2xl border border-zinc-700/80 bg-[#141414]/85 p-4 shadow-[0_8px_28px_rgba(0,0,0,0.35)] backdrop-blur-sm transition hover:-translate-y-0.5 hover:border-[#f5b21b]/55 hover:shadow-[0_12px_30px_rgba(245,178,27,0.12)]"
+                className="group rounded-2xl border border-zinc-700/80 bg-black/40 p-4 shadow-[0_8px_28px_rgba(0,0,0,0.35)] backdrop-blur-sm transition hover:-translate-y-0.5 hover:border-[#f5b21b]/55 hover:shadow-[0_12px_30px_rgba(245,178,27,0.12)]"
               >
-                <div className="relative h-[190px] overflow-hidden rounded-xl border border-white/10 bg-black/60 flex items-center justify-center">
+                <div className="relative h-[190px] overflow-hidden rounded-xl border border-white/10 bg-black/40 backdrop-blur-md flex items-center justify-center">
                   <img
                     src={partner.image}
                     alt={`${partner.name} logo`}
@@ -376,14 +376,14 @@ export default function HomePage() {
             ))}
           </div>
 
-          <div className="mt-6 rounded-2xl border border-[#f5b21b]/35 bg-[#121212]/85 p-5 text-center shadow-[0_8px_28px_rgba(0,0,0,0.35)] backdrop-blur-sm">
+          <div className="mt-6 rounded-2xl border border-[#f5b21b]/35 bg-black/40 p-5 text-center shadow-[0_8px_28px_rgba(0,0,0,0.35)] backdrop-blur-md">
             <p className="text-lg font-semibold text-zinc-100">¿Quieres promocionar tu marca aquí?</p>
             <p className="mx-auto mt-2 max-w-2xl text-sm text-zinc-300">Solicita un espacio publicitario para tu negocio, evento, lanzamiento o proyecto.</p>
             <a href="#contacto-comercial?tipo=espacio-publicitario" className="btn-gold mt-4 inline-flex">Solicitar publicidad</a>
           </div>
         </section>
       </main>
-      <footer className="border-t border-zinc-800 bg-black/70 backdrop-blur-sm">
+      <footer className="border-t border-zinc-800 bg-black/45 backdrop-blur-sm">
         <div className="mx-auto grid w-full max-w-[1400px] gap-6 px-4 py-10 sm:px-6 lg:grid-cols-3 lg:px-10">
           <div>
             <h2 className="text-2xl font-black text-zinc-100">V.E.D.A. MUSIC</h2>

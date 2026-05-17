@@ -43,7 +43,7 @@ export default function ServicesSectionModal({ services }: { services: Service[]
   return (
     <>
       <section id="contacto" className="space-y-4">
-        <div className="panel relative rounded-2xl border border-[#f5b21b]/25 bg-[#121212]/80 p-5 sm:p-6">
+        <div className="panel relative rounded-2xl border border-[#f5b21b]/25 bg-black/40 backdrop-blur-md p-5 sm:p-6">
           <div aria-hidden="true" className="pointer-events-none absolute inset-0 rounded-2xl bg-[radial-gradient(circle_at_18%_20%,rgba(245,178,27,0.14),transparent_45%),radial-gradient(circle_at_82%_72%,rgba(239,31,45,0.08),transparent_42%)]" />
           <div className="relative flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
             <div>
@@ -56,8 +56,8 @@ export default function ServicesSectionModal({ services }: { services: Service[]
       </section>
 
       {isServicesModalOpen ? (
-        <div className="fixed inset-0 z-[110] flex items-center justify-center bg-black/80 px-4 py-6 backdrop-blur-sm" onClick={closeServicesModal}>
-          <div role="dialog" aria-modal="true" aria-labelledby="servicios-modal-title" className="panel relative w-full max-w-[980px] max-h-[85vh] overflow-y-auto rounded-2xl border border-[#f5b21b]/30 bg-[#090909]/95 p-5 sm:p-7" onClick={(event) => event.stopPropagation()}>
+        <div className="fixed inset-0 z-[110] flex items-center justify-center bg-black/45 px-4 py-6 backdrop-blur-sm" onClick={closeServicesModal}>
+          <div role="dialog" aria-modal="true" aria-labelledby="servicios-modal-title" className="panel relative w-full max-w-[980px] max-h-[85vh] overflow-y-auto rounded-2xl border border-[#f5b21b]/30 bg-black/45 backdrop-blur-lg p-5 sm:p-7" onClick={(event) => event.stopPropagation()}>
             <button type="button" aria-label="Cerrar servicios" onClick={closeServicesModal} className="absolute right-4 top-4 rounded-full border border-zinc-600 px-2.5 py-1 text-zinc-300 transition hover:border-[#f5b21b] hover:text-zinc-100">✕</button>
             <h2 id="servicios-modal-title" className="pr-10 text-2xl font-bold text-zinc-100">Nuestros Servicios</h2>
             <p className="mt-2 text-sm text-zinc-300 sm:text-base">Soluciones de visibilidad, contenido y conexión comercial para artistas, marcas y eventos.</p>
