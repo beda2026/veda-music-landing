@@ -1,3 +1,8 @@
+'use client';
+
+import { useMemo, useState } from 'react';
+
+import EmbeddedVideoModal from '@/components/EmbeddedVideoModal';
 import VideoThumbnail from '@/components/VideoThumbnail';
 import { videos } from '@/lib/veda-data';
 
@@ -36,38 +41,50 @@ function getYoutubeVideoId(href?: string): string | null {
 }
 
 export default function LatestVideosSection() {
-  const latestVideos = videos.reduce<LatestVideo[]>((acc, video) => {
-    const youtubeVideoId = getYoutubeVideoId(video.href);
-    if (!youtubeVideoId) return acc;
+  const [activeVideo, setActiveVideo] = useState<LatestVideo | null>(null);
 
-    acc.push({
-      title: video.title,
-      meta: video.meta,
-      category: video.category,
-      href: video.href,
-      thumbnail: video.thumbnail,
-      fallbackThumbnail: video.fallbackThumbnail,
-      youtubeVideoId,
-    });
+  const latestVideos = useMemo(
+    () =>
+      videos.reduce<LatestVideo[]>((acc, video) => {
+        const youtubeVideoId = getYoutubeVideoId(video.href);
+        if (!youtubeVideoId) return acc;
 
-    return acc;
-  }, []);
+        acc.push({
+          title: video.title,
+          meta: video.meta,
+          category: video.category,
+          href: video.href,
+          thumbnail: video.thumbnail,
+          fallbackThumbnail: video.fallbackThumbnail,
+          youtubeVideoId,
+        });
+
+        return acc;
+      }, []),
+    []
+  );
 
   return (
-    <section id="videos" className="space-y-4">
-      <h2 className="section-title">Últimos Videos</h2>
-      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
-        {latestVideos.map((video) => (
-          <a key={video.title} href={video.href} target="_blank" rel="noreferrer" className="block">
-            <article className="panel hover-card rounded-2xl p-4 media-card">
-              <VideoThumbnail title={video.title} thumbnail={video.thumbnail} fallbackThumbnail={video.fallbackThumbnail} />
-              <h3 className="font-semibold text-zinc-100">{video.title}</h3>
-              <p className="mt-1 text-sm text-zinc-400">{video.category}</p>
-              <p className="mt-1 text-sm text-zinc-300">{video.meta}</p>
-            </article>
-          </a>
-        ))}
-      </div>
-    </section>
+    <>
+      <section id="videos" className="space-y-4">
+        <h2 className="section-title">Últimos Videos</h2>
+        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+          {latestVideos.map((video) => (
+            <button key={video.title} type="button" onClick={() => setActiveVideo(video)} className="block text-left">
+              <article className="panel hover-card rounded-2xl p-4 media-card">
+                <VideoThumbnail title={video.title} thumbnail={video.thumbnail} fallbackThumbnail={video.fallbackThumbnail} />
+                <h3 className="font-semibold text-zinc-100">{video.title}</h3>
+                <p className="mt-1 text-sm text-zinc-400">{video.category}</p>
+                <p className="mt-1 text-sm text-zinc-300">{video.meta}</p>
+              </article>
+            </button>
+          ))}
+        </div>
+      </section>
+
+      {activeVideo ? (
+        <EmbeddedVideoModal title={activeVideo.title} youtubeVideoId={activeVideo.youtubeVideoId} onClose={() => setActiveVideo(null)} />
+      ) : null}
+    </>
   );
 }

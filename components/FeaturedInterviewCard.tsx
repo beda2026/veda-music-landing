@@ -1,6 +1,8 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
+
+import EmbeddedVideoModal from '@/components/EmbeddedVideoModal';
 
 type FeaturedInterview = {
   title: string;
@@ -39,17 +41,6 @@ export default function FeaturedInterviewCard() {
     return null;
   }, [activeInterview]);
 
-  useEffect(() => {
-    if (!activeInterview) return;
-
-    const handleEscapeClose = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') setActiveInterview(null);
-    };
-
-    window.addEventListener('keydown', handleEscapeClose);
-    return () => window.removeEventListener('keydown', handleEscapeClose);
-  }, [activeInterview]);
-
   return (
     <>
       <article className="panel hover-card featured-card rounded-3xl p-4 lg:col-span-1 lg:max-h-[300px] lg:p-5">
@@ -74,36 +65,11 @@ export default function FeaturedInterviewCard() {
       </article>
 
       {activeInterview && activeInterviewVideoId ? (
-        <div
-          className="fixed inset-0 z-[200] flex items-center justify-center bg-[rgba(0,0,0,0.82)] p-4 backdrop-blur-md"
-          onClick={() => setActiveInterview(null)}
-          role="presentation"
-        >
-          <div
-            className="w-full max-w-4xl rounded-2xl border border-[#d8ba7f]/60 bg-[#111111]/95 p-4 shadow-[0_30px_80px_rgba(0,0,0,0.6)] sm:p-5"
-            onClick={(event) => event.stopPropagation()}
-          >
-            <div className="mb-3 flex items-start justify-between gap-4">
-              <h3 className="text-base font-semibold text-zinc-100 sm:text-lg">{activeInterview.title}</h3>
-              <button
-                type="button"
-                className="rounded-full border border-zinc-500 px-3 py-1 text-sm text-zinc-100 transition hover:border-[#d8ba7f] hover:text-[#f2d7a2]"
-                onClick={() => setActiveInterview(null)}
-              >
-                Cerrar
-              </button>
-            </div>
-            <div className="relative w-full overflow-hidden rounded-xl bg-black pt-[56.25%]">
-              <iframe
-                src={`https://www.youtube.com/embed/${activeInterviewVideoId}?autoplay=1`}
-                title="Entrevista VEDA Music"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                allowFullScreen
-                className="absolute inset-0 h-full w-full"
-              />
-            </div>
-          </div>
-        </div>
+        <EmbeddedVideoModal
+          title={activeInterview.title}
+          youtubeVideoId={activeInterviewVideoId}
+          onClose={() => setActiveInterview(null)}
+        />
       ) : null}
     </>
   );
