@@ -27,18 +27,10 @@ const hoverPoses: Pose[] = ['troll', 'mock', 'laugh', 'point', 'pointRight'];
 const celebrationPoses: Pose[] = ['dance', 'clap', 'celebrate'];
 
 const speechBubbles = [
-  'Anúnciate aquí.',
-  'Tu marca puede salir aquí.',
-  'Espacio disponible para auspicios.',
-  'Promociona tu negocio en V.E.D.A.',
-  '¿Quieres que tu logo aparezca aquí?',
-  'Este espacio puede ser tuyo.',
-  'Apoya la música, anuncia tu marca.',
-  'Tu negocio puede estar en esta sección.',
-  'Haz que te vean aquí.',
-  'Pregunta por espacios de promoción.',
-  'V.E.D.A. también impulsa marcas locales.',
-  'Tu anuncio puede vivir aquí.',
+  'Ey, chequea los auspicios que apoyan el movimiento.',
+  'Dale una mirada a los panas que están respaldando VEDA Music.',
+  'Esto es parte del movimiento, mira quiénes están apoyando.',
+  'Apoya a los que apoyan la cultura.',
 ];
 const POSITION_STORAGE_KEY = 'veda-mascot-position';
 const SCREEN_MARGIN = 12;
@@ -46,16 +38,10 @@ const DRAG_THRESHOLD = 6;
 
 type Position = { x: number; y: number };
 
-const hoverSpeechBubbles = [
-  '¿Tienes negocio? Aquí puedes anunciarte.',
-  'Tu logo puede estar en esta página.',
-  'Espacios abiertos para auspicios.',
-  'Haz que tu marca suene con V.E.D.A.',
-];
+const HOVER_BUBBLE_DELAY_MS = 300;
+const HOVER_BUBBLE_HIDE_DELAY_MS = 180;
 
-const clickSpeechBubbles = ['Pregunta por tu espacio.', 'Separa tu anuncio.', 'Tu marca aquí.'];
-
-const resetSpeechBubbles = ['Me quedo aquí.', 'Aquí está bien.'];
+const clickSpeechBubbles = ['Pregunta por tu espacio.', 'Tu marca puede montarse aquí.', 'Activa tu auspicio con VEDA.'];
 
 export function VedaMascot() {
   const mascotRef = useRef<HTMLButtonElement>(null);
@@ -78,6 +64,8 @@ export function VedaMascot() {
   const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
   const [position, setPosition] = useState<Position | null>(null);
   const [isDragging, setIsDragging] = useState(false);
+  const hoverShowTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const hoverHideTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const clampPosition = useCallback((nextX: number, nextY: number): Position => {
     if (!containerRef.current) return { x: nextX, y: nextY };
@@ -114,7 +102,7 @@ export function VedaMascot() {
     const handler = (e: MediaQueryListEvent) => setPrefersReducedMotion(e.matches);
     mediaQuery.addEventListener('change', handler);
     return () => mediaQuery.removeEventListener('change', handler);
-  }, [clampPosition, getDefaultPosition]);
+  }, []);
 
   useEffect(() => {
     if (!containerRef.current) return;
@@ -131,11 +119,11 @@ export function VedaMascot() {
       }
     }
     setPosition(getDefaultPosition());
-  }, []);
+  }, [clampPosition, getDefaultPosition]);
 
   const { contextSafe } = useGSAP(
     () => {
-      if (!mascotRef.current || !containerRef.current || !bubbleRef.current) return;
+      if (!mascotRef.current || !containerRef.current || !bubbleRef.current || isDragging) return;
       if (prefersReducedMotion) return;
 
       // Idle floating animation
@@ -156,7 +144,7 @@ export function VedaMascot() {
         yoyo: true,
       });
     },
-    { scope: containerRef, dependencies: [prefersReducedMotion] }
+    { scope: containerRef, dependencies: [prefersReducedMotion, isDragging] }
   );
 
   const playHoverAnimation = contextSafe(() => {
@@ -240,6 +228,9 @@ export function VedaMascot() {
   });
 
   const handleMouseEnter = () => {
+    if (hoverHideTimerRef.current) clearTimeout(hoverHideTimerRef.current);
+    if (hoverShowTimerRef.current) clearTimeout(hoverShowTimerRef.current);
+    if (isDragging) return;
     playHoverAnimation();
 
     // Random hover pose
@@ -247,25 +238,24 @@ export function VedaMascot() {
     setCurrentPose(randomPose);
 
     // Show speech bubble with random text
-    const availableHoverSpeech = hoverSpeechBubbles.length ? hoverSpeechBubbles : speechBubbles;
-    const randomSpeech = availableHoverSpeech[Math.floor(Math.random() * availableHoverSpeech.length)];
-    setBubbleText(randomSpeech);
-    setShowBubble(true);
-    playBubbleAnimation();
+    setBubbleText(speechBubbles[0]);
+    hoverShowTimerRef.current = setTimeout(() => {
+      setShowBubble(true);
+      playBubbleAnimation();
+    }, HOVER_BUBBLE_DELAY_MS);
   };
 
   const handleMouseLeave = () => {
-    if (!prefersReducedMotion) {
-      setTimeout(() => {
-        setCurrentPose('idle');
-        const randomResetSpeech = resetSpeechBubbles[Math.floor(Math.random() * resetSpeechBubbles.length)];
-        setBubbleText(randomResetSpeech);
-        hideBubbleAnimation();
-      }, 1000);
-    } else {
+    if (hoverShowTimerRef.current) clearTimeout(hoverShowTimerRef.current);
+    if (hoverHideTimerRef.current) clearTimeout(hoverHideTimerRef.current);
+    hoverHideTimerRef.current = setTimeout(() => {
       setCurrentPose('idle');
-      setShowBubble(false);
-    }
+      if (prefersReducedMotion) {
+        setShowBubble(false);
+        return;
+      }
+      hideBubbleAnimation();
+    }, HOVER_BUBBLE_HIDE_DELAY_MS);
   };
 
   const handleClick = () => {
@@ -336,15 +326,20 @@ export function VedaMascot() {
     if (!dragState.isDragging || dragState.pointerId !== pointerId) return;
     dragState.isDragging = false;
     setIsDragging(false);
-    if (position && dragState.moved) {
-      window.localStorage.setItem(POSITION_STORAGE_KEY, JSON.stringify(position));
+    if (containerRef.current) {
+      const rect = containerRef.current.getBoundingClientRect();
+      const finalPosition = clampPosition(rect.left, rect.top);
+      setPosition(finalPosition);
+      if (dragState.moved) {
+        window.localStorage.setItem(POSITION_STORAGE_KEY, JSON.stringify(finalPosition));
+      }
     }
   };
 
   // Subtle parallax effect on mouse move
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
-      if (!containerRef.current || prefersReducedMotion) return;
+      if (!containerRef.current || prefersReducedMotion || isDragging) return;
 
       const rect = containerRef.current.getBoundingClientRect();
       const centerX = rect.left + rect.width / 2;
@@ -363,7 +358,26 @@ export function VedaMascot() {
 
     window.addEventListener('mousemove', handleMouseMove);
     return () => window.removeEventListener('mousemove', handleMouseMove);
-  }, [prefersReducedMotion]);
+  }, [isDragging, prefersReducedMotion]);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setPosition((current) => {
+        if (!current) return current;
+        return clampPosition(current.x, current.y);
+      });
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, [clampPosition]);
+
+  useEffect(() => {
+    return () => {
+      if (hoverShowTimerRef.current) clearTimeout(hoverShowTimerRef.current);
+      if (hoverHideTimerRef.current) clearTimeout(hoverHideTimerRef.current);
+    };
+  }, []);
 
   return (
     <div
@@ -380,7 +394,7 @@ export function VedaMascot() {
       }
     >
       {/* Speech Bubble */}
-      {showBubble && (
+      {showBubble && bubbleText && (
         <div
           ref={bubbleRef}
           className="mb-2 rounded-2xl border border-amber-300/30 bg-black/75 px-3 py-2 text-sm text-amber-100 backdrop-blur-md"
@@ -389,6 +403,7 @@ export function VedaMascot() {
             fontSize: '0.875rem',
             lineHeight: '1.25rem',
             textAlign: 'center',
+            pointerEvents: 'none',
           }}
         >
           {bubbleText}
