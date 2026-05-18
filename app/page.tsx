@@ -1,5 +1,6 @@
 import VedaMusicPlayer from '@/components/VedaMusicPlayer';
 import CommercialContactForm from '@/components/CommercialContactForm';
+import AdvertisingRequestButton from '@/components/AdvertisingRequestButton';
 import SubscribeForm from '@/components/SubscribeForm';
 import ServicesSectionModal from '@/components/ServicesSectionModal';
 import Link from 'next/link';
@@ -386,7 +387,7 @@ export default function HomePage() {
           <div className="mt-6 rounded-2xl border border-[#f5b21b]/35 bg-black/40 p-5 text-center shadow-[0_8px_28px_rgba(0,0,0,0.35)] backdrop-blur-md">
             <p className="text-lg font-semibold text-zinc-100">¿Quieres promocionar tu marca aquí?</p>
             <p className="mx-auto mt-2 max-w-2xl text-sm text-zinc-300">Solicita un espacio publicitario para tu negocio, evento, lanzamiento o proyecto.</p>
-            <a href="#servicios" className="btn-gold mt-4 inline-flex">Solicitar publicidad</a>
+            <AdvertisingRequestButton />
           </div>
         </section>
       </main>

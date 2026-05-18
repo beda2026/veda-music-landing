@@ -10,6 +10,10 @@ const requestTypes = [
   'Otro',
 ] as const;
 
+type OpenCommercialContactEventDetail = {
+  selectedType?: (typeof requestTypes)[number];
+};
+
 const requestTypeBySlug: Record<string, (typeof requestTypes)[number]> = {
   'espacio-publicitario': 'Espacio publicitario',
   'enviar-musica': 'Enviar música',
@@ -68,7 +72,11 @@ export default function CommercialContactForm({ showTrigger = true }: { showTrig
   useEffect(() => {
     if (typeof window === 'undefined') return;
 
-    const onOpenCommercialContact = () => {
+    const onOpenCommercialContact = (
+      event: Event,
+    ) => {
+      const customEvent = event as CustomEvent<OpenCommercialContactEventDetail>;
+      if (customEvent.detail?.selectedType) setTipo(customEvent.detail.selectedType);
       setIsModalOpen(true);
     };
 
