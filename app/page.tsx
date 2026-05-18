@@ -3,13 +3,13 @@ import CommercialContactForm from '@/components/CommercialContactForm';
 import SubscribeForm from '@/components/SubscribeForm';
 import ServicesSectionModal from '@/components/ServicesSectionModal';
 import Link from 'next/link';
+import HeaderNavLinks from '@/components/HeaderNavLinks';
 import { interviews, releases, services, topTen } from '@/lib/veda-data';
 import { vedaArtists } from '@/lib/veda-artists';
 import VedaGsapEffects from '@/components/VedaGsapEffects';
 import FeaturedInterviewCard from '@/components/FeaturedInterviewCard';
 import LatestVideosSection from '@/components/LatestVideosSection';
 
-const navLinks = ['Noticias', 'Música', 'Videos', 'Artistas', 'Entrevistas', 'Nosotros', 'Contacto'] as const;
 const socialLinks = [
   { name: 'Spotify', icon: 'spotify' },
   { name: 'YouTube', icon: 'youtube' },
@@ -145,33 +145,7 @@ export default function HomePage() {
               <Link href="/artistas" className="transition hover:text-[#c9a67a]">Artistas</Link>
             </p>
           </div>
-          <nav className="hide-scrollbar -mx-2 flex gap-3 overflow-x-auto px-2 text-sm font-medium text-zinc-200 lg:flex-wrap lg:overflow-visible">
-            {navLinks.map((link) => {
-              const hrefMap: Record<(typeof navLinks)[number], string> = {
-                Noticias: '#noticias',
-                Música: '#musica',
-                Videos: '#videos',
-                Artistas: '/artistas',
-                Entrevistas: '#entrevistas',
-                Nosotros: '#sobre-nosotros',
-                Contacto: '#servicios',
-              };
-
-              if (hrefMap[link].startsWith('/')) {
-                return (
-                  <Link key={link} href={hrefMap[link]} className="whitespace-nowrap rounded-full border border-zinc-700 px-3 py-1.5 transition hover:border-[#8f2d37] hover:text-white">
-                    {link}
-                  </Link>
-                );
-              }
-
-              return (
-                <a key={link} href={hrefMap[link]} className="whitespace-nowrap rounded-full border border-zinc-700 px-3 py-1.5 transition hover:border-[#8f2d37] hover:text-white">
-                  {link}
-                </a>
-              );
-            })}
-          </nav>
+          <HeaderNavLinks />
           <button type="button" className="self-start rounded-full border border-zinc-700 px-4 py-2 text-zinc-300 transition hover:border-[#f5b21b]">
             ⌕
           </button>
