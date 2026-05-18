@@ -132,7 +132,7 @@ export default function HeaderSearchModal() {
                       <p className="mt-1 text-xs uppercase tracking-wide text-[#c9a67a]">{result.type} · {result.source}</p>
                       <p className="mt-2 line-clamp-3 text-sm text-zinc-300">{result.snippet}</p>
                       <div className="mt-2 flex flex-wrap gap-2">
-                        {result.url ? <a href={result.url} target="_blank" rel="noreferrer" className="rounded-full border border-zinc-700 px-2.5 py-1 text-xs text-zinc-200 transition hover:border-[#c9a67a]">Abrir fuente</a> : null}
+                        {result.url ? <a href={result.url} target="_blank" rel="noopener noreferrer" className="rounded-full border border-zinc-700 px-2.5 py-1 text-xs text-zinc-200 transition hover:border-[#c9a67a]">Abrir fuente</a> : null}
                         {videoId ? <button type="button" onClick={() => setVideoToPlay({ title: result.title, videoId })} className="rounded-full border border-[#c9a67a]/70 px-2.5 py-1 text-xs text-[#f5d2a2] transition hover:bg-[#c9a67a]/15">Ver video</button> : null}
                       </div>
                     </div>
