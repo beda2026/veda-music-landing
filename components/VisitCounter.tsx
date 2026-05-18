@@ -1,64 +1,48 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-
-const SESSION_KEY = 'veda-music-visit-counted';
-const SESSION_LOCK_KEY = 'veda-music-visit-counted-lock';
+import { useEffect, useRef, useState } from 'react';
 
 export default function VisitCounter() {
   const [mounted, setMounted] = useState(false);
   const [visits, setVisits] = useState(0);
+  const countedRef = useRef(false);
 
   useEffect(() => {
     let active = true;
 
-    const updateViews = async () => {
-      const alreadyCounted = sessionStorage.getItem(SESSION_KEY) === '1';
-      const countLocked = sessionStorage.getItem(SESSION_LOCK_KEY) === '1';
-      const shouldCountVisit = !alreadyCounted && !countLocked;
-      const method = shouldCountVisit ? 'POST' : 'GET';
-
-      if (shouldCountVisit) {
-        sessionStorage.setItem(SESSION_LOCK_KEY, '1');
-      }
+    const registerVisit = async () => {
+      if (countedRef.current) return;
+      countedRef.current = true;
 
       try {
         const response = await fetch('/api/visits', {
-          method,
+          method: 'POST',
           cache: 'no-store',
-          headers: method === 'POST' ? { 'Content-Type': 'application/json' } : undefined,
         });
 
-        if (response.ok) {
-          const data = (await response.json()) as { views?: number };
-          if (typeof data.views === 'number' && active) {
-            setVisits(data.views);
-          }
+        if (!response.ok) return;
 
-          if (method === 'POST') {
-            sessionStorage.setItem(SESSION_KEY, '1');
-          }
+        const data = (await response.json()) as { views?: number };
+        if (active && typeof data.views === 'number') {
+          setVisits(data.views);
         }
       } catch {
-        // Silent fallback to avoid breaking the landing page UI.
+        // Do not block page rendering if counter backend fails.
       } finally {
-        sessionStorage.removeItem(SESSION_LOCK_KEY);
         if (active) {
           setMounted(true);
         }
       }
     };
 
-    updateViews();
+    registerVisit();
 
     return () => {
       active = false;
     };
   }, []);
 
-  if (!mounted) {
-    return null;
-  }
+  if (!mounted) return null;
 
   const formattedVisits = visits.toString().padStart(6, '0');
 
