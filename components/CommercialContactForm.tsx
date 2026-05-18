@@ -27,7 +27,7 @@ const parseContactHash = (hashValue: string) => {
   return { selectedType };
 };
 
-export default function CommercialContactForm() {
+export default function CommercialContactForm({ showTrigger = true }: { showTrigger?: boolean }) {
   const [nombre, setNombre] = useState('');
   const [email, setEmail] = useState('');
   const [telefono, setTelefono] = useState('');
@@ -133,17 +133,19 @@ export default function CommercialContactForm() {
 
   return (
     <>
-      <div className="panel relative rounded-2xl border border-[#f5b21b]/30 bg-black/40 backdrop-blur-md p-5 sm:p-6">
-        <div aria-hidden="true" className="pointer-events-none absolute inset-0 rounded-2xl bg-[radial-gradient(circle_at_20%_18%,rgba(245,178,27,0.15),transparent_42%),radial-gradient(circle_at_82%_78%,rgba(239,31,45,0.1),transparent_40%)]" />
-        <div className="relative flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-          <div>
-            <h3 className="text-xl font-bold text-zinc-100">Contacto Comercial</h3>
-            <p className="mt-1 text-sm text-zinc-200">¿Quieres promocionar tu marca, evento o proyecto en V.E.D.A. Music?</p>
-            <p className="mt-2 text-xs uppercase tracking-[0.1em] text-zinc-400">Envíanos tu solicitud y nuestro equipo la revisa por email.</p>
+      {showTrigger ? (
+        <div className="panel relative rounded-2xl border border-[#f5b21b]/30 bg-black/40 backdrop-blur-md p-5 sm:p-6">
+          <div aria-hidden="true" className="pointer-events-none absolute inset-0 rounded-2xl bg-[radial-gradient(circle_at_20%_18%,rgba(245,178,27,0.15),transparent_42%),radial-gradient(circle_at_82%_78%,rgba(239,31,45,0.1),transparent_40%)]" />
+          <div className="relative flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+            <div>
+              <h3 className="text-xl font-bold text-zinc-100">Contacto Comercial</h3>
+              <p className="mt-1 text-sm text-zinc-200">¿Quieres promocionar tu marca, evento o proyecto en V.E.D.A. Music?</p>
+              <p className="mt-2 text-xs uppercase tracking-[0.1em] text-zinc-400">Envíanos tu solicitud y nuestro equipo la revisa por email.</p>
+            </div>
+            <button ref={triggerButtonRef} type="button" onClick={() => setIsModalOpen(true)} className="btn-gold shrink-0">Enviar solicitud</button>
           </div>
-          <button ref={triggerButtonRef} type="button" onClick={() => setIsModalOpen(true)} className="btn-gold shrink-0">Enviar solicitud</button>
         </div>
-      </div>
+      ) : null}
 
       {isModalOpen ? (
         <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/45 px-4 py-6 backdrop-blur-sm" onClick={closeModal}>

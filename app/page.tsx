@@ -21,24 +21,18 @@ const promoCards = [
     title: 'Anúnciate',
     text: 'Coloca tu marca, evento o negocio en espacios visibles dentro de V.E.D.A. MUSIC.',
     items: ['Top Banner', 'Sponsored Banner', 'Brand Partner'],
-    cta: 'Quiero anunciarme',
-    href: '#contacto-comercial?tipo=espacio-publicitario',
   },
   {
     badge: 'NEGOCIOS',
     title: 'Envía tu música',
     text: 'Comparte tu canción, video o estreno para evaluación editorial.',
     items: ['Video oficial', 'Estreno musical', 'Artista emergente'],
-    cta: 'Enviar música',
-    href: '#contacto-comercial?tipo=enviar-musica',
   },
   {
     badge: 'SPONSORS',
     title: 'Reserva entrevista',
     text: 'Coordina entrevistas, cobertura o contenido especial para tu proyecto.',
     items: ['Entrevista', 'Cobertura de evento', 'Studio / contenido'],
-    cta: 'Reservar entrevista',
-    href: '#contacto-comercial?tipo=entrevista-cobertura',
   },
 ] as const;
 const promoPackages = ['Publicación básica', 'Video destacado', 'Banner semanal', 'Banner mensual', 'Sponsor oficial', 'Entrevista / cobertura'];
@@ -139,7 +133,7 @@ export default function HomePage() {
           </div>
           <nav className="hide-scrollbar -mx-2 flex gap-3 overflow-x-auto px-2 text-sm font-medium text-zinc-200 lg:flex-wrap lg:overflow-visible">
             {navLinks.map((link) => (
-              <a key={link} href={link === 'Inicio' ? '#' : link === 'Contacto' ? '#contacto-comercial' : link === 'Nosotros' ? '#sobre-nosotros' : link === 'Artistas' ? '/artistas' : `#${link.toLowerCase()}`} className="whitespace-nowrap rounded-full border border-zinc-700 px-3 py-1.5 transition hover:border-[#ef1f2d] hover:text-white">
+              <a key={link} href={link === 'Inicio' ? '#' : link === 'Contacto' ? '#contacto' : link === 'Nosotros' ? '#sobre-nosotros' : link === 'Artistas' ? '/artistas' : `#${link.toLowerCase()}`} className="whitespace-nowrap rounded-full border border-zinc-700 px-3 py-1.5 transition hover:border-[#ef1f2d] hover:text-white">
                 {link}
               </a>
             ))}
@@ -261,7 +255,7 @@ export default function HomePage() {
             <p className="font-semibold">SPONSORED BANNER · 970x90</p>
             <p className="text-zinc-300">Tu marca aquí con la cultura urbana</p>
           </div>
-          <a href="#contacto-comercial" className="btn-gold">Más información</a>
+          <a href="#contacto" className="btn-gold">Más información</a>
         </section>
 
         <section className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_340px]">
@@ -305,13 +299,7 @@ export default function HomePage() {
 
         <ServicesSectionModal services={services} />
 
-        <section id="contacto-comercial" className="space-y-4">
-          <div>
-            <h2 className="section-title">Contacto Comercial</h2>
-            <p className="mt-2 max-w-3xl text-zinc-300">Cuéntanos qué quieres promocionar, enviar o coordinar. Nuestro equipo revisa cada solicitud y responde por email.</p>
-          </div>
-          <CommercialContactForm />
-        </section>
+        <CommercialContactForm showTrigger={false} />
 
         <section className="space-y-5 pt-3 md:pt-5">
           <div>
@@ -329,7 +317,6 @@ export default function HomePage() {
                     <li key={item} className="before:mr-2 before:text-[#f5b21b] before:content-['•']">{item}</li>
                   ))}
                 </ul>
-                <a href={card.href} className="btn-red mt-5 w-full">{card.cta}</a>
               </article>
             ))}
           </div>
@@ -391,7 +378,7 @@ export default function HomePage() {
           <div className="mt-6 rounded-2xl border border-[#f5b21b]/35 bg-black/40 p-5 text-center shadow-[0_8px_28px_rgba(0,0,0,0.35)] backdrop-blur-md">
             <p className="text-lg font-semibold text-zinc-100">¿Quieres promocionar tu marca aquí?</p>
             <p className="mx-auto mt-2 max-w-2xl text-sm text-zinc-300">Solicita un espacio publicitario para tu negocio, evento, lanzamiento o proyecto.</p>
-            <a href="#contacto-comercial?tipo=espacio-publicitario" className="btn-gold mt-4 inline-flex">Solicitar publicidad</a>
+            <a href="#contacto" className="btn-gold mt-4 inline-flex">Solicitar publicidad</a>
           </div>
         </section>
       </main>
