@@ -47,7 +47,7 @@ const brandPartners: ReadonlyArray<{
   name: string;
   subtext?: string;
   image: string;
-  href: string;
+  href?: string;
   logoClassName: string;
 }> = [
   {
@@ -79,6 +79,11 @@ const brandPartners: ReadonlyArray<{
     subtext: 'Indio Pancho',
     image: '/assets/sponsors/perreo-mania-pr/perreo-mania-pr-logo-800.webp',
     href: 'https://www.instagram.com/perreomaniapr?igsh=MWRyZXF5dHR3bzRscA==',
+    logoClassName: 'object-contain object-center',
+  },
+  {
+    name: 'Taimory Music',
+    image: '/assets/auspicios/taimory-music-logo.webp.jpg',
     logoClassName: 'object-contain object-center',
   },
 ] as const;
@@ -370,14 +375,16 @@ export default function HomePage() {
                 </div>
                 <h3 className="mt-4 text-base font-semibold text-zinc-100">{partner.name}</h3>
                 {partner.subtext ? <p className="mt-1 text-sm text-zinc-400">{partner.subtext}</p> : null}
-                <a
-                  href={partner.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="mt-3 inline-flex rounded-full border border-[#f5b21b]/45 px-3 py-1.5 text-xs font-semibold uppercase tracking-wide text-[#f5b21b] transition hover:border-[#f5b21b] hover:bg-[#f5b21b14]"
-                >
-                  Ver Instagram
-                </a>
+                {partner.href ? (
+                  <a
+                    href={partner.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="mt-3 inline-flex rounded-full border border-[#f5b21b]/45 px-3 py-1.5 text-xs font-semibold uppercase tracking-wide text-[#f5b21b] transition hover:border-[#f5b21b] hover:bg-[#f5b21b14]"
+                  >
+                    Ver Instagram
+                  </a>
+                ) : null}
               </article>
             ))}
           </div>
