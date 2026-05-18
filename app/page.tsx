@@ -11,6 +11,7 @@ import VedaGsapEffects from '@/components/VedaGsapEffects';
 import FeaturedInterviewCard from '@/components/FeaturedInterviewCard';
 import LatestVideosSection from '@/components/LatestVideosSection';
 import OpenCommercialContactButton from '@/components/OpenCommercialContactButton';
+import HeaderSearchModal from '@/components/HeaderSearchModal';
 
 const socialLinks = [
   { name: 'Spotify', icon: 'spotify' },
@@ -148,9 +149,7 @@ export default function HomePage() {
             </p>
           </div>
           <HeaderNavLinks />
-          <button type="button" className="self-start rounded-full border border-zinc-700 px-4 py-2 text-zinc-300 transition hover:border-[#f5b21b]">
-            ⌕
-          </button>
+          <HeaderSearchModal />
         </div>
       </header>
 
