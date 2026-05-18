@@ -154,7 +154,7 @@ export default function HomePage() {
                 Artistas: '/artistas',
                 Entrevistas: '#entrevistas',
                 Nosotros: '#sobre-nosotros',
-                Contacto: '#contacto',
+                Contacto: '#servicios',
               };
 
               if (hrefMap[link].startsWith('/')) {
@@ -289,7 +289,7 @@ export default function HomePage() {
             <p className="font-semibold">SPONSORED BANNER · 970x90</p>
             <p className="text-zinc-300">Tu marca aquí con la cultura urbana</p>
           </div>
-          <a href="#contacto" className="btn-gold">Más información</a>
+          <a href="#servicios" className="btn-gold">Más información</a>
         </section>
 
         <section id="musica" className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_340px]">
@@ -412,7 +412,7 @@ export default function HomePage() {
           <div className="mt-6 rounded-2xl border border-[#f5b21b]/35 bg-black/40 p-5 text-center shadow-[0_8px_28px_rgba(0,0,0,0.35)] backdrop-blur-md">
             <p className="text-lg font-semibold text-zinc-100">¿Quieres promocionar tu marca aquí?</p>
             <p className="mx-auto mt-2 max-w-2xl text-sm text-zinc-300">Solicita un espacio publicitario para tu negocio, evento, lanzamiento o proyecto.</p>
-            <a href="#contacto" className="btn-gold mt-4 inline-flex">Solicitar publicidad</a>
+            <a href="#servicios" className="btn-gold mt-4 inline-flex">Solicitar publicidad</a>
           </div>
         </section>
       </main>
