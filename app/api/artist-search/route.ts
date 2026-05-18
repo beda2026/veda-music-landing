@@ -12,6 +12,42 @@ type SearchResult = {
 const SEARCH_PROMPT = 'Busca información pública reciente sobre el artista o tema consultado para una plataforma editorial de entretenimiento urbano. Devuelve resultados breves, seguros y útiles: título, tipo, fuente, resumen, url e imagen si está disponible. No inventes datos. Si no hay resultados confiables, devuelve lista vacía.';
 const allowedTypes = new Set(['artist', 'video', 'article', 'social', 'other']);
 
+
+type ResponsesApiOutput = {
+  output_text?: string;
+  output?: Array<{
+    content?: Array<{
+      type?: string;
+      text?: string;
+      [key: string]: unknown;
+    }>;
+  }>;
+};
+
+function extractOutputText(data: ResponsesApiOutput): string | null {
+  if (typeof data.output_text === 'string' && data.output_text.trim()) {
+    return data.output_text;
+  }
+
+  if (!Array.isArray(data.output)) return null;
+
+  for (const item of data.output) {
+    if (!item || !Array.isArray(item.content)) continue;
+
+    for (const content of item.content) {
+      if (!content || typeof content !== 'object') continue;
+      if (content.type === 'output_text' && typeof content.text === 'string' && content.text.trim()) {
+        return content.text;
+      }
+      if (typeof content.text === 'string' && content.text.trim()) {
+        return content.text;
+      }
+    }
+  }
+
+  return null;
+}
+
 function normalizeQuery(value: string | null): string {
   return (value ?? '').replace(/\s+/g, ' ').trim();
 }
@@ -64,7 +100,7 @@ export async function GET(request: NextRequest) {
       },
       body: JSON.stringify({
         model,
-        tools: [{ type: 'web_search_preview' }],
+        tools: [{ type: 'web_search' }],
         input: [
           {
             role: 'system',
@@ -108,15 +144,45 @@ export async function GET(request: NextRequest) {
     });
 
     if (!response.ok) {
+      const errorText = await response.text();
+
+      console.error('[artist-search] OpenAI request failed', {
+        status: response.status,
+        statusText: response.statusText,
+        model,
+        errorPreview: errorText.slice(0, 500),
+      });
+
       return NextResponse.json({ ok: false, error: 'No se pudo completar la búsqueda ahora mismo.' }, { status: 502 });
     }
 
-    const data = (await response.json()) as { output_text?: string };
-    const parsed = data.output_text ? (JSON.parse(data.output_text) as { results?: unknown }) : { results: [] };
-    const results = sanitizeResults(parsed.results);
+    const data = (await response.json()) as ResponsesApiOutput;
+    const outputText = extractOutputText(data);
 
-    return NextResponse.json({ ok: true, query, results });
-  } catch {
+    if (!outputText) {
+      console.error('[artist-search] Missing output text in Responses API payload', { model, query });
+      return NextResponse.json({ ok: false, error: 'No se pudo completar la búsqueda ahora mismo.' }, { status: 502 });
+    }
+
+    try {
+      const parsed = JSON.parse(outputText) as { results?: unknown };
+      const results = sanitizeResults(parsed.results);
+
+      return NextResponse.json({ ok: true, query, results });
+    } catch {
+      console.error('[artist-search] Invalid JSON returned by Responses API', {
+        model,
+        query,
+        outputPreview: outputText.slice(0, 500),
+      });
+      return NextResponse.json({ ok: false, error: 'No se pudo completar la búsqueda ahora mismo.' }, { status: 502 });
+    }
+  } catch (error) {
+    console.error('[artist-search] Unexpected search error', {
+      model,
+      query,
+      error: error instanceof Error ? error.message : 'Unknown error',
+    });
     return NextResponse.json({ ok: false, error: 'No se pudo completar la búsqueda ahora mismo.' }, { status: 500 });
   }
 }
