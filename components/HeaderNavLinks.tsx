@@ -2,11 +2,17 @@
 
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
+import { createPortal } from 'react-dom';
 
 const navLinks = ['Noticias', 'Música', 'Videos', 'Artistas', 'Entrevistas', 'Nosotros', 'Contacto'] as const;
 
 export default function HeaderNavLinks() {
   const [isAboutOpen, setIsAboutOpen] = useState(false);
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   useEffect(() => {
     const onEsc = (event: KeyboardEvent) => {
@@ -80,10 +86,10 @@ export default function HeaderNavLinks() {
         })}
       </nav>
 
-      {isAboutOpen && (
-        <div className="fixed inset-0 z-[120] flex items-center justify-center bg-black/75 px-4 backdrop-blur-sm" onClick={() => setIsAboutOpen(false)}>
+      {isMounted && isAboutOpen && createPortal(
+        <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/70 px-4 backdrop-blur-sm" onClick={() => setIsAboutOpen(false)}>
           <div
-            className="w-full max-w-lg rounded-2xl border border-[#c9a67a]/30 bg-zinc-950/95 p-5 text-zinc-100 shadow-[0_24px_80px_rgba(0,0,0,0.5)]"
+            className="w-full max-w-[560px] rounded-2xl border border-[#c9a67a]/45 bg-zinc-950/95 p-5 text-zinc-100 shadow-[0_24px_80px_rgba(0,0,0,0.55)] sm:p-6"
             onClick={(event) => event.stopPropagation()}
             role="dialog"
             aria-modal="true"
@@ -122,7 +128,8 @@ export default function HeaderNavLinks() {
               </button>
             </div>
           </div>
-        </div>
+        </div>,
+        document.body,
       )}
     </>
   );
