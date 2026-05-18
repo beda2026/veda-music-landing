@@ -1,6 +1,8 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
+import EmbeddedVideoModal from '@/components/EmbeddedVideoModal';
+import { extractYoutubeVideoId } from '@/lib/youtube';
 
 type FeaturedInterview = {
   title: string;
@@ -19,35 +21,7 @@ export default function FeaturedInterviewCard() {
 
   const activeInterviewVideoId = useMemo(() => {
     if (!activeInterview) return null;
-    const urlValue = activeInterview.youtubeUrl;
-    if (!urlValue) return null;
-    if (!urlValue.includes('http')) return urlValue;
-
-    try {
-      const parsedUrl = new URL(urlValue);
-      if (parsedUrl.hostname.includes('youtu.be')) return parsedUrl.pathname.replace('/', '') || null;
-      if (parsedUrl.hostname.includes('youtube.com')) {
-        const queryVideoId = parsedUrl.searchParams.get('v');
-        if (queryVideoId) return queryVideoId;
-        const pathSegments = parsedUrl.pathname.split('/').filter(Boolean);
-        return pathSegments[pathSegments.length - 1] || null;
-      }
-    } catch {
-      return null;
-    }
-
-    return null;
-  }, [activeInterview]);
-
-  useEffect(() => {
-    if (!activeInterview) return;
-
-    const handleEscapeClose = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') setActiveInterview(null);
-    };
-
-    window.addEventListener('keydown', handleEscapeClose);
-    return () => window.removeEventListener('keydown', handleEscapeClose);
+    return extractYoutubeVideoId(activeInterview.youtubeUrl);
   }, [activeInterview]);
 
   return (
@@ -74,36 +48,13 @@ export default function FeaturedInterviewCard() {
       </article>
 
       {activeInterview && activeInterviewVideoId ? (
-        <div
-          className="fixed inset-0 z-[200] flex items-center justify-center bg-[rgba(0,0,0,0.82)] p-4 backdrop-blur-md"
-          onClick={() => setActiveInterview(null)}
-          role="presentation"
-        >
-          <div
-            className="w-full max-w-4xl rounded-2xl border border-[#d8ba7f]/60 bg-[#111111]/95 p-4 shadow-[0_30px_80px_rgba(0,0,0,0.6)] sm:p-5"
-            onClick={(event) => event.stopPropagation()}
-          >
-            <div className="mb-3 flex items-start justify-between gap-4">
-              <h3 className="text-base font-semibold text-zinc-100 sm:text-lg">{activeInterview.title}</h3>
-              <button
-                type="button"
-                className="rounded-full border border-zinc-500 px-3 py-1 text-sm text-zinc-100 transition hover:border-[#d8ba7f] hover:text-[#f2d7a2]"
-                onClick={() => setActiveInterview(null)}
-              >
-                Cerrar
-              </button>
-            </div>
-            <div className="relative w-full overflow-hidden rounded-xl bg-black pt-[56.25%]">
-              <iframe
-                src={`https://www.youtube.com/embed/${activeInterviewVideoId}?autoplay=1`}
-                title="Entrevista VEDA Music"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                allowFullScreen
-                className="absolute inset-0 h-full w-full"
-              />
-            </div>
-          </div>
-        </div>
+        <EmbeddedVideoModal
+          isOpen={Boolean(activeInterview)}
+          title={activeInterview.title}
+          description={activeInterview.description}
+          youtubeVideoId={activeInterviewVideoId}
+          onClose={() => setActiveInterview(null)}
+        />
       ) : null}
     </>
   );
