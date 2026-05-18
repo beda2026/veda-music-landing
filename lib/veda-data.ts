@@ -24,12 +24,12 @@ export const videos = [
     fallbackThumbnail: 'https://img.youtube.com/vi/FynTKeT3MhU/hqdefault.jpg',
   },
   {
-    title: 'Belinda x Los Ángeles Azules – Por Ella',
-    meta: 'Video oficial · Estreno latino',
-    category: 'Novedad latina',
-    href: 'https://www.youtube.com/watch?v=eu8IIeVKNmQ',
-    thumbnail: '/assets/belinda-los-angeles-azules-por-ella-thumb.png',
-    fallbackThumbnail: 'https://img.youtube.com/vi/eu8IIeVKNmQ/hqdefault.jpg',
+    title: 'BEDA – Soy Tu Diablo',
+    meta: 'Sencillo del disco Desamores · Disponible ya',
+    category: 'Estreno urbano',
+    href: 'https://youtu.be/gXhHh1T65qQ?si=5RtDqLPVGDxZNuJC',
+    thumbnail: 'https://img.youtube.com/vi/gXhHh1T65qQ/maxresdefault.jpg',
+    fallbackThumbnail: 'https://img.youtube.com/vi/gXhHh1T65qQ/hqdefault.jpg',
   },
   {
     title: 'KAROL G, Greg Gonzalez – Después de ti',
