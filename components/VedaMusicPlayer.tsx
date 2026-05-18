@@ -3,11 +3,31 @@
 import { useState } from 'react';
 import { vedaStations } from '@/lib/veda-player';
 
-export default function VedaMusicPlayer() {
-  const [isSpotifyOpen, setIsSpotifyOpen] = useState(false);
+const SPOTIFY_EMBED_URL =
+  'https://open.spotify.com/embed/playlist/5EOsQIRYI2Ily29tygRg7T?utm_source=generator&theme=0';
+const YOUTUBE_PLAYLIST_ID = 'PON_AQUI_EL_ID_DE_LA_PLAYLIST';
+const YOUTUBE_VIDEO_ID = 'PON_AQUI_EL_ID_DEL_VIDEO';
 
-  const toggleSpotifyEmbed = () => {
-    setIsSpotifyOpen((prev) => !prev);
+type PlayerSource = 'spotify' | 'youtube';
+
+function getYouTubeEmbedUrl() {
+  if (YOUTUBE_PLAYLIST_ID && YOUTUBE_PLAYLIST_ID !== 'PON_AQUI_EL_ID_DE_LA_PLAYLIST') {
+    return `https://www.youtube.com/embed/videoseries?list=${YOUTUBE_PLAYLIST_ID}`;
+  }
+
+  if (YOUTUBE_VIDEO_ID && YOUTUBE_VIDEO_ID !== 'PON_AQUI_EL_ID_DEL_VIDEO') {
+    return `https://www.youtube.com/embed/${YOUTUBE_VIDEO_ID}`;
+  }
+
+  return 'https://www.youtube.com/embed/videoseries?list=PON_AQUI_EL_ID_DE_LA_PLAYLIST';
+}
+
+export default function VedaMusicPlayer() {
+  const [isPlayerOpen, setIsPlayerOpen] = useState(false);
+  const [activeSource, setActiveSource] = useState<PlayerSource>('spotify');
+
+  const togglePlayerEmbed = () => {
+    setIsPlayerOpen((prev) => !prev);
   };
 
   return (
@@ -31,28 +51,69 @@ export default function VedaMusicPlayer() {
               <p className="text-lg font-bold text-white md:text-xl">V.E.D.A. Music Radio</p>
             </div>
 
-            <div className="flex items-center justify-center md:justify-start">
+            <div className="flex flex-wrap items-center justify-center gap-2 md:justify-start">
               <button
                 type="button"
-                onClick={toggleSpotifyEmbed}
+                onClick={togglePlayerEmbed}
                 className="inline-flex h-10 items-center justify-center rounded-full border border-yellow-500/60 bg-yellow-500/10 px-4 text-xs font-semibold text-yellow-100 transition hover:bg-yellow-500/20 md:h-11 md:text-sm"
               >
-                {isSpotifyOpen ? 'Cerrar' : 'Escuchar aquí'}
+                {isPlayerOpen ? 'Cerrar' : 'Escuchar aquí'}
               </button>
+
+              <div className="inline-flex rounded-full border border-yellow-500/30 bg-black/55 p-1">
+                <button
+                  type="button"
+                  onClick={() => setActiveSource('spotify')}
+                  className={`rounded-full px-3 py-1 text-[11px] font-semibold tracking-wide transition md:text-xs ${
+                    activeSource === 'spotify'
+                      ? 'bg-yellow-500/20 text-yellow-100'
+                      : 'text-zinc-300 hover:text-yellow-100'
+                  }`}
+                  aria-pressed={activeSource === 'spotify'}
+                >
+                  Spotify
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setActiveSource('youtube')}
+                  className={`rounded-full px-3 py-1 text-[11px] font-semibold tracking-wide transition md:text-xs ${
+                    activeSource === 'youtube'
+                      ? 'bg-yellow-500/20 text-yellow-100'
+                      : 'text-zinc-300 hover:text-yellow-100'
+                  }`}
+                  aria-pressed={activeSource === 'youtube'}
+                >
+                  YouTube Music
+                </button>
+              </div>
             </div>
 
-            {isSpotifyOpen ? (
-              <div className="max-w-full overflow-hidden rounded-2xl border border-yellow-500/15 bg-black/40 backdrop-blur-md">
-                <iframe
-                  title="Spotify embedded player"
-                  src="https://open.spotify.com/embed/playlist/5EOsQIRYI2Ily29tygRg7T?utm_source=generator&theme=0"
-                  width="100%"
-                  height="352"
-                  frameBorder="0"
-                  allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
-                  loading="lazy"
-                  className="w-full rounded-2xl border-0 bg-black"
-                />
+            {isPlayerOpen ? (
+              <div className="max-w-full overflow-hidden rounded-2xl border border-yellow-400/25 bg-gradient-to-br from-zinc-950/95 via-zinc-900/90 to-black/95 p-1 shadow-[0_0_20px_rgba(245,158,11,.16)] backdrop-blur-md">
+                {activeSource === 'spotify' ? (
+                  <iframe
+                    title="Spotify embedded player"
+                    src={SPOTIFY_EMBED_URL}
+                    width="100%"
+                    height="352"
+                    frameBorder="0"
+                    allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+                    loading="lazy"
+                    className="w-full rounded-2xl border-0 bg-black"
+                  />
+                ) : (
+                  <iframe
+                    title="VEDA Music YouTube player"
+                    src={getYouTubeEmbedUrl()}
+                    width="100%"
+                    height="352"
+                    frameBorder="0"
+                    loading="lazy"
+                    className="w-full rounded-2xl border-0 bg-black"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                    allowFullScreen
+                  />
+                )}
               </div>
             ) : null}
           </div>
