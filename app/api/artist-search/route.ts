@@ -12,6 +12,11 @@ type SearchResult = {
 const SEARCH_PROMPT = 'Busca información pública reciente sobre el artista o tema consultado para una plataforma editorial de entretenimiento urbano. Devuelve resultados breves, seguros y útiles: título, tipo, fuente, resumen, url e imagen si está disponible. No inventes datos. No uses markdown. No uses comentarios. No uses texto antes o después del JSON. El campo type debe ser uno de: artist, video, article, social, other. Si no hay resultados confiables, devuelve {"results":[]}. Si no hay imagen disponible para un resultado, devuelve image como string vacío "".';
 const allowedTypes = new Set(['artist', 'video', 'article', 'social', 'other']);
 
+type SearchResultType = SearchResult['type'];
+
+function toSearchResultType(value: string): SearchResultType {
+  return allowedTypes.has(value) ? (value as SearchResultType) : 'other';
+}
 
 type ResponsesApiOutput = {
   output_text?: string;
@@ -89,7 +94,7 @@ function sanitizeResults(results: unknown): SearchResult[] {
       const snippet = typeof candidate.snippet === 'string' ? candidate.snippet.trim() : '';
       const url = typeof candidate.url === 'string' ? candidate.url.trim() : '';
       const typeValue = typeof candidate.type === 'string' ? candidate.type : 'other';
-      const type = allowedTypes.has(typeValue) ? typeValue : 'other';
+      const type = toSearchResultType(typeValue);
       const image = typeof candidate.image === 'string' && candidate.image.trim() ? candidate.image.trim() : undefined;
 
       if (!title || !snippet) return null;
@@ -153,7 +158,10 @@ Devuelve máximo 5 resultados.`,
                     type: 'object',
                     properties: {
                       title: { type: 'string' },
-                      type: { type: 'string' },
+                      type: {
+                        type: 'string',
+                        enum: ['artist', 'video', 'article', 'social', 'other'],
+                      },
                       source: { type: 'string' },
                       snippet: { type: 'string' },
                       url: { type: 'string' },
