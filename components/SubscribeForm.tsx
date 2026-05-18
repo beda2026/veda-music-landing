@@ -4,13 +4,33 @@ import { FormEvent, useState } from 'react';
 
 export default function SubscribeForm() {
   const [email, setEmail] = useState('');
-  const [status, setStatus] = useState<'idle' | 'success'>('idle');
+  const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (!email.trim()) return;
-    setStatus('success');
-    setEmail('');
+
+    setStatus('loading');
+
+    try {
+      const response = await fetch('/api/subscribe', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: email.trim() }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok && data?.ok === true) {
+        setStatus('success');
+        setEmail('');
+        return;
+      }
+
+      setStatus('error');
+    } catch {
+      setStatus('error');
+    }
   };
 
   return (
@@ -31,11 +51,15 @@ export default function SubscribeForm() {
             placeholder="tuemail@ejemplo.com"
             className="h-12 w-full rounded-full border border-zinc-600 bg-black/40 backdrop-blur-md px-5 text-sm text-zinc-100 outline-none transition focus:border-[#f5b21b]"
           />
-          <button type="submit" className="btn-gold h-12 w-full sm:w-auto sm:px-8">Suscribirme</button>
+          <button type="submit" disabled={status === 'loading'} className="btn-gold h-12 w-full disabled:opacity-60 sm:w-auto sm:px-8">{status === 'loading' ? 'Enviando...' : 'Suscribirme'}</button>
         </form>
 
         {status === 'success' && (
-          <p className="text-sm font-medium text-emerald-300">¡Gracias por unirte a la comunidad V.E.D.A.!</p>
+          <p className="text-sm font-medium text-emerald-300">Gracias. Tu email fue enviado a la comunidad V.E.D.A.</p>
+        )}
+
+        {status === 'error' && (
+          <p className="text-sm font-medium text-[#ef1f2d]">No se pudo completar la suscripción. Inténtalo nuevamente.</p>
         )}
       </div>
     </section>

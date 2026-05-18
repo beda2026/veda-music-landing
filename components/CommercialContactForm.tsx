@@ -35,13 +35,17 @@ export default function CommercialContactForm({ showTrigger = true }: { showTrig
   const [mensaje, setMensaje] = useState('');
   const [error, setError] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [successMessage, setSuccessMessage] = useState('');
 
   const closeButtonRef = useRef<HTMLButtonElement | null>(null);
   const triggerButtonRef = useRef<HTMLButtonElement | null>(null);
 
   const closeModal = () => {
+    if (isSubmitting) return;
     setIsModalOpen(false);
     setError('');
+    setSuccessMessage('');
   };
 
   useEffect(() => {
@@ -103,7 +107,7 @@ export default function CommercialContactForm({ showTrigger = true }: { showTrig
     };
   }, [isModalOpen]);
 
-  const onSubmit = (event: FormEvent<HTMLFormElement>) => {
+  const onSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     if (!nombre.trim() || !email.trim() || !tipo.trim() || !mensaje.trim()) {
@@ -111,24 +115,40 @@ export default function CommercialContactForm({ showTrigger = true }: { showTrig
       return;
     }
 
-    const subject = `VEDA MUSIC - ${tipo}`;
-    const body = [
-      'Nueva solicitud desde V.E.D.A. MUSIC',
-      '',
-      `Nombre: ${nombre.trim()}`,
-      `Correo electrónico: ${email.trim()}`,
-      `Teléfono / WhatsApp: ${telefono.trim() || 'No indicado'}`,
-      `Tipo de solicitud: ${tipo}`,
-      '',
-      'Mensaje:',
-      mensaje.trim(),
-    ].join('\n');
-
     setError('');
-    closeModal();
+    setSuccessMessage('');
+    setIsSubmitting(true);
 
-    // TODO: Replace mailto with POST /api/contact using Resend, SendGrid, or equivalent provider.
-    window.location.href = `mailto:vedamusicpr@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    try {
+      const response = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          nombre: nombre.trim(),
+          email: email.trim(),
+          telefono: telefono.trim(),
+          tipo: tipo.trim(),
+          mensaje: mensaje.trim(),
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok && data?.ok === true) {
+        setNombre('');
+        setEmail('');
+        setTelefono('');
+        setTipo('');
+        setMensaje('');
+        setSuccessMessage('Solicitud enviada. Te responderemos por email en horario laboral.');
+      } else {
+        setError('No se pudo enviar la solicitud. Inténtalo nuevamente.');
+      }
+    } catch {
+      setError('No se pudo enviar la solicitud. Inténtalo nuevamente.');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -203,9 +223,10 @@ export default function CommercialContactForm({ showTrigger = true }: { showTrig
               </div>
 
               {error ? <p className="mt-3 text-sm font-medium text-[#ef1f2d]">{error}</p> : null}
+              {successMessage ? <p className="mt-3 text-sm font-medium text-emerald-300">{successMessage}</p> : null}
 
               <div className="mt-5 flex flex-wrap items-center gap-3">
-                <button type="submit" className="btn-gold">Enviar solicitud</button>
+                <button type="submit" disabled={isSubmitting} className="btn-gold disabled:opacity-60">{isSubmitting ? 'Enviando...' : 'Enviar solicitud'}</button>
                 <p className="text-xs uppercase tracking-[0.12em] text-zinc-400">Respuesta por email en horario laboral.</p>
               </div>
             </form>
