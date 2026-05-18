@@ -2,13 +2,13 @@ import VisitCounter from '@/components/VisitCounter';
 import VedaMusicPlayer from '@/components/VedaMusicPlayer';
 import CommercialContactForm from '@/components/CommercialContactForm';
 import SubscribeForm from '@/components/SubscribeForm';
-import VideoThumbnail from '@/components/VideoThumbnail';
 import ServicesSectionModal from '@/components/ServicesSectionModal';
 import Link from 'next/link';
-import { interviews, releases, services, topTen, videos } from '@/lib/veda-data';
+import { interviews, releases, services, topTen } from '@/lib/veda-data';
 import { vedaArtists } from '@/lib/veda-artists';
 import VedaGsapEffects from '@/components/VedaGsapEffects';
 import FeaturedInterviewCard from '@/components/FeaturedInterviewCard';
+import LatestVideosSection from '@/components/LatestVideosSection';
 
 const navLinks = ['Inicio', 'Noticias', 'Música', 'Videos', 'Artistas', 'Entrevistas', 'Nosotros', 'Contacto'];
 const socialLinks = [
@@ -214,29 +214,7 @@ export default function HomePage() {
 
         <VedaMusicPlayer />
 
-        <section id="videos" className="space-y-4">
-          <h2 className="section-title">Últimos Videos</h2>
-          <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
-            {videos.map((video) => {
-              const card = (
-                <article className="panel hover-card rounded-2xl p-4 media-card">
-                  <VideoThumbnail title={video.title} thumbnail={video.thumbnail} fallbackThumbnail={video.fallbackThumbnail} />
-                  <h3 className="font-semibold text-zinc-100">{video.title}</h3>
-                  <p className="mt-1 text-sm text-zinc-400">{video.category}</p>
-                  <p className="mt-1 text-sm text-zinc-300">{video.meta}</p>
-                </article>
-              );
-
-              return video.href ? (
-                <a key={video.title} href={video.href} target="_blank" rel="noreferrer" className="block">
-                  {card}
-                </a>
-              ) : (
-                <div key={video.title}>{card}</div>
-              );
-            })}
-          </div>
-        </section>
+        <LatestVideosSection />
 
         <section id="artistas-destacados" className="space-y-4">
           <h2 className="section-title">Artistas Destacados</h2>
