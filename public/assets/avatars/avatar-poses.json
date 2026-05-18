@@ -1,0 +1,146 @@
+[
+  {
+    "file": "/assets/avatars/veda-avatar-idle.png",
+    "pose": "idle",
+    "size": [
+      1122,
+      1402
+    ]
+  },
+  {
+    "file": "/assets/avatars/veda-avatar-walk.png",
+    "pose": "walk",
+    "size": [
+      1122,
+      1402
+    ]
+  },
+  {
+    "file": "/assets/avatars/veda-avatar-walk-alt.png",
+    "pose": "walk-alt",
+    "size": [
+      1122,
+      1402
+    ]
+  },
+  {
+    "file": "/assets/avatars/veda-avatar-thinking.png",
+    "pose": "thinking",
+    "size": [
+      1122,
+      1402
+    ]
+  },
+  {
+    "file": "/assets/avatars/veda-avatar-middle-finger.png",
+    "pose": "middle-finger",
+    "size": [
+      1122,
+      1402
+    ]
+  },
+  {
+    "file": "/assets/avatars/veda-avatar-facepalm-laugh.png",
+    "pose": "facepalm-laugh",
+    "size": [
+      1122,
+      1402
+    ]
+  },
+  {
+    "file": "/assets/avatars/veda-avatar-laugh-point.png",
+    "pose": "laugh-point",
+    "size": [
+      1122,
+      1402
+    ]
+  },
+  {
+    "file": "/assets/avatars/veda-avatar-thumbs-up.png",
+    "pose": "thumbs-up",
+    "size": [
+      1122,
+      1402
+    ]
+  },
+  {
+    "file": "/assets/avatars/veda-avatar-dance.png",
+    "pose": "dance",
+    "size": [
+      1122,
+      1402
+    ]
+  },
+  {
+    "file": "/assets/avatars/veda-avatar-wave.png",
+    "pose": "wave",
+    "size": [
+      1122,
+      1402
+    ]
+  },
+  {
+    "file": "/assets/avatars/veda-avatar-point-right.png",
+    "pose": "point-right",
+    "size": [
+      1122,
+      1402
+    ]
+  },
+  {
+    "file": "/assets/avatars/veda-avatar-listen.png",
+    "pose": "listen",
+    "size": [
+      1122,
+      1402
+    ]
+  },
+  {
+    "file": "/assets/avatars/veda-avatar-open-hand.png",
+    "pose": "open-hand",
+    "size": [
+      1122,
+      1402
+    ]
+  },
+  {
+    "file": "/assets/avatars/veda-avatar-point-down.png",
+    "pose": "point-down",
+    "size": [
+      1122,
+      1402
+    ]
+  },
+  {
+    "file": "/assets/avatars/veda-avatar-mock.png",
+    "pose": "mock",
+    "size": [
+      1122,
+      1402
+    ]
+  },
+  {
+    "file": "/assets/avatars/veda-avatar-clap.png",
+    "pose": "clap",
+    "size": [
+      1122,
+      1402
+    ]
+  },
+  {
+    "file": "/assets/avatars/veda-avatar-point.png",
+    "alias_of": "/assets/avatars/veda-avatar-point-right.png"
+  },
+  {
+    "file": "/assets/avatars/veda-avatar-laugh.png",
+    "alias_of": "/assets/avatars/veda-avatar-laugh-point.png"
+  },
+  {
+    "file": "/assets/avatars/veda-avatar-troll.png",
+    "alias_of": "/assets/avatars/veda-avatar-mock.png"
+  },
+  {
+    "file": "/assets/avatars/veda-avatar-celebrate.png",
+    "alias_of": "/assets/avatars/veda-avatar-clap.png"
+  }
+]
