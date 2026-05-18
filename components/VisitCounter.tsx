@@ -2,8 +2,8 @@
 
 import { useEffect, useState } from 'react';
 
-const SESSION_KEY = 'veda_music_visit_counted';
-const OFFICIAL_HOSTS = new Set(['vedamusicpr.net', 'www.vedamusicpr.net']);
+const SESSION_KEY = 'veda-music-visit-counted';
+const SESSION_LOCK_KEY = 'veda-music-visit-counted-lock';
 
 export default function VisitCounter() {
   const [mounted, setMounted] = useState(false);
@@ -13,10 +13,14 @@ export default function VisitCounter() {
     let active = true;
 
     const updateViews = async () => {
-      const host = window.location.hostname.toLowerCase();
-      const isOfficialHost = OFFICIAL_HOSTS.has(host);
       const alreadyCounted = sessionStorage.getItem(SESSION_KEY) === '1';
-      const method = isOfficialHost && !alreadyCounted ? 'POST' : 'GET';
+      const countLocked = sessionStorage.getItem(SESSION_LOCK_KEY) === '1';
+      const shouldCountVisit = !alreadyCounted && !countLocked;
+      const method = shouldCountVisit ? 'POST' : 'GET';
+
+      if (shouldCountVisit) {
+        sessionStorage.setItem(SESSION_LOCK_KEY, '1');
+      }
 
       try {
         const response = await fetch('/api/visits', {
@@ -38,6 +42,7 @@ export default function VisitCounter() {
       } catch {
         // Silent fallback to avoid breaking the landing page UI.
       } finally {
+        sessionStorage.removeItem(SESSION_LOCK_KEY);
         if (active) {
           setMounted(true);
         }

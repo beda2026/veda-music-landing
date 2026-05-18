@@ -63,6 +63,10 @@ export async function GET() {
     const views = await getViews();
     return NextResponse.json({ views });
   } catch (error) {
+    console.error('[api/visits][GET] Failed to fetch visits', {
+      message: error instanceof Error ? error.message : 'Unknown error',
+    });
+
     if (error instanceof Error && error.message === 'SUPABASE_NOT_CONFIGURED') {
       return NextResponse.json({ error: 'Supabase is not configured.' }, { status: 503 });
     }
@@ -85,6 +89,10 @@ export async function POST() {
     const updated = Array.isArray(updatedRows) && updatedRows.length > 0 ? Number(updatedRows[0]?.views ?? next) : next;
     return NextResponse.json({ views: Number.isFinite(updated) ? updated : next });
   } catch (error) {
+    console.error('[api/visits][POST] Failed to update visits', {
+      message: error instanceof Error ? error.message : 'Unknown error',
+    });
+
     if (error instanceof Error && error.message === 'SUPABASE_NOT_CONFIGURED') {
       return NextResponse.json({ error: 'Supabase is not configured.' }, { status: 503 });
     }
