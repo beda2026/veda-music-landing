@@ -7,6 +7,7 @@ import ServicesSectionModal from '@/components/ServicesSectionModal';
 import Link from 'next/link';
 import { interviews, releases, services, topTen, videos } from '@/lib/veda-data';
 import { vedaArtists } from '@/lib/veda-artists';
+import VedaGsapEffects from '@/components/VedaGsapEffects';
 
 const navLinks = ['Inicio', 'Noticias', 'Música', 'Videos', 'Artistas', 'Entrevistas', 'Nosotros', 'Contacto'];
 const socialLinks = [
@@ -105,6 +106,7 @@ function SocialButtons() {
 export default function HomePage() {
   return (
     <>
+      <VedaGsapEffects />
       <header className="mx-auto w-full max-w-[1400px] px-4 pt-6 sm:px-6 lg:px-10">
         <section className="ad-box ad-space-labels mb-4 rounded-2xl p-4 sm:p-5 lg:min-h-[132px] lg:px-6">
           <div className="flex items-center justify-center overflow-hidden rounded-xl border border-zinc-600/70 bg-black/45 backdrop-blur-md p-2 sm:p-3">
