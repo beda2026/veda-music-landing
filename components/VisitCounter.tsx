@@ -2,44 +2,36 @@
 
 import { useEffect, useRef, useState } from 'react';
 
+const STORAGE_KEY = 'veda-music-local-views';
+const BASE_VIEWS = 350;
+
 export default function VisitCounter() {
   const [mounted, setMounted] = useState(false);
-  const [visits, setVisits] = useState(0);
+  const [visits, setVisits] = useState(BASE_VIEWS);
   const countedRef = useRef(false);
 
   useEffect(() => {
-    let active = true;
+    if (countedRef.current) return;
+    countedRef.current = true;
 
-    const registerVisit = async () => {
-      if (countedRef.current) return;
-      countedRef.current = true;
+    let nextVisits = BASE_VIEWS;
 
-      try {
-        const response = await fetch('/api/visits', {
-          method: 'POST',
-          cache: 'no-store',
-        });
+    try {
+      const storedValue = localStorage.getItem(STORAGE_KEY);
+      const parsedValue = storedValue ? Number.parseInt(storedValue, 10) : Number.NaN;
 
-        if (!response.ok) return;
-
-        const data = (await response.json()) as { views?: number };
-        if (active && typeof data.views === 'number') {
-          setVisits(data.views);
-        }
-      } catch {
-        // Do not block page rendering if counter backend fails.
-      } finally {
-        if (active) {
-          setMounted(true);
-        }
+      if (Number.isFinite(parsedValue)) {
+        nextVisits = parsedValue;
       }
-    };
 
-    registerVisit();
+      nextVisits += 1;
+      localStorage.setItem(STORAGE_KEY, nextVisits.toString());
+    } catch {
+      nextVisits += 1;
+    }
 
-    return () => {
-      active = false;
-    };
+    setVisits(nextVisits);
+    setMounted(true);
   }, []);
 
   if (!mounted) return null;
