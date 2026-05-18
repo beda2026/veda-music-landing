@@ -1,4 +1,3 @@
-import VisitCounter from '@/components/VisitCounter';
 import VedaMusicPlayer from '@/components/VedaMusicPlayer';
 import CommercialContactForm from '@/components/CommercialContactForm';
 import SubscribeForm from '@/components/SubscribeForm';
@@ -395,9 +394,7 @@ export default function HomePage() {
             <h2 className="text-2xl font-black text-zinc-100">V.E.D.A. MUSIC</h2>
             <p className="mt-3 text-sm text-zinc-300">Plataforma urbana independiente dedicada a la música, videos, entrevistas, fotos y artistas que están moviendo la cultura.</p>
           </div>
-          <div className="text-sm text-zinc-300">
-            <div className="mt-3"><VisitCounter /></div>
-          </div>
+          <div className="hidden lg:block" aria-hidden="true" />
           <div className="hidden lg:block" aria-hidden="true" />
         </div>
         <p className="border-t border-zinc-800 py-4 text-center text-xs text-zinc-500">© 2026 V.E.D.A. MUSIC. Todos los derechos reservados.</p>
