@@ -20,3 +20,6 @@ Archivos principales:
 - veda-avatar-clap.png
 
 También incluye poses extra y `avatar-poses.json`.
+
+
+Note: This transparent package removes the baked checkerboard/white background and keeps the same filenames for web replacement.
