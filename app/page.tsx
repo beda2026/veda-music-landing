@@ -82,7 +82,7 @@ const brandPartners: ReadonlyArray<{
     logoClassName: 'object-contain object-center',
   },
   {
-    name: 'Taimory Music',
+    name: 'Taimary Music',
     image: '/assets/auspicios/taimory-music-logo.webp.jpg',
     logoClassName: 'object-contain object-center',
   },
