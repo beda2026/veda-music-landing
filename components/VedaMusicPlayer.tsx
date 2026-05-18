@@ -63,7 +63,7 @@ export default function VedaMusicPlayer() {
                   }`}
                   aria-pressed={activeSource === 'radio'}
                 >
-                  Radio
+                  Spotify
                 </button>
                 <button
                   type="button"
