@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { PointerEvent, useCallback, useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
@@ -34,17 +34,60 @@ const speechBubbles = [
   'Aquí hay movimiento.',
   'Mira eso ahí abajo.',
 ];
+const POSITION_STORAGE_KEY = 'veda-mascot-position';
+const SCREEN_MARGIN = 12;
+const DRAG_THRESHOLD = 6;
+
+type Position = { x: number; y: number };
 
 export function VedaMascot() {
   const mascotRef = useRef<HTMLButtonElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const bubbleRef = useRef<HTMLDivElement>(null);
   const imageRef = useRef<HTMLImageElement>(null);
+  const dragStateRef = useRef({
+    pointerId: -1,
+    isDragging: false,
+    moved: false,
+    startX: 0,
+    startY: 0,
+    offsetX: 0,
+    offsetY: 0,
+  });
 
   const [currentPose, setCurrentPose] = useState<Pose>('idle');
   const [showBubble, setShowBubble] = useState(false);
   const [bubbleText, setBubbleText] = useState('');
   const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
+  const [position, setPosition] = useState<Position | null>(null);
+  const [isDragging, setIsDragging] = useState(false);
+
+  const clampPosition = useCallback((nextX: number, nextY: number): Position => {
+    if (!containerRef.current) return { x: nextX, y: nextY };
+    const rect = containerRef.current.getBoundingClientRect();
+    const maxX = Math.max(SCREEN_MARGIN, window.innerWidth - rect.width - SCREEN_MARGIN);
+    const maxY = Math.max(SCREEN_MARGIN, window.innerHeight - rect.height - SCREEN_MARGIN);
+
+    return {
+      x: Math.min(Math.max(nextX, SCREEN_MARGIN), maxX),
+      y: Math.min(Math.max(nextY, SCREEN_MARGIN), maxY),
+    };
+  }, []);
+
+  const getDefaultPosition = useCallback((): Position => {
+    if (!containerRef.current) {
+      return {
+        x: window.innerWidth - SCREEN_MARGIN - 128,
+        y: window.innerHeight - SCREEN_MARGIN - 128,
+      };
+    }
+
+    const rect = containerRef.current.getBoundingClientRect();
+    return clampPosition(
+      window.innerWidth - SCREEN_MARGIN - rect.width,
+      window.innerHeight - SCREEN_MARGIN - rect.height
+    );
+  }, [clampPosition]);
 
   // Detect if user prefers reduced motion
   useEffect(() => {
@@ -54,6 +97,23 @@ export function VedaMascot() {
     const handler = (e: MediaQueryListEvent) => setPrefersReducedMotion(e.matches);
     mediaQuery.addEventListener('change', handler);
     return () => mediaQuery.removeEventListener('change', handler);
+  }, [clampPosition, getDefaultPosition]);
+
+  useEffect(() => {
+    if (!containerRef.current) return;
+    const savedRaw = window.localStorage.getItem(POSITION_STORAGE_KEY);
+    if (savedRaw) {
+      try {
+        const saved = JSON.parse(savedRaw) as Position;
+        if (typeof saved.x === 'number' && typeof saved.y === 'number') {
+          setPosition(clampPosition(saved.x, saved.y));
+          return;
+        }
+      } catch {
+        // Ignore invalid storage payload and fallback to default.
+      }
+    }
+    setPosition(getDefaultPosition());
   }, []);
 
   const { contextSafe } = useGSAP(
@@ -189,6 +249,11 @@ export function VedaMascot() {
   };
 
   const handleClick = () => {
+    if (dragStateRef.current.moved) {
+      dragStateRef.current.moved = false;
+      return;
+    }
+
     const randomCelebration = celebrationPoses[Math.floor(Math.random() * celebrationPoses.length)];
     setCurrentPose(randomCelebration);
     playClickAnimation();
@@ -199,6 +264,54 @@ export function VedaMascot() {
       }, 1500);
     } else {
       setCurrentPose('idle');
+    }
+  };
+
+  const handleDoubleClick = () => {
+    window.localStorage.removeItem(POSITION_STORAGE_KEY);
+    const defaultPosition = getDefaultPosition();
+    setPosition(defaultPosition);
+    setBubbleText('Volví a mi esquina.');
+    setShowBubble(true);
+    playBubbleAnimation();
+  };
+
+  const handlePointerDown = (e: PointerEvent<HTMLButtonElement>) => {
+    if (!containerRef.current) return;
+    const containerRect = containerRef.current.getBoundingClientRect();
+    dragStateRef.current = {
+      pointerId: e.pointerId,
+      isDragging: true,
+      moved: false,
+      startX: e.clientX,
+      startY: e.clientY,
+      offsetX: e.clientX - containerRect.left,
+      offsetY: e.clientY - containerRect.top,
+    };
+    e.currentTarget.setPointerCapture(e.pointerId);
+    setIsDragging(true);
+  };
+
+  const handlePointerMove = (e: PointerEvent<HTMLButtonElement>) => {
+    const dragState = dragStateRef.current;
+    if (!dragState.isDragging || dragState.pointerId !== e.pointerId) return;
+    const next = clampPosition(e.clientX - dragState.offsetX, e.clientY - dragState.offsetY);
+    if (!dragState.moved) {
+      const dist = Math.hypot(e.clientX - dragState.startX, e.clientY - dragState.startY);
+      if (dist >= DRAG_THRESHOLD) {
+        dragState.moved = true;
+      }
+    }
+    setPosition(next);
+  };
+
+  const stopDragging = (pointerId: number) => {
+    const dragState = dragStateRef.current;
+    if (!dragState.isDragging || dragState.pointerId !== pointerId) return;
+    dragState.isDragging = false;
+    setIsDragging(false);
+    if (position && dragState.moved) {
+      window.localStorage.setItem(POSITION_STORAGE_KEY, JSON.stringify(position));
     }
   };
 
@@ -229,7 +342,16 @@ export function VedaMascot() {
   return (
     <div
       ref={containerRef}
-      className="fixed bottom-4 right-4 z-[60] flex flex-col items-center gap-2"
+      className="fixed z-[60] flex flex-col items-center gap-2"
+      style={
+        position
+          ? {
+              left: `${position.x}px`,
+              top: `${position.y}px`,
+              userSelect: isDragging ? 'none' : 'auto',
+            }
+          : { visibility: 'hidden' }
+      }
     >
       {/* Speech Bubble */}
       {showBubble && (
@@ -252,12 +374,19 @@ export function VedaMascot() {
         ref={mascotRef}
         type="button"
         onClick={handleClick}
+        onDoubleClick={handleDoubleClick}
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
+        onPointerDown={handlePointerDown}
+        onPointerMove={handlePointerMove}
+        onPointerUp={(e) => stopDragging(e.pointerId)}
+        onPointerCancel={(e) => stopDragging(e.pointerId)}
         aria-label="V.E.D.A. Music avatar"
-        className="relative flex h-20 w-20 cursor-pointer items-center justify-center rounded-full transition-shadow duration-300 hover:drop-shadow-[0_0_12px_rgba(245,178,27,0.4)] sm:h-28 sm:w-28 lg:h-32 lg:w-32"
+        className="relative flex h-20 w-20 items-center justify-center rounded-full transition-shadow duration-300 hover:drop-shadow-[0_0_12px_rgba(245,178,27,0.4)] sm:h-28 sm:w-28 lg:h-32 lg:w-32"
         style={{
           filter: 'drop-shadow(0 4px 16px rgba(0, 0, 0, 0.3)) drop-shadow(0 0 8px rgba(245, 178, 27, 0.2))',
+          cursor: isDragging ? 'grabbing' : 'grab',
+          touchAction: 'none',
         }}
       >
         <Image
