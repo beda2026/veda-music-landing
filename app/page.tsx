@@ -4,7 +4,6 @@ import CommercialContactForm from '@/components/CommercialContactForm';
 import SubscribeForm from '@/components/SubscribeForm';
 import VideoThumbnail from '@/components/VideoThumbnail';
 import ServicesSectionModal from '@/components/ServicesSectionModal';
-import { VedaMascot } from '@/components/veda/VedaMascot';
 import Link from 'next/link';
 import { interviews, releases, services, topTen, videos } from '@/lib/veda-data';
 import { vedaArtists } from '@/lib/veda-artists';
@@ -443,7 +442,6 @@ export default function HomePage() {
         <p className="border-t border-zinc-800 py-4 text-center text-xs text-zinc-500">© 2026 V.E.D.A. MUSIC. Todos los derechos reservados.</p>
       </footer>
 
-      <VedaMascot />
     </>
   );
 }
