@@ -18,6 +18,25 @@ export default function ServicesSectionModal({ services }: { services: Service[]
   };
 
   useEffect(() => {
+    const openServicesModal = () => setIsServicesModalOpen(true);
+
+    const openFromHash = () => {
+      if (window.location.hash === '#servicios' || window.location.hash === '#contacto') {
+        setIsServicesModalOpen(true);
+      }
+    };
+
+    openFromHash();
+    window.addEventListener('openServicesModal', openServicesModal);
+    window.addEventListener('hashchange', openFromHash);
+
+    return () => {
+      window.removeEventListener('openServicesModal', openServicesModal);
+      window.removeEventListener('hashchange', openFromHash);
+    };
+  }, []);
+
+  useEffect(() => {
     if (!isServicesModalOpen) return;
 
     const onKeyDown = (event: KeyboardEvent) => {
@@ -42,19 +61,9 @@ export default function ServicesSectionModal({ services }: { services: Service[]
 
   return (
     <>
-      <section id="contacto" className="space-y-4">
-        <div className="panel relative rounded-2xl border border-[#f5b21b]/25 bg-black/40 backdrop-blur-md p-5 sm:p-6">
-          <div aria-hidden="true" className="pointer-events-none absolute inset-0 rounded-2xl bg-[radial-gradient(circle_at_18%_20%,rgba(245,178,27,0.14),transparent_45%),radial-gradient(circle_at_82%_72%,rgba(239,31,45,0.08),transparent_42%)]" />
-          <div className="relative flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-            <div>
-              <h2 className="section-title">Nuestros Servicios</h2>
-              <p className="mt-2 max-w-3xl text-sm text-zinc-300 sm:text-base">Promoción, entrevistas, cobertura, contenido digital y espacios publicitarios para artistas, marcas y eventos urbanos.</p>
-            </div>
-            <button ref={servicesTriggerRef} type="button" onClick={() => setIsServicesModalOpen(true)} className="btn-gold shrink-0">Ver servicios</button>
-          </div>
-        </div>
-      </section>
-
+      <button ref={servicesTriggerRef} type="button" onClick={() => setIsServicesModalOpen(true)} className="sr-only" tabIndex={-1} aria-hidden="true">
+        Abrir servicios
+      </button>
       {isServicesModalOpen ? (
         <div className="fixed inset-0 z-[110] flex items-center justify-center bg-black/45 px-4 py-6 backdrop-blur-sm" onClick={closeServicesModal}>
           <div role="dialog" aria-modal="true" aria-labelledby="servicios-modal-title" className="panel relative w-full max-w-[980px] max-h-[85vh] overflow-y-auto rounded-2xl border border-[#f5b21b]/30 bg-black/45 backdrop-blur-lg p-5 sm:p-7" onClick={(event) => event.stopPropagation()}>
