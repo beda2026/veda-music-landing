@@ -73,6 +73,29 @@ function parseSearchJson(raw: string): { results?: unknown } | null {
   }
 }
 
+function recoverLooseSearchResults(raw: string): SearchResult[] {
+  const text = raw.trim();
+
+  const titleMatch = text.match(/"title"\s*:\s*"([^"]+)"/);
+  const typeMatch = text.match(/"type"\s*:\s*"([^"]+)"/);
+  const sourceMatch = text.match(/"source"\s*:\s*"([^"]+)"/);
+  const snippetMatch = text.match(/"snippet"\s*:\s*"([^"]+)"/);
+  const urlMatch = text.match(/"url"\s*:\s*"([^"]+)"/);
+  const imageMatch = text.match(/"image"\s*:\s*"([^"]*)"/);
+
+  const title = titleMatch?.[1]?.trim() ?? '';
+  const rawType = typeMatch?.[1]?.trim() ?? 'other';
+  const type = allowedTypes.has(rawType) ? rawType : 'other';
+  const source = sourceMatch?.[1]?.trim() ?? 'Web';
+  const snippet = snippetMatch?.[1]?.trim() ?? '';
+  const url = urlMatch?.[1]?.trim() ?? '';
+  const image = imageMatch?.[1]?.trim() || undefined;
+
+  if (!title || !snippet) return [];
+
+  return [{ title, type, source, snippet, url, image }];
+}
+
 function normalizeQuery(value: string | null): string {
   return (value ?? '').replace(/\s+/g, ' ').trim();
 }
@@ -144,6 +167,7 @@ Devuelve máximo 5 resultados.`,
           format: {
             type: 'json_schema',
             name: 'artist_search_results',
+            strict: true,
             schema: {
               type: 'object',
               properties: {
@@ -153,7 +177,10 @@ Devuelve máximo 5 resultados.`,
                     type: 'object',
                     properties: {
                       title: { type: 'string' },
-                      type: { type: 'string' },
+                      type: {
+                        type: 'string',
+                        enum: ['artist', 'video', 'article', 'social', 'other'],
+                      },
                       source: { type: 'string' },
                       snippet: { type: 'string' },
                       url: { type: 'string' },
@@ -196,6 +223,18 @@ Devuelve máximo 5 resultados.`,
     const parsed = parseSearchJson(outputText);
 
     if (!parsed) {
+      const recoveredResults = recoverLooseSearchResults(outputText);
+
+      if (recoveredResults.length > 0) {
+        console.warn('[artist-search] Recovered loose JSON result from Responses API', {
+          model,
+          query,
+          outputLength: outputText.length,
+        });
+
+        return NextResponse.json({ ok: true, query, results: recoveredResults });
+      }
+
       console.error('[artist-search] Invalid JSON returned by Responses API', {
         model,
         query,
