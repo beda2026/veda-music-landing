@@ -5,7 +5,7 @@ import Image from 'next/image';
 
 type Position = { x: number; y: number };
 
-const POSITION_STORAGE_KEY = 'veda-floating-avatar-position-v4';
+const POSITION_STORAGE_KEY = 'veda-floating-avatar-position-left-v1';
 const TOOLTIP_TEXT = 'Ey, chequea los auspicios que apoyan el movimiento.';
 
 const DESKTOP_SIZE = 96;
@@ -26,9 +26,9 @@ function getAvatarSize() {
 
 function getSafeInitialPosition(): Position {
   if (isMobileViewport()) {
-    return { x: window.innerWidth - 120, y: window.innerHeight - 240 };
+    return { x: 18, y: window.innerHeight - 240 };
   }
-  return { x: window.innerWidth - 150, y: window.innerHeight - 260 };
+  return { x: 32, y: window.innerHeight - 260 };
 }
 
 function clampPosition(raw: Position, avatarSize: number): Position {
