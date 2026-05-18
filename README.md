@@ -63,3 +63,14 @@ Si no usas Supabase, configura:
 - `KV_REST_API_TOKEN`
 
 La API usará `INCR visits:home` para mantener el total persistente en Redis.
+
+
+## Email / Formularios
+
+Configura estas variables en Vercel:
+
+- `RESEND_API_KEY`
+- `VEDA_CONTACT_TO_EMAIL=vedamusicpr@gmail.com`
+- `VEDA_CONTACT_FROM_EMAIL=V.E.D.A. Music <onboarding@resend.dev>`
+
+Nota: para producción final, se recomienda verificar un dominio propio en Resend y cambiar `VEDA_CONTACT_FROM_EMAIL` a un correo del dominio oficial.
