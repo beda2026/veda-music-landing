@@ -83,3 +83,17 @@ Variables requeridas:
 
 - `OPENAI_API_KEY`
 - `OPENAI_MODEL=gpt-5-mini`
+
+## Security Baseline
+
+Se aplicó una capa básica de seguridad para producción sin alterar el diseño ni el flujo principal:
+
+- **Headers globales**: `X-Frame-Options`, `X-Content-Type-Options`, `Referrer-Policy`, `Permissions-Policy`, `X-DNS-Prefetch-Control` y `Content-Security-Policy` compatibles con YouTube y Resend.
+- **Rate limit básico**: límites por IP en `POST /api/contact` y `POST /api/subscribe` (5 requests por 10 minutos).
+- **Honeypot anti-spam**: campo oculto `company` en formularios de contacto y suscripción con respuesta segura silenciosa.
+- **Secretos server-side**: `RESEND_API_KEY` solo en servidor (nunca usar `NEXT_PUBLIC_RESEND_API_KEY`).
+
+Recomendación futura:
+
+- Verificar dominio propio en Resend para envío estable de correos.
+- Migrar el rate limit en memoria a una capa persistente (ej. Redis/KV) si sube el tráfico.

@@ -37,6 +37,7 @@ export default function CommercialContactForm({ showTrigger = true }: { showTrig
   const [telefono, setTelefono] = useState('');
   const [tipo, setTipo] = useState('');
   const [mensaje, setMensaje] = useState('');
+  const [company, setCompany] = useState('');
   const [error, setError] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -137,6 +138,7 @@ export default function CommercialContactForm({ showTrigger = true }: { showTrig
           telefono: telefono.trim(),
           tipo: tipo.trim(),
           mensaje: mensaje.trim(),
+          company: company.trim(),
         }),
       });
 
@@ -148,6 +150,7 @@ export default function CommercialContactForm({ showTrigger = true }: { showTrig
         setTelefono('');
         setTipo('');
         setMensaje('');
+        setCompany('');
         setSuccessMessage('Solicitud enviada. Te responderemos por email en horario laboral.');
       } else {
         setError('No se pudo enviar la solicitud. Inténtalo nuevamente.');
@@ -199,6 +202,17 @@ export default function CommercialContactForm({ showTrigger = true }: { showTrig
 
             <form onSubmit={onSubmit} className="mt-5">
               <div className="grid gap-4 md:grid-cols-2">
+
+              <input
+                type="text"
+                name="company"
+                tabIndex={-1}
+                autoComplete="off"
+                value={company}
+                onChange={(e) => setCompany(e.target.value)}
+                className="hidden"
+                aria-hidden="true"
+              />
                 <label className="space-y-2 text-sm text-zinc-200">
                   <span>Nombre *</span>
                   <input required value={nombre} onChange={(e) => setNombre(e.target.value)} className="w-full rounded-xl border border-zinc-700 bg-black/35 backdrop-blur-md px-4 py-2.5 text-zinc-100 outline-none transition focus:border-[#ef1f2d]" />

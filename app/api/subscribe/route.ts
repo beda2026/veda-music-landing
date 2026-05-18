@@ -1,13 +1,33 @@
 import { NextResponse } from 'next/server';
 import { escapeHtml, sendVedaEmail } from '@/lib/server/email';
+import { checkRateLimit, getClientIp } from '@/lib/server/rate-limit';
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-const MAX_EMAIL_LENGTH = 254;
+const MAX_EMAIL_LENGTH = 180;
+const RATE_LIMIT_MAX = 5;
+const RATE_LIMIT_WINDOW_MS = 10 * 60 * 1000;
 
 export async function POST(request: Request) {
+  const contentType = request.headers.get('content-type') || '';
+  if (!contentType.toLowerCase().includes('application/json')) {
+    return NextResponse.json({ ok: false, error: 'Invalid content type.' }, { status: 415 });
+  }
+
+  const ip = getClientIp(request);
+  const rateLimitKey = `subscribe:${ip}`;
+  const rateLimit = checkRateLimit(rateLimitKey, RATE_LIMIT_MAX, RATE_LIMIT_WINDOW_MS);
+  if (!rateLimit.allowed) {
+    return NextResponse.json({ ok: false, error: 'Too many requests. Try again later.' }, { status: 429 });
+  }
+
   try {
     const body = await request.json();
     const email = typeof body?.email === 'string' ? body.email.trim() : '';
+    const company = typeof body?.company === 'string' ? body.company.trim() : '';
+
+    if (company) {
+      return NextResponse.json({ ok: true });
+    }
 
     if (!email) {
       return NextResponse.json({ ok: false, error: 'El email es obligatorio.' }, { status: 400 });
@@ -31,11 +51,7 @@ export async function POST(request: Request) {
     });
 
     return NextResponse.json({ ok: true });
-  } catch (error) {
-    if (error instanceof Error && error.message.includes('RESEND_API_KEY')) {
-      return NextResponse.json({ ok: false, error: error.message }, { status: 500 });
-    }
-
+  } catch {
     return NextResponse.json({ ok: false, error: 'No se pudo enviar la suscripción.' }, { status: 500 });
   }
 }
