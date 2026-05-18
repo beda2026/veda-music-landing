@@ -9,7 +9,7 @@ type SearchResult = {
   image?: string;
 };
 
-const SEARCH_PROMPT = 'Busca información pública reciente sobre el artista o tema consultado para una plataforma editorial de entretenimiento urbano. Devuelve resultados breves, seguros y útiles: título, tipo, fuente, resumen, url e imagen si está disponible. No inventes datos. Si no hay resultados confiables, devuelve lista vacía. Si no hay imagen disponible para un resultado, devuelve image como string vacío "".';
+const SEARCH_PROMPT = 'Busca información pública reciente sobre el artista o tema consultado para una plataforma editorial de entretenimiento urbano. Devuelve resultados breves, seguros y útiles: título, tipo, fuente, resumen, url e imagen si está disponible. No inventes datos. No uses markdown. No uses comentarios. No uses texto antes o después del JSON. El campo type debe ser uno de: artist, video, article, social, other. Si no hay resultados confiables, devuelve {"results":[]}. Si no hay imagen disponible para un resultado, devuelve image como string vacío "".';
 const allowedTypes = new Set(['artist', 'video', 'article', 'social', 'other']);
 
 
@@ -46,6 +46,31 @@ function extractOutputText(data: ResponsesApiOutput): string | null {
   }
 
   return null;
+}
+
+
+function parseSearchJson(raw: string): { results?: unknown } | null {
+  const cleaned = raw
+    .trim()
+    .replace(/^```json/i, '')
+    .replace(/^```/i, '')
+    .replace(/```$/i, '')
+    .trim();
+
+  try {
+    return JSON.parse(cleaned) as { results?: unknown };
+  } catch {
+    const start = cleaned.indexOf('{');
+    const end = cleaned.lastIndexOf('}');
+    if (start >= 0 && end > start) {
+      try {
+        return JSON.parse(cleaned.slice(start, end + 1)) as { results?: unknown };
+      } catch {
+        return null;
+      }
+    }
+    return null;
+  }
 }
 
 function normalizeQuery(value: string | null): string {
@@ -108,7 +133,11 @@ export async function GET(request: NextRequest) {
           },
           {
             role: 'user',
-            content: `Consulta: ${query}. Devuelve únicamente JSON con {"results": [...]}.`,
+            content: `Consulta: ${query}. Devuelve únicamente JSON válido. No uses markdown. No uses bloque de código. No añadas texto fuera del JSON. Usa este formato exacto:
+{"results":[{"title":"","type":"artist|video|article|social|other","source":"","snippet":"","url":"","image":""}]}
+
+Si no hay imagen disponible, usa image como string vacío "".
+Devuelve máximo 5 resultados.`,
           },
         ],
         text: {
@@ -164,19 +193,25 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ ok: false, error: 'No se pudo completar la búsqueda ahora mismo.' }, { status: 502 });
     }
 
-    try {
-      const parsed = JSON.parse(outputText) as { results?: unknown };
-      const results = sanitizeResults(parsed.results);
+    const parsed = parseSearchJson(outputText);
 
-      return NextResponse.json({ ok: true, query, results });
-    } catch {
+    if (!parsed) {
       console.error('[artist-search] Invalid JSON returned by Responses API', {
         model,
         query,
+        outputLength: outputText.length,
         outputPreview: outputText.slice(0, 500),
       });
-      return NextResponse.json({ ok: false, error: 'No se pudo completar la búsqueda ahora mismo.' }, { status: 502 });
+
+      return NextResponse.json(
+        { ok: false, error: 'No se pudo completar la búsqueda ahora mismo.' },
+        { status: 502 }
+      );
     }
+
+    const results = sanitizeResults(parsed.results);
+
+    return NextResponse.json({ ok: true, query, results });
   } catch (error) {
     console.error('[artist-search] Unexpected search error', {
       model,
