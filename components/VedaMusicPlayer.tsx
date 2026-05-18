@@ -5,26 +5,18 @@ import { vedaStations } from '@/lib/veda-player';
 
 const SPOTIFY_EMBED_URL =
   'https://open.spotify.com/embed/playlist/5EOsQIRYI2Ily29tygRg7T?utm_source=generator&theme=0';
-const YOUTUBE_PLAYLIST_ID = 'PON_AQUI_EL_ID_DE_LA_PLAYLIST';
-const YOUTUBE_VIDEO_ID = 'PON_AQUI_EL_ID_DEL_VIDEO';
+const YOUTUBE_PLAYLIST_ID = "PL2Gc984KWtBqx0UsuUezfm9-Oz0xUQ1ry";
+const YOUTUBE_VIDEO_ID = "iY-7SWY_iMQ";
 
-type PlayerSource = 'spotify' | 'youtube';
+type PlayerSource = 'radio' | 'youtube';
 
-function getYouTubeEmbedUrl() {
-  if (YOUTUBE_PLAYLIST_ID && YOUTUBE_PLAYLIST_ID !== 'PON_AQUI_EL_ID_DE_LA_PLAYLIST') {
-    return `https://www.youtube.com/embed/videoseries?list=${YOUTUBE_PLAYLIST_ID}`;
-  }
-
-  if (YOUTUBE_VIDEO_ID && YOUTUBE_VIDEO_ID !== 'PON_AQUI_EL_ID_DEL_VIDEO') {
-    return `https://www.youtube.com/embed/${YOUTUBE_VIDEO_ID}`;
-  }
-
-  return 'https://www.youtube.com/embed/videoseries?list=PON_AQUI_EL_ID_DE_LA_PLAYLIST';
-}
+const YOUTUBE_EMBED_URL = YOUTUBE_VIDEO_ID
+  ? `https://www.youtube.com/embed/${YOUTUBE_VIDEO_ID}?list=${YOUTUBE_PLAYLIST_ID}`
+  : `https://www.youtube.com/embed/videoseries?list=${YOUTUBE_PLAYLIST_ID}`;
 
 export default function VedaMusicPlayer() {
   const [isPlayerOpen, setIsPlayerOpen] = useState(false);
-  const [activeSource, setActiveSource] = useState<PlayerSource>('spotify');
+  const [activeSource, setActiveSource] = useState<PlayerSource>('radio');
 
   const togglePlayerEmbed = () => {
     setIsPlayerOpen((prev) => !prev);
@@ -63,15 +55,15 @@ export default function VedaMusicPlayer() {
               <div className="inline-flex rounded-full border border-yellow-500/30 bg-black/55 p-1">
                 <button
                   type="button"
-                  onClick={() => setActiveSource('spotify')}
+                  onClick={() => setActiveSource('radio')}
                   className={`rounded-full px-3 py-1 text-[11px] font-semibold tracking-wide transition md:text-xs ${
-                    activeSource === 'spotify'
+                    activeSource === 'radio'
                       ? 'bg-yellow-500/20 text-yellow-100'
                       : 'text-zinc-300 hover:text-yellow-100'
                   }`}
-                  aria-pressed={activeSource === 'spotify'}
+                  aria-pressed={activeSource === 'radio'}
                 >
-                  Spotify
+                  Radio
                 </button>
                 <button
                   type="button"
@@ -83,16 +75,16 @@ export default function VedaMusicPlayer() {
                   }`}
                   aria-pressed={activeSource === 'youtube'}
                 >
-                  YouTube Music
+                  YouTube
                 </button>
               </div>
             </div>
 
             {isPlayerOpen ? (
               <div className="max-w-full overflow-hidden rounded-2xl border border-yellow-400/25 bg-gradient-to-br from-zinc-950/95 via-zinc-900/90 to-black/95 p-1 shadow-[0_0_20px_rgba(245,158,11,.16)] backdrop-blur-md">
-                {activeSource === 'spotify' ? (
+                {activeSource === 'radio' ? (
                   <iframe
-                    title="Spotify embedded player"
+                    title="Radio embedded player"
                     src={SPOTIFY_EMBED_URL}
                     width="100%"
                     height="352"
@@ -104,7 +96,7 @@ export default function VedaMusicPlayer() {
                 ) : (
                   <iframe
                     title="VEDA Music YouTube player"
-                    src={getYouTubeEmbedUrl()}
+                    src={YOUTUBE_EMBED_URL}
                     width="100%"
                     height="352"
                     frameBorder="0"
@@ -121,7 +113,7 @@ export default function VedaMusicPlayer() {
 
         {/* Conservamos la data de plataformas para uso futuro, sin render visible por ahora. */}
         <span className="sr-only">{vedaStations.length} estaciones cargadas para futuras versiones.</span>
-        <span className="sr-only">Plataformas preparadas: Spotify, Apple Music, YouTube Music y SoundCloud.</span>
+        <span className="sr-only">Plataformas preparadas: Radio, Apple Music, YouTube y SoundCloud.</span>
       </div>
     </section>
   );
