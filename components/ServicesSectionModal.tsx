@@ -21,7 +21,7 @@ export default function ServicesSectionModal({ services }: { services: Service[]
     const openServicesModal = () => setIsServicesModalOpen(true);
 
     const openFromHash = () => {
-      if (window.location.hash === '#servicios' || window.location.hash === '#contacto') {
+      if (window.location.hash === '#servicios') {
         setIsServicesModalOpen(true);
       }
     };
