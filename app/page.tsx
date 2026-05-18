@@ -79,6 +79,12 @@ const brandPartners: ReadonlyArray<{
     image: '/assets/auspicios/taimory-music-logo.webp.jpg',
     logoClassName: 'object-contain object-center',
   },
+  {
+    name: 'Aragonés Music',
+    image: '/assets/auspicios/aragones-music-logo.webp.jpg',
+    href: 'https://www.instagram.com/ag_laoreja_qno_falla/',
+    logoClassName: 'object-contain object-center',
+  },
 ] as const;
 
 function SocialIcon({ icon }: { icon: (typeof socialLinks)[number]['icon'] }) {
