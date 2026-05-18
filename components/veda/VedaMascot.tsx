@@ -8,6 +8,7 @@ import { useGSAP } from '@gsap/react';
 gsap.registerPlugin(useGSAP);
 
 type Pose = 'idle' | 'wave' | 'point' | 'pointRight' | 'pointDown' | 'laugh' | 'troll' | 'mock' | 'dance' | 'clap' | 'celebrate';
+type MascotVisualState = 'idle' | 'hover' | 'dragging';
 
 const poseImageMap: Record<Pose, string> = {
   idle: '/assets/avatars/veda-avatar-listen.png',
@@ -23,7 +24,7 @@ const poseImageMap: Record<Pose, string> = {
   celebrate: '/assets/avatars/veda-avatar-celebrate.png',
 };
 
-const hoverPoses: Pose[] = ['troll', 'mock', 'laugh', 'point', 'pointRight'];
+const HOVER_POSE: Pose = 'point';
 const celebrationPoses: Pose[] = ['dance', 'clap', 'celebrate'];
 
 const speechBubbles = [
@@ -37,9 +38,6 @@ const SCREEN_MARGIN = 12;
 const DRAG_THRESHOLD = 6;
 
 type Position = { x: number; y: number };
-
-const HOVER_BUBBLE_DELAY_MS = 300;
-const HOVER_BUBBLE_HIDE_DELAY_MS = 180;
 
 const clickSpeechBubbles = ['Pregunta por tu espacio.', 'Tu marca puede montarse aquí.', 'Activa tu auspicio con VEDA.'];
 
@@ -64,8 +62,8 @@ export function VedaMascot() {
   const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
   const [position, setPosition] = useState<Position | null>(null);
   const [isDragging, setIsDragging] = useState(false);
-  const hoverShowTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const hoverHideTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const [isHovering, setIsHovering] = useState(false);
+  const [visualState, setVisualState] = useState<MascotVisualState>('idle');
 
   const clampPosition = useCallback((nextX: number, nextY: number): Position => {
     if (!containerRef.current) return { x: nextX, y: nextY };
@@ -147,19 +145,6 @@ export function VedaMascot() {
     { scope: containerRef, dependencies: [prefersReducedMotion, isDragging] }
   );
 
-  const playHoverAnimation = contextSafe(() => {
-    if (!mascotRef.current || prefersReducedMotion) return;
-
-    // Quick shake/bounce on hover
-    gsap.to(mascotRef.current, {
-      x: -4,
-      duration: 0.1,
-      repeat: 5,
-      yoyo: true,
-      ease: 'power2.inOut',
-    });
-  });
-
   const playClickAnimation = contextSafe(() => {
     if (!mascotRef.current || prefersReducedMotion) return;
 
@@ -228,34 +213,22 @@ export function VedaMascot() {
   });
 
   const handleMouseEnter = () => {
-    if (hoverHideTimerRef.current) clearTimeout(hoverHideTimerRef.current);
-    if (hoverShowTimerRef.current) clearTimeout(hoverShowTimerRef.current);
     if (isDragging) return;
-    playHoverAnimation();
-
-    // Random hover pose
-    const randomPose = hoverPoses[Math.floor(Math.random() * hoverPoses.length)];
-    setCurrentPose(randomPose);
-
-    // Show speech bubble with random text
+    setIsHovering(true);
+    setCurrentPose(HOVER_POSE);
     setBubbleText(speechBubbles[0]);
-    hoverShowTimerRef.current = setTimeout(() => {
-      setShowBubble(true);
-      playBubbleAnimation();
-    }, HOVER_BUBBLE_DELAY_MS);
+    setShowBubble(true);
+    playBubbleAnimation();
   };
 
   const handleMouseLeave = () => {
-    if (hoverShowTimerRef.current) clearTimeout(hoverShowTimerRef.current);
-    if (hoverHideTimerRef.current) clearTimeout(hoverHideTimerRef.current);
-    hoverHideTimerRef.current = setTimeout(() => {
-      setCurrentPose('idle');
-      if (prefersReducedMotion) {
-        setShowBubble(false);
-        return;
-      }
-      hideBubbleAnimation();
-    }, HOVER_BUBBLE_HIDE_DELAY_MS);
+    setIsHovering(false);
+    setCurrentPose('idle');
+    if (prefersReducedMotion) {
+      setShowBubble(false);
+      return;
+    }
+    hideBubbleAnimation();
   };
 
   const handleClick = () => {
@@ -305,6 +278,9 @@ export function VedaMascot() {
       offsetY: e.clientY - containerRect.top,
     };
     e.currentTarget.setPointerCapture(e.pointerId);
+    setIsHovering(false);
+    setShowBubble(false);
+    setCurrentPose('idle');
     setIsDragging(true);
   };
 
@@ -334,31 +310,28 @@ export function VedaMascot() {
         window.localStorage.setItem(POSITION_STORAGE_KEY, JSON.stringify(finalPosition));
       }
     }
+    if (mascotRef.current?.matches(':hover')) {
+      setIsHovering(true);
+      setCurrentPose(HOVER_POSE);
+      setBubbleText(speechBubbles[0]);
+      setShowBubble(true);
+    } else {
+      setIsHovering(false);
+      setCurrentPose('idle');
+    }
   };
 
-  // Subtle parallax effect on mouse move
   useEffect(() => {
-    const handleMouseMove = (e: MouseEvent) => {
-      if (!containerRef.current || prefersReducedMotion || isDragging) return;
-
-      const rect = containerRef.current.getBoundingClientRect();
-      const centerX = rect.left + rect.width / 2;
-      const centerY = rect.top + rect.height / 2;
-
-      const distX = (e.clientX - centerX) * 0.02;
-      const distY = (e.clientY - centerY) * 0.02;
-
-      gsap.to(containerRef.current, {
-        x: distX,
-        y: distY,
-        duration: 0.5,
-        overwrite: 'auto',
-      });
-    };
-
-    window.addEventListener('mousemove', handleMouseMove);
-    return () => window.removeEventListener('mousemove', handleMouseMove);
-  }, [isDragging, prefersReducedMotion]);
+    if (isDragging) {
+      setVisualState('dragging');
+      return;
+    }
+    if (isHovering) {
+      setVisualState('hover');
+      return;
+    }
+    setVisualState('idle');
+  }, [isDragging, isHovering]);
 
   useEffect(() => {
     const handleResize = () => {
@@ -372,13 +345,6 @@ export function VedaMascot() {
     return () => window.removeEventListener('resize', handleResize);
   }, [clampPosition]);
 
-  useEffect(() => {
-    return () => {
-      if (hoverShowTimerRef.current) clearTimeout(hoverShowTimerRef.current);
-      if (hoverHideTimerRef.current) clearTimeout(hoverHideTimerRef.current);
-    };
-  }, []);
-
   return (
     <div
       ref={containerRef}
@@ -389,6 +355,7 @@ export function VedaMascot() {
               left: `${position.x}px`,
               top: `${position.y}px`,
               userSelect: isDragging ? 'none' : 'auto',
+              transition: isDragging ? 'none' : 'left 180ms ease, top 180ms ease',
             }
           : { visibility: 'hidden' }
       }
@@ -423,6 +390,7 @@ export function VedaMascot() {
         onPointerUp={(e) => stopDragging(e.pointerId)}
         onPointerCancel={(e) => stopDragging(e.pointerId)}
         aria-label="V.E.D.A. Music avatar"
+        data-avatar-state={visualState}
         className="relative flex h-20 w-20 items-center justify-center rounded-full transition-shadow duration-300 hover:drop-shadow-[0_0_12px_rgba(245,178,27,0.4)] sm:h-28 sm:w-28 lg:h-32 lg:w-32"
         style={{
           filter: 'drop-shadow(0 4px 16px rgba(0, 0, 0, 0.3)) drop-shadow(0 0 8px rgba(245, 178, 27, 0.2))',
