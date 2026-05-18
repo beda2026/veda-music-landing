@@ -9,7 +9,7 @@ import VedaGsapEffects from '@/components/VedaGsapEffects';
 import FeaturedInterviewCard from '@/components/FeaturedInterviewCard';
 import LatestVideosSection from '@/components/LatestVideosSection';
 
-const navLinks = ['Inicio', 'Noticias', 'Música', 'Videos', 'Artistas', 'Entrevistas', 'Nosotros', 'Contacto'];
+const navLinks = ['Noticias', 'Música', 'Videos', 'Artistas', 'Entrevistas', 'Nosotros', 'Contacto'] as const;
 const socialLinks = [
   { name: 'Spotify', icon: 'spotify' },
   { name: 'YouTube', icon: 'youtube' },
@@ -123,7 +123,7 @@ export default function HomePage() {
           </div>
         </section>
 
-        <div className="panel mb-4 flex flex-col gap-3 rounded-2xl p-3 lg:flex-row lg:items-center lg:justify-between">
+        <div id="noticias" className="panel mb-4 flex flex-col gap-3 rounded-2xl p-3 lg:flex-row lg:items-center lg:justify-between">
           <div className="flex items-center gap-3 text-sm">
             <span className="rounded-full bg-[#ef1f2d] px-3 py-1 font-semibold text-white">TRENDING</span>
             <p className="text-zinc-300">Eladio Carrión llevó CORSA al Coliseo de Puerto Rico · LIT Killah ft. Paulo Londra, Khea y Ramma – Si Te Vas 2.0 · Kris R – Lindos Recuerdos</p>
@@ -135,14 +135,42 @@ export default function HomePage() {
           <div>
             <p className="text-3xl font-black leading-none text-zinc-50">V.E.D.A.</p>
             <p className="text-xl font-bold tracking-[0.3em] text-[#f5b21b]">MUSIC</p>
-            <p className="mt-1 text-xs uppercase text-zinc-400">Videos · Entrevistas · Descubrimiento · Artistas</p>
+            <p className="mt-2 flex flex-wrap items-center gap-x-2 gap-y-1 text-[11px] font-medium uppercase tracking-[0.16em] text-zinc-400">
+              <a href="#videos" className="transition hover:text-[#c9a67a]">Videos</a>
+              <span className="text-zinc-600">·</span>
+              <a href="#entrevistas" className="transition hover:text-[#c9a67a]">Entrevistas</a>
+              <span className="text-zinc-600">·</span>
+              <a href="#artistas-destacados" className="transition hover:text-[#c9a67a]">Descubriendo</a>
+              <span className="text-zinc-600">·</span>
+              <Link href="/artistas" className="transition hover:text-[#c9a67a]">Artistas</Link>
+            </p>
           </div>
           <nav className="hide-scrollbar -mx-2 flex gap-3 overflow-x-auto px-2 text-sm font-medium text-zinc-200 lg:flex-wrap lg:overflow-visible">
-            {navLinks.map((link) => (
-              <a key={link} href={link === 'Inicio' ? '#' : link === 'Contacto' ? '#contacto' : link === 'Nosotros' ? '#sobre-nosotros' : link === 'Artistas' ? '/artistas' : `#${link.toLowerCase()}`} className="whitespace-nowrap rounded-full border border-zinc-700 px-3 py-1.5 transition hover:border-[#ef1f2d] hover:text-white">
-                {link}
-              </a>
-            ))}
+            {navLinks.map((link) => {
+              const hrefMap: Record<(typeof navLinks)[number], string> = {
+                Noticias: '#noticias',
+                Música: '#musica',
+                Videos: '#videos',
+                Artistas: '/artistas',
+                Entrevistas: '#entrevistas',
+                Nosotros: '#sobre-nosotros',
+                Contacto: '#contacto',
+              };
+
+              if (hrefMap[link].startsWith('/')) {
+                return (
+                  <Link key={link} href={hrefMap[link]} className="whitespace-nowrap rounded-full border border-zinc-700 px-3 py-1.5 transition hover:border-[#8f2d37] hover:text-white">
+                    {link}
+                  </Link>
+                );
+              }
+
+              return (
+                <a key={link} href={hrefMap[link]} className="whitespace-nowrap rounded-full border border-zinc-700 px-3 py-1.5 transition hover:border-[#8f2d37] hover:text-white">
+                  {link}
+                </a>
+              );
+            })}
           </nav>
           <button type="button" className="self-start rounded-full border border-zinc-700 px-4 py-2 text-zinc-300 transition hover:border-[#f5b21b]">
             ⌕
@@ -264,7 +292,7 @@ export default function HomePage() {
           <a href="#contacto" className="btn-gold">Más información</a>
         </section>
 
-        <section className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_340px]">
+        <section id="musica" className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_340px]">
           <div className="panel rounded-2xl p-5">
             <h2 className="section-title mb-4">Estrenos / Música Nueva</h2>
             <div className="space-y-3">
@@ -388,7 +416,7 @@ export default function HomePage() {
           </div>
         </section>
       </main>
-      <footer className="border-t border-zinc-800 bg-black/45 backdrop-blur-sm">
+      <footer id="sobre-nosotros" className="border-t border-zinc-800 bg-black/45 backdrop-blur-sm">
         <div className="mx-auto grid w-full max-w-[1400px] gap-6 px-4 py-10 sm:px-6 lg:grid-cols-3 lg:px-10">
           <div>
             <h2 className="text-2xl font-black text-zinc-100">V.E.D.A. MUSIC</h2>
