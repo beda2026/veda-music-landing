@@ -1,41 +1,46 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
+
+const SESSION_KEY = 'veda-music-visit-counted';
+const SESSION_LOCK_KEY = 'veda-music-visit-counted-lock';
 
 export default function VisitCounter() {
   const [mounted, setMounted] = useState(false);
   const [visits, setVisits] = useState(0);
-  const countedRef = useRef(false);
 
   useEffect(() => {
     let active = true;
 
-    const registerVisit = async () => {
-      if (countedRef.current) return;
-      countedRef.current = true;
+    async function updateViews() {
+      const alreadyCounted = sessionStorage.getItem(SESSION_KEY) === '1';
+      const countLocked = sessionStorage.getItem(SESSION_LOCK_KEY) === '1';
+      const shouldCountVisit = !alreadyCounted && !countLocked;
+      const method = shouldCountVisit ? 'POST' : 'GET';
+
+      if (shouldCountVisit) sessionStorage.setItem(SESSION_LOCK_KEY, '1');
 
       try {
         const response = await fetch('/api/visits', {
-          method: 'POST',
+          method,
           cache: 'no-store',
+          headers: method === 'POST' ? { 'Content-Type': 'application/json' } : undefined,
         });
 
-        if (!response.ok) return;
-
-        const data = (await response.json()) as { views?: number };
-        if (active && typeof data.views === 'number') {
-          setVisits(data.views);
+        if (response.ok) {
+          const data = (await response.json()) as { views?: number };
+          if (typeof data.views === 'number' && active) setVisits(data.views);
+          if (method === 'POST') sessionStorage.setItem(SESSION_KEY, '1');
         }
       } catch {
-        // Do not block page rendering if counter backend fails.
+        // Silent fallback to avoid breaking the landing page UI.
       } finally {
-        if (active) {
-          setMounted(true);
-        }
+        sessionStorage.removeItem(SESSION_LOCK_KEY);
+        if (active) setMounted(true);
       }
-    };
+    }
 
-    registerVisit();
+    updateViews();
 
     return () => {
       active = false;
