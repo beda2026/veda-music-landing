@@ -1,11 +1,12 @@
 'use client';
 
 import { PointerEvent, useCallback, useEffect, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import Image from 'next/image';
 
 type Position = { x: number; y: number };
 
-const POSITION_STORAGE_KEY = 'veda-floating-avatar-position-v4';
+const POSITION_STORAGE_KEY = 'veda-floating-avatar-position-v5';
 const TOOLTIP_TEXT = 'Ey, chequea los auspicios que apoyan el movimiento.';
 
 const DESKTOP_SIZE = 96;
@@ -25,9 +26,6 @@ function getAvatarSize() {
 }
 
 function getSafeInitialPosition(): Position {
-  if (isMobileViewport()) {
-    return { x: window.innerWidth - 120, y: window.innerHeight - 240 };
-  }
   return { x: window.innerWidth - 150, y: window.innerHeight - 260 };
 }
 
@@ -52,15 +50,13 @@ function getValidatedPosition(avatarSize: number): Position {
     if (typeof parsed.x !== 'number' || typeof parsed.y !== 'number') {
       return fallback;
     }
-    const clamped = clampPosition(parsed, avatarSize);
-    const movedByClamp = clamped.x !== parsed.x || clamped.y !== parsed.y;
-    return movedByClamp ? fallback : clamped;
+    return clampPosition(parsed, avatarSize);
   } catch {
     return fallback;
   }
 }
 
-export function VedaMascot() {
+function AvatarOverlay() {
   const [position, setPosition] = useState<Position | null>(null);
   const [avatarSize, setAvatarSize] = useState<number>(DESKTOP_SIZE);
   const [isDragging, setIsDragging] = useState(false);
@@ -145,15 +141,18 @@ export function VedaMascot() {
 
   return (
     <div
-      className="fixed z-[9999]"
       style={
         position
           ? {
+              position: 'fixed',
               left: `${position.x}px`,
               top: `${position.y}px`,
+              zIndex: 999999,
               width: `${avatarSize}px`,
               height: `${avatarSize}px`,
+              pointerEvents: 'auto',
               userSelect: 'none',
+              touchAction: 'none',
             }
           : { visibility: 'hidden' }
       }
@@ -162,6 +161,7 @@ export function VedaMascot() {
         <div
           className="pointer-events-none absolute rounded-xl border border-amber-300/30 bg-black/80 px-3 py-2 text-xs text-amber-100"
           style={{
+            position: 'absolute',
             bottom: 'calc(100% + 10px)',
             right: 0,
             maxWidth: '220px',
@@ -191,7 +191,7 @@ export function VedaMascot() {
         }}
       >
         <Image
-          src="/assets/avatars/veda-avatar-listen.png"
+          src="/assets/avatars/veda-avatar-idle.png"
           alt="V.E.D.A. Music mascot"
           fill
           priority
@@ -206,4 +206,14 @@ export function VedaMascot() {
       </button>
     </div>
   );
+}
+
+export function VedaMascot() {
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => setMounted(true), []);
+
+  if (!mounted) return null;
+
+  return createPortal(<AvatarOverlay />, document.body);
 }
