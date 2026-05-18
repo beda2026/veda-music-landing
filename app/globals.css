@@ -216,6 +216,16 @@ body {
 .btn-red { background: #ef1f2d; color: white; }
 .btn-gold { background: #f5b21b; color: #121212; }
 .btn-red:hover, .btn-gold:hover { filter: brightness(1.08); transform: translateY(-1px); }
+.gsap-button {
+  transition: transform .2s ease, box-shadow .2s ease, filter .2s ease;
+}
+.gsap-button:hover {
+  transform: scale(1.04);
+  box-shadow: 0 0 16px rgba(245, 178, 27, 0.22);
+}
+.gsap-button:active {
+  transform: scale(0.98);
+}
 
 .ad-box { border: 1px dashed rgba(255,255,255,0.18); background: rgba(17, 17, 17, 0.35); color: #a1a1aa; backdrop-filter: blur(14px); }
 .ad-space-labels {
@@ -239,6 +249,9 @@ body {
 .ad-space-labels::before {
   content: 'ESPACIO PUBLICITARIO';
   top: 0.65rem;
+}
+.gsap-ad-slot {
+  box-shadow: 0 0 0 1px rgba(245, 178, 27, 0.06), 0 0 22px rgba(245, 178, 27, 0.08);
 }
 .section-title { font-size: 1.6rem; font-weight: 800; color: #f8f8f8; }
 .social-clean { white-space: nowrap; }

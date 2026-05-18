@@ -4,7 +4,7 @@ import CommercialContactForm from '@/components/CommercialContactForm';
 import SubscribeForm from '@/components/SubscribeForm';
 import VideoThumbnail from '@/components/VideoThumbnail';
 import ServicesSectionModal from '@/components/ServicesSectionModal';
-import { VedaMascot } from '@/components/veda/VedaMascot';
+import VedaGsapEffects from '@/components/VedaGsapEffects';
 import Link from 'next/link';
 import { interviews, releases, services, topTen, videos } from '@/lib/veda-data';
 import { vedaArtists } from '@/lib/veda-artists';
@@ -106,8 +106,9 @@ function SocialButtons() {
 export default function HomePage() {
   return (
     <>
+      <VedaGsapEffects />
       <header className="mx-auto w-full max-w-[1400px] px-4 pt-6 sm:px-6 lg:px-10">
-        <section className="ad-box ad-space-labels mb-4 rounded-2xl p-4 sm:p-5 lg:min-h-[132px] lg:px-6">
+        <section className="ad-box ad-space-labels gsap-card gsap-ad-slot mb-4 rounded-2xl p-4 sm:p-5 lg:min-h-[132px] lg:px-6">
           <div className="flex items-center justify-center overflow-hidden rounded-xl border border-zinc-600/70 bg-black/45 backdrop-blur-md p-2 sm:p-3">
             <img
               src="/assets/mgf-vip-ad-728x90.png"
@@ -146,19 +147,19 @@ export default function HomePage() {
 
       <main className="mx-auto flex w-full max-w-[1400px] flex-col gap-8 px-4 py-8 sm:px-6 lg:px-10">
         <section className="grid gap-4 lg:grid-cols-[minmax(0,65fr)_minmax(0,35fr)] lg:items-stretch">
-          <article className="relative isolate overflow-hidden rounded-[2rem] border border-white/10 bg-black/30 p-5 shadow-[0_24px_80px_rgba(0,0,0,0.35)] backdrop-blur-xl lg:col-span-2 lg:p-7">
+          <article className="gsap-hero relative isolate overflow-hidden rounded-[2rem] border border-white/10 bg-black/30 p-5 shadow-[0_24px_80px_rgba(0,0,0,0.35)] backdrop-blur-xl lg:col-span-2 lg:p-7">
             <div className="pointer-events-none absolute inset-y-0 left-0 w-full bg-gradient-to-r from-black/55 via-black/25 to-transparent lg:w-2/3" aria-hidden="true" />
 
             <div className="relative grid items-center gap-8 lg:grid-cols-[1.05fr_0.95fr] lg:gap-10">
               <div className="z-10 py-2 lg:py-4">
-                <p className="mb-4 text-xs uppercase tracking-[0.25em] text-zinc-300">V.E.D.A. MUSIC · PUERTO RICO</p>
-                <h1 className="hero-title text-zinc-50">
+                <p className="gsap-hero-logo mb-4 text-xs uppercase tracking-[0.25em] text-zinc-300">V.E.D.A. MUSIC · PUERTO RICO</p>
+                <h1 className="hero-title gsap-headline text-zinc-50">
                   LA NUEVA PLATAFORMA <span className="urbana-accent">URBANA</span>
                 </h1>
                 <p className="mt-4 max-w-xl text-zinc-200">Videos, entrevistas, estrenos, fotos y todo lo que mueve la cultura urbana.</p>
                 <div className="mt-7 flex flex-wrap gap-3">
-                  <a href="#videos" className="btn-red">Ver lo más nuevo</a>
-                  <a href="#entrevistas" className="btn-gold">Explorar artistas</a>
+                  <a href="#videos" className="btn-red gsap-button">Ver lo más nuevo</a>
+                  <a href="#entrevistas" className="btn-gold gsap-button">Explorar artistas</a>
                 </div>
                 <div className="hero-strip mt-6">
                   <div className="px-[1px] text-xs uppercase tracking-[0.22em] text-zinc-300">
@@ -167,7 +168,7 @@ export default function HomePage() {
                 </div>
               </div>
 
-              <div className="relative h-[270px] overflow-hidden rounded-[1.5rem] border border-white/10 bg-black/20 shadow-[0_14px_45px_rgba(0,0,0,0.35)] sm:h-[320px] lg:h-[410px]">
+              <div className="gsap-hero-media relative h-[270px] overflow-hidden rounded-[1.5rem] border border-white/10 bg-black/20 shadow-[0_14px_45px_rgba(0,0,0,0.35)] sm:h-[320px] lg:h-[410px]">
                 <img
                   src="/assets/veda-music-hero-reggaeton-classics.png"
                   alt="Collage editorial de VEDA Music"
@@ -194,7 +195,7 @@ export default function HomePage() {
             </div>
           </article>
 
-          <article className="panel hover-card featured-card rounded-3xl p-4 lg:col-span-1 lg:max-h-[300px] lg:p-5">
+          <article className="panel hover-card featured-card gsap-card rounded-3xl p-4 lg:col-span-1 lg:max-h-[300px] lg:p-5">
             <span className="inline-block rounded-full border border-[#f5b21b] bg-[#f5b21b1a] px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-[0.12em] text-[#f5b21b]">ENTREVISTA · ESTRENO</span>
             <div className="featured-visual my-3 relative flex h-32 items-center justify-center overflow-hidden rounded-2xl border border-zinc-700 lg:h-28">
               <img
@@ -216,7 +217,7 @@ export default function HomePage() {
             </a>
           </article>
 
-          <aside className="ad-box ad-space-labels flex min-h-[280px] flex-col items-center justify-center rounded-3xl p-4 text-center lg:h-[300px] lg:min-h-[300px]">
+          <aside className="ad-box ad-space-labels gsap-card gsap-ad-slot flex min-h-[280px] flex-col items-center justify-center rounded-3xl p-4 text-center lg:h-[300px] lg:min-h-[300px]">
             <div
               className="relative block h-[250px] w-full max-w-[336px] overflow-hidden rounded-2xl border border-zinc-600/80 bg-black/40 backdrop-blur-md"
               aria-label="Dímelo Kombete sponsor banner"
@@ -237,7 +238,7 @@ export default function HomePage() {
           <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
             {videos.map((video) => {
               const card = (
-                <article className="panel hover-card rounded-2xl p-4 media-card">
+                <article className="panel hover-card gsap-card rounded-2xl p-4 media-card">
                   <VideoThumbnail title={video.title} thumbnail={video.thumbnail} fallbackThumbnail={video.fallbackThumbnail} />
                   <h3 className="font-semibold text-zinc-100">{video.title}</h3>
                   <p className="mt-1 text-sm text-zinc-400">{video.category}</p>
@@ -261,7 +262,7 @@ export default function HomePage() {
           <p className="text-sm text-zinc-300">Perfiles editoriales, trayectoria musical y figuras clave del movimiento urbano.</p>
           <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-5">
             {vedaArtists.map((artist) => (
-              <article key={artist.slug} className="panel hover-card rounded-2xl p-4 media-card">
+              <article key={artist.slug} className="panel hover-card gsap-card rounded-2xl p-4 media-card">
                 <div className="mb-3 h-36 overflow-hidden rounded-xl border border-zinc-700 bg-gradient-to-br from-black/45 via-red-950/15 to-yellow-950/10 backdrop-blur-md">
                   {artist.image ? (
                     <img src={artist.image} alt={artist.name} className="h-full w-full object-cover" />
@@ -284,7 +285,7 @@ export default function HomePage() {
           <h2 className="section-title">Entrevistas / Exclusivas</h2>
           <div className="grid gap-4 md:grid-cols-3">
             {interviews.map((item, idx) => (
-              <article key={item.title} className="panel hover-card rounded-2xl p-4 interview-card" data-idx={idx}>
+              <article key={item.title} className="panel hover-card gsap-card rounded-2xl p-4 interview-card" data-idx={idx}>
                 <h3 className="font-semibold text-zinc-100">{item.title}</h3>
                 <p className="mt-2 text-sm text-zinc-300">{item.meta}</p>
               </article>
@@ -292,20 +293,20 @@ export default function HomePage() {
           </div>
         </section>
 
-        <section className="ad-box flex flex-col items-center justify-between gap-3 rounded-2xl p-5 text-center md:flex-row md:text-left">
+        <section className="ad-box gsap-card gsap-ad-slot flex flex-col items-center justify-between gap-3 rounded-2xl p-5 text-center md:flex-row md:text-left">
           <div>
             <p className="font-semibold">SPONSORED BANNER · 970x90</p>
             <p className="text-zinc-300">Tu marca aquí con la cultura urbana</p>
           </div>
-          <a href="#contacto-comercial" className="btn-gold">Más información</a>
+          <a href="#contacto-comercial" className="btn-gold gsap-button">Más información</a>
         </section>
 
         <section className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_340px]">
-          <div className="panel rounded-2xl p-5">
+          <div className="panel gsap-card rounded-2xl p-5">
             <h2 className="section-title mb-4">Estrenos / Música Nueva</h2>
             <div className="space-y-3">
               {releases.map((release) => (
-                <article key={release} className="hover-card rounded-xl border border-white/10 bg-black/40 backdrop-blur-md p-3 before:mr-2 before:text-[#f5b21b] before:content-['●']">
+                <article key={release} className="hover-card gsap-card rounded-xl border border-white/10 bg-black/40 backdrop-blur-md p-3 before:mr-2 before:text-[#f5b21b] before:content-['●']">
                   {release}
                 </article>
               ))}
@@ -313,7 +314,7 @@ export default function HomePage() {
           </div>
 
           <div className="space-y-4">
-            <aside className="panel rounded-2xl p-5">
+            <aside className="panel gsap-card rounded-2xl p-5">
               <h2 className="section-title mb-3">Top 10</h2>
               <ol className="space-y-2 text-sm text-zinc-200">
                 {topTen.map((item, idx) => (
@@ -324,7 +325,7 @@ export default function HomePage() {
                 ))}
               </ol>
             </aside>
-            <aside className="ad-box ad-space-labels flex min-h-[250px] flex-col items-center justify-center rounded-2xl p-3">
+            <aside className="ad-box ad-space-labels gsap-card gsap-ad-slot flex min-h-[250px] flex-col items-center justify-center rounded-2xl p-3">
               <div
                 className="relative block h-[250px] w-full max-w-[336px] overflow-hidden rounded-2xl border border-zinc-600/80 bg-black/40 backdrop-blur-md"
                 aria-label="MGF Enterprises Services LLC sponsor banner"
@@ -356,7 +357,7 @@ export default function HomePage() {
           </div>
           <div className="grid gap-4 md:grid-cols-3">
             {promoCards.map((card) => (
-              <article key={card.title} className="promo-card hover-card rounded-2xl p-5">
+              <article key={card.title} className="promo-card hover-card gsap-card rounded-2xl p-5">
                 <span className="promo-badge">{card.badge}</span>
                 <h3 className="mt-4 text-2xl font-bold text-zinc-100">{card.title}</h3>
                 <p className="mt-2 text-sm text-zinc-300">{card.text}</p>
@@ -365,7 +366,7 @@ export default function HomePage() {
                     <li key={item} className="before:mr-2 before:text-[#f5b21b] before:content-['•']">{item}</li>
                   ))}
                 </ul>
-                <a href={card.href} className="btn-red mt-5 w-full">{card.cta}</a>
+                <a href={card.href} className="btn-red gsap-button mt-5 w-full">{card.cta}</a>
               </article>
             ))}
           </div>
@@ -387,7 +388,7 @@ export default function HomePage() {
 
         <SubscribeForm />
 
-        <section className="ad-box rounded-3xl border border-[#f5b21b]/25 bg-gradient-to-br from-black/45 via-red-950/15 to-yellow-950/10 backdrop-blur-lg p-6 md:p-7">
+        <section className="ad-box gsap-card rounded-3xl border border-[#f5b21b]/25 bg-gradient-to-br from-black/45 via-red-950/15 to-yellow-950/10 backdrop-blur-lg p-6 md:p-7">
           <div className="text-center">
             <h2 className="section-title">Auspicios &amp; Publicidad</h2>
             <p className="mt-2 text-sm text-zinc-300 md:text-base">
@@ -398,7 +399,7 @@ export default function HomePage() {
             {brandPartners.map((partner) => (
               <article
                 key={partner.name}
-                className="group rounded-2xl border border-zinc-700/80 bg-black/40 p-4 shadow-[0_8px_28px_rgba(0,0,0,0.35)] backdrop-blur-sm transition hover:-translate-y-0.5 hover:border-[#f5b21b]/55 hover:shadow-[0_12px_30px_rgba(245,178,27,0.12)]"
+                className="group gsap-card gsap-sponsor-card rounded-2xl border border-zinc-700/80 bg-black/40 p-4 shadow-[0_8px_28px_rgba(0,0,0,0.35)] backdrop-blur-sm transition hover:-translate-y-0.5 hover:border-[#f5b21b]/55 hover:shadow-[0_12px_30px_rgba(245,178,27,0.12)]"
               >
                 <div className="relative h-[190px] overflow-hidden rounded-xl border border-white/10 bg-black/40 backdrop-blur-md flex items-center justify-center">
                   <img
@@ -425,7 +426,7 @@ export default function HomePage() {
           <div className="mt-6 rounded-2xl border border-[#f5b21b]/35 bg-black/40 p-5 text-center shadow-[0_8px_28px_rgba(0,0,0,0.35)] backdrop-blur-md">
             <p className="text-lg font-semibold text-zinc-100">¿Quieres promocionar tu marca aquí?</p>
             <p className="mx-auto mt-2 max-w-2xl text-sm text-zinc-300">Solicita un espacio publicitario para tu negocio, evento, lanzamiento o proyecto.</p>
-            <a href="#contacto-comercial?tipo=espacio-publicitario" className="btn-gold mt-4 inline-flex">Solicitar publicidad</a>
+            <a href="#contacto-comercial?tipo=espacio-publicitario" className="btn-gold gsap-button mt-4 inline-flex">Solicitar publicidad</a>
           </div>
         </section>
       </main>
@@ -442,8 +443,6 @@ export default function HomePage() {
         </div>
         <p className="border-t border-zinc-800 py-4 text-center text-xs text-zinc-500">© 2026 V.E.D.A. MUSIC. Todos los derechos reservados.</p>
       </footer>
-
-      <VedaMascot />
     </>
   );
 }

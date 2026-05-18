@@ -17,7 +17,7 @@ export default function VedaMusicPlayer() {
 
         <div className="relative grid items-center gap-4 md:grid-cols-[auto_minmax(0,1fr)] md:gap-6">
           <div className="mx-auto">
-            <div className="h-32 w-32 rounded-full border border-zinc-700 bg-[radial-gradient(circle_at_48%_45%,#2d2d2d,#090909_66%)] p-2.5 shadow-[inset_0_8px_20px_rgba(255,255,255,.06),inset_0_-10px_20px_rgba(0,0,0,.6),0_0_24px_rgba(239,68,68,.16)] md:h-36 md:w-36">
+            <div className="gsap-radio-pulse h-32 w-32 rounded-full border border-zinc-700 bg-[radial-gradient(circle_at_48%_45%,#2d2d2d,#090909_66%)] p-2.5 shadow-[inset_0_8px_20px_rgba(255,255,255,.06),inset_0_-10px_20px_rgba(0,0,0,.6),0_0_24px_rgba(239,68,68,.16)] md:h-36 md:w-36">
               <div className="flex h-full w-full items-center justify-center rounded-full border border-yellow-500/35 bg-[conic-gradient(from_0deg,rgba(245,158,11,.55),rgba(244,63,94,.43),rgba(245,158,11,.55))] p-3">
                 <div className="flex h-full w-full items-center justify-center rounded-full bg-[radial-gradient(circle,#0f0f0f_25%,#1e1e1e_62%,#080808_100%)] text-center">
                   <span className="text-sm font-black tracking-[0.22em] text-yellow-100">VEDA</span>
@@ -35,7 +35,7 @@ export default function VedaMusicPlayer() {
               <button
                 type="button"
                 onClick={toggleSpotifyEmbed}
-                className="inline-flex h-10 items-center justify-center rounded-full border border-yellow-500/60 bg-yellow-500/10 px-4 text-xs font-semibold text-yellow-100 transition hover:bg-yellow-500/20 md:h-11 md:text-sm"
+                className="gsap-button inline-flex h-10 items-center justify-center rounded-full border border-yellow-500/60 bg-yellow-500/10 px-4 text-xs font-semibold text-yellow-100 transition hover:bg-yellow-500/20 md:h-11 md:text-sm"
               >
                 {isSpotifyOpen ? 'Cerrar' : 'Escuchar aquí'}
               </button>
@@ -58,7 +58,7 @@ export default function VedaMusicPlayer() {
                     href="https://open.spotify.com/playlist/5EOsQIRYI2Ily29tygRg7T"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center justify-center rounded-full border border-yellow-500/60 bg-yellow-500/10 px-4 py-2 text-xs font-semibold text-yellow-100 transition hover:bg-yellow-500/20 md:text-sm"
+                    className="gsap-button inline-flex items-center justify-center rounded-full border border-yellow-500/60 bg-yellow-500/10 px-4 py-2 text-xs font-semibold text-yellow-100 transition hover:bg-yellow-500/20 md:text-sm"
                   >
                     Abrir en Spotify
                   </a>
