@@ -74,3 +74,31 @@ Configura estas variables en Vercel:
 - `VEDA_CONTACT_FROM_EMAIL=V.E.D.A. Music <onboarding@resend.dev>`
 
 Nota: para producción final, se recomienda verificar un dominio propio en Resend y cambiar `VEDA_CONTACT_FROM_EMAIL` a un correo del dominio oficial.
+
+## Security Baseline
+
+Esta landing aplica una base de seguridad para producción en Vercel/Next.js:
+
+- **Security headers globales** (incluye CSP):
+  - `X-Frame-Options: DENY`
+  - `X-Content-Type-Options: nosniff`
+  - `Referrer-Policy: strict-origin-when-cross-origin`
+  - `Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=()`
+  - `X-DNS-Prefetch-Control: on`
+  - `Content-Security-Policy` compatible con embeds de YouTube / youtube-nocookie.
+- **Secrets solo server-side**:
+  - `RESEND_API_KEY` se usa únicamente en rutas backend (`/api/contact`, `/api/subscribe`).
+  - No usar `NEXT_PUBLIC_RESEND_API_KEY`.
+- **Rate limit básico anti-spam** en memoria por IP:
+  - `/api/contact`: máximo 5 requests cada 10 minutos.
+  - `/api/subscribe`: máximo 5 requests cada 10 minutos.
+- **Honeypot anti-bots**:
+  - Campo oculto `company` en formularios de suscripción y contacto comercial.
+  - Si llega con valor, la API responde de forma silenciosa sin enviar correo.
+
+### Recomendaciones futuras
+
+- Verificar dominio propio en Resend.
+- Cambiar `VEDA_CONTACT_FROM_EMAIL` a un correo oficial del dominio.
+- Agregar storage/DB si deseas guardar leads además de enviar correo.
+- Implementar rate limit persistente (por ejemplo Upstash Redis) si aumenta el tráfico.

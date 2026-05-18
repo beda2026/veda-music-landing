@@ -4,6 +4,7 @@ import { FormEvent, useState } from 'react';
 
 export default function SubscribeForm() {
   const [email, setEmail] = useState('');
+  const [company, setCompany] = useState('');
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
@@ -16,7 +17,7 @@ export default function SubscribeForm() {
       const response = await fetch('/api/subscribe', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: email.trim() }),
+        body: JSON.stringify({ email: email.trim(), company: company.trim() }),
       });
 
       const data = await response.json();
@@ -24,6 +25,7 @@ export default function SubscribeForm() {
       if (response.ok && data?.ok === true) {
         setStatus('success');
         setEmail('');
+        setCompany('');
         return;
       }
 
@@ -42,6 +44,17 @@ export default function SubscribeForm() {
 
         <form onSubmit={handleSubmit} className="flex flex-col gap-3 sm:flex-row sm:items-center">
           <label htmlFor="subscribe-email" className="sr-only">Correo electrónico</label>
+
+          <input
+            type="text"
+            name="company"
+            value={company}
+            onChange={(event) => setCompany(event.target.value)}
+            autoComplete="off"
+            tabIndex={-1}
+            aria-hidden="true"
+            className="sr-only"
+          />
           <input
             id="subscribe-email"
             type="email"

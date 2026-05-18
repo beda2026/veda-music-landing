@@ -1,24 +1,68 @@
 import { NextResponse } from 'next/server';
 import { escapeHtml, sendVedaEmail } from '@/lib/server/email';
+import { checkRateLimit, getClientIp } from '@/lib/server/rate-limit';
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-const MAX_EMAIL_LENGTH = 254;
+const MAX_EMAIL_LENGTH = 180;
+const RATE_LIMIT_MAX = 5;
+const RATE_LIMIT_WINDOW_MS = 10 * 60 * 1000;
+
+const jsonError = (status: number, error: string) => NextResponse.json({ ok: false, error }, { status });
+
+const logSecurityEvent = ({ status, code, missingEnv }: { status: number; code: string; missingEnv?: string }) => {
+  console.error('[security]', {
+    route: '/api/subscribe',
+    status,
+    code,
+    missingEnv,
+  });
+};
 
 export async function POST(request: Request) {
+  if (!request.headers.get('content-type')?.toLowerCase().includes('application/json')) {
+    logSecurityEvent({ status: 415, code: 'INVALID_CONTENT_TYPE' });
+    return jsonError(415, 'Invalid content type.');
+  }
+
+  const ip = getClientIp(request);
+  const rateLimit = checkRateLimit({
+    route: '/api/subscribe',
+    ip,
+    maxRequests: RATE_LIMIT_MAX,
+    windowMs: RATE_LIMIT_WINDOW_MS,
+  });
+
+  if (!rateLimit.allowed) {
+    logSecurityEvent({ status: 429, code: 'RATE_LIMIT_EXCEEDED' });
+    return jsonError(429, 'Too many requests. Try again later.');
+  }
+
   try {
     const body = await request.json();
+
+    if (!body || typeof body !== 'object') {
+      logSecurityEvent({ status: 400, code: 'EMPTY_BODY' });
+      return jsonError(400, 'Invalid request body.');
+    }
+
+    const honeypot = typeof body?.company === 'string' ? body.company.trim() : '';
+    if (honeypot) {
+      logSecurityEvent({ status: 200, code: 'HONEYPOT_TRIGGERED' });
+      return NextResponse.json({ ok: true });
+    }
+
     const email = typeof body?.email === 'string' ? body.email.trim() : '';
 
     if (!email) {
-      return NextResponse.json({ ok: false, error: 'El email es obligatorio.' }, { status: 400 });
+      return jsonError(400, 'El email es obligatorio.');
     }
 
     if (email.length > MAX_EMAIL_LENGTH) {
-      return NextResponse.json({ ok: false, error: 'El email es demasiado largo.' }, { status: 400 });
+      return jsonError(400, 'El email es demasiado largo.');
     }
 
     if (!EMAIL_REGEX.test(email)) {
-      return NextResponse.json({ ok: false, error: 'Formato de email inválido.' }, { status: 400 });
+      return jsonError(400, 'Formato de email inválido.');
     }
 
     const isoDate = new Date().toISOString();
@@ -33,9 +77,11 @@ export async function POST(request: Request) {
     return NextResponse.json({ ok: true });
   } catch (error) {
     if (error instanceof Error && error.message.includes('RESEND_API_KEY')) {
-      return NextResponse.json({ ok: false, error: error.message }, { status: 500 });
+      logSecurityEvent({ status: 500, code: 'MISSING_ENV', missingEnv: 'RESEND_API_KEY' });
+      return jsonError(500, 'No se pudo procesar la suscripción.');
     }
 
-    return NextResponse.json({ ok: false, error: 'No se pudo enviar la suscripción.' }, { status: 500 });
+    logSecurityEvent({ status: 500, code: 'INTERNAL_ERROR' });
+    return jsonError(500, 'No se pudo enviar la suscripción.');
   }
 }
