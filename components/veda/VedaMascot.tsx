@@ -27,13 +27,30 @@ const hoverPoses: Pose[] = ['troll', 'mock', 'laugh', 'point', 'pointRight'];
 const celebrationPoses: Pose[] = ['dance', 'clap', 'celebrate'];
 
 const speechBubbles = [
-  '¿Vas a darle play o qué?',
-  'Eso quedó duro.',
-  'No me ignores.',
-  'Dale scroll, jefe.',
-  'Aquí hay movimiento.',
-  'Mira eso ahí abajo.',
+  'Anúnciate aquí.',
+  'Tu marca puede salir aquí.',
+  'Espacio disponible para auspicios.',
+  'Promociona tu negocio en V.E.D.A.',
+  '¿Quieres que tu logo aparezca aquí?',
+  'Este espacio puede ser tuyo.',
+  'Apoya la música, anuncia tu marca.',
+  'Tu negocio puede estar en esta sección.',
+  'Haz que te vean aquí.',
+  'Pregunta por espacios de promoción.',
+  'V.E.D.A. también impulsa marcas locales.',
+  'Tu anuncio puede vivir aquí.',
 ];
+
+const hoverSpeechBubbles = [
+  '¿Tienes negocio? Aquí puedes anunciarte.',
+  'Tu logo puede estar en esta página.',
+  'Espacios abiertos para auspicios.',
+  'Haz que tu marca suene con V.E.D.A.',
+];
+
+const clickSpeechBubbles = ['Pregunta por tu espacio.', 'Separa tu anuncio.', 'Tu marca aquí.'];
+
+const resetSpeechBubbles = ['Me quedo aquí.', 'Aquí está bien.'];
 
 export function VedaMascot() {
   const mascotRef = useRef<HTMLButtonElement>(null);
@@ -170,7 +187,8 @@ export function VedaMascot() {
     setCurrentPose(randomPose);
 
     // Show speech bubble with random text
-    const randomSpeech = speechBubbles[Math.floor(Math.random() * speechBubbles.length)];
+    const availableHoverSpeech = hoverSpeechBubbles.length ? hoverSpeechBubbles : speechBubbles;
+    const randomSpeech = availableHoverSpeech[Math.floor(Math.random() * availableHoverSpeech.length)];
     setBubbleText(randomSpeech);
     setShowBubble(true);
     playBubbleAnimation();
@@ -180,6 +198,8 @@ export function VedaMascot() {
     if (!prefersReducedMotion) {
       setTimeout(() => {
         setCurrentPose('idle');
+        const randomResetSpeech = resetSpeechBubbles[Math.floor(Math.random() * resetSpeechBubbles.length)];
+        setBubbleText(randomResetSpeech);
         hideBubbleAnimation();
       }, 1000);
     } else {
@@ -191,6 +211,12 @@ export function VedaMascot() {
   const handleClick = () => {
     const randomCelebration = celebrationPoses[Math.floor(Math.random() * celebrationPoses.length)];
     setCurrentPose(randomCelebration);
+
+    const randomSpeech = clickSpeechBubbles[Math.floor(Math.random() * clickSpeechBubbles.length)];
+    setBubbleText(randomSpeech);
+    setShowBubble(true);
+    playBubbleAnimation();
+
     playClickAnimation();
 
     if (!prefersReducedMotion) {
