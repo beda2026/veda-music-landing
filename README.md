@@ -74,3 +74,12 @@ Configura estas variables en Vercel:
 - `VEDA_CONTACT_FROM_EMAIL=V.E.D.A. Music <onboarding@resend.dev>`
 
 Nota: para producción final, se recomienda verificar un dominio propio en Resend y cambiar `VEDA_CONTACT_FROM_EMAIL` a un correo del dominio oficial.
+
+## Búsqueda de artistas en tiempo real
+
+La ruta `GET /api/artist-search?q=...` utiliza un proveedor server-side para devolver resultados editoriales en tiempo real desde el modal de búsqueda del header.
+
+Variables requeridas:
+
+- `OPENAI_API_KEY`
+- `OPENAI_MODEL=gpt-5-mini`
