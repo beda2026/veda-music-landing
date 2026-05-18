@@ -13,8 +13,8 @@ export default function ServicesSectionModal({ services }: { services: Service[]
   const openCommercialContact = () => {
     closeServicesModal();
     window.dispatchEvent(new CustomEvent('openCommercialContact'));
-    window.location.hash = 'contacto-comercial';
-    document.getElementById('contacto-comercial')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    window.location.hash = 'contacto';
+    document.getElementById('contacto')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   };
 
   useEffect(() => {
