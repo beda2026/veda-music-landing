@@ -42,7 +42,13 @@ const promoCards = [
   },
 ] as const;
 const promoPackages = ['Publicación básica', 'Video destacado', 'Banner semanal', 'Banner mensual', 'Sponsor oficial', 'Entrevista / cobertura'];
-const brandPartners = [
+const brandPartners: ReadonlyArray<{
+  name: string;
+  subtext?: string;
+  image: string;
+  href: string;
+  logoClassName: string;
+}> = [
   {
     name: 'José Barber Shop & Tattoo',
     image: '/assets/auspicios/jose-barber-shop-tattoo.png',
@@ -66,6 +72,13 @@ const brandPartners = [
     image: '/assets/auspicios/torneo-at.png',
     href: 'https://www.instagram.com/torneo_a.t?igsh=MTA1cjZoMWxyejg0aw%3D%3D&utm_source=qr',
     logoClassName: 'scale-[1.45] object-cover object-center',
+  },
+  {
+    name: 'Perreo Mania PR',
+    subtext: 'Indio Pancho',
+    image: '/assets/sponsors/perreo-mania-pr/perreo-mania-pr-logo-800.webp',
+    href: 'https://www.instagram.com/perreomaniapr?igsh=MWRyZXF5dHR3bzRscA==',
+    logoClassName: 'object-contain object-center',
   },
 ] as const;
 
@@ -396,6 +409,7 @@ export default function HomePage() {
                   />
                 </div>
                 <h3 className="mt-4 text-base font-semibold text-zinc-100">{partner.name}</h3>
+                {partner.subtext ? <p className="mt-1 text-sm text-zinc-400">{partner.subtext}</p> : null}
                 <a
                   href={partner.href}
                   target="_blank"
