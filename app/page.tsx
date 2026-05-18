@@ -11,6 +11,7 @@ import VedaGsapEffects from '@/components/VedaGsapEffects';
 import FeaturedInterviewCard from '@/components/FeaturedInterviewCard';
 import LatestVideosSection from '@/components/LatestVideosSection';
 import OpenCommercialContactButton from '@/components/OpenCommercialContactButton';
+import VisitCounter from '@/components/VisitCounter';
 
 const socialLinks = [
   { name: 'Spotify', icon: 'spotify' },
@@ -399,7 +400,11 @@ export default function HomePage() {
             <p className="mt-3 text-sm text-zinc-300">Plataforma urbana independiente dedicada a la música, videos, entrevistas, fotos y artistas que están moviendo la cultura.</p>
           </div>
           <div className="hidden lg:block" aria-hidden="true" />
-          <div className="hidden lg:block" aria-hidden="true" />
+          <div className="text-sm text-zinc-300">
+            <div className="mt-3">
+              <VisitCounter />
+            </div>
+          </div>
         </div>
         <p className="border-t border-zinc-800 py-4 text-center text-xs text-zinc-500">© 2026 V.E.D.A. MUSIC. Todos los derechos reservados.</p>
       </footer>
