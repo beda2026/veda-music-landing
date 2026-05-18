@@ -35,7 +35,7 @@ export default function HeaderNavLinks() {
             Artistas: '/artistas',
             Entrevistas: '#entrevistas',
             Nosotros: '#',
-            Contacto: '#servicios',
+            Contacto: '#',
           };
 
           if (link === 'Nosotros') {
@@ -44,6 +44,19 @@ export default function HeaderNavLinks() {
                 key={link}
                 type="button"
                 onClick={() => setIsAboutOpen(true)}
+                className="whitespace-nowrap rounded-full border border-zinc-700 px-3 py-1.5 transition hover:border-[#8f2d37] hover:text-white"
+              >
+                {link}
+              </button>
+            );
+          }
+
+          if (link === 'Contacto') {
+            return (
+              <button
+                key={link}
+                type="button"
+                onClick={() => window.dispatchEvent(new CustomEvent('openCommercialContact'))}
                 className="whitespace-nowrap rounded-full border border-zinc-700 px-3 py-1.5 transition hover:border-[#8f2d37] hover:text-white"
               >
                 {link}

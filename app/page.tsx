@@ -10,6 +10,7 @@ import { vedaArtists } from '@/lib/veda-artists';
 import VedaGsapEffects from '@/components/VedaGsapEffects';
 import FeaturedInterviewCard from '@/components/FeaturedInterviewCard';
 import LatestVideosSection from '@/components/LatestVideosSection';
+import OpenCommercialContactButton from '@/components/OpenCommercialContactButton';
 
 const socialLinks = [
   { name: 'Spotify', icon: 'spotify' },
@@ -264,7 +265,7 @@ export default function HomePage() {
             <p className="font-semibold">SPONSORED BANNER · 970x90</p>
             <p className="text-zinc-300">Tu marca aquí con la cultura urbana</p>
           </div>
-          <a href="#servicios" className="btn-gold">Más información</a>
+          <OpenCommercialContactButton className="btn-gold" selectedType="Espacio publicitario">Más información</OpenCommercialContactButton>
         </section>
 
         <section id="musica" className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_340px]">
