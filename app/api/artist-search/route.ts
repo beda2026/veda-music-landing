@@ -9,7 +9,7 @@ type SearchResult = {
   image?: string;
 };
 
-const SEARCH_PROMPT = 'Busca información pública reciente sobre el artista o tema consultado para una plataforma editorial de entretenimiento urbano. Devuelve resultados breves, seguros y útiles: título, tipo, fuente, resumen, url e imagen si está disponible. No inventes datos. Si no hay resultados confiables, devuelve lista vacía.';
+const SEARCH_PROMPT = 'Busca información pública reciente sobre el artista o tema consultado para una plataforma editorial de entretenimiento urbano. Devuelve resultados breves, seguros y útiles: título, tipo, fuente, resumen, url e imagen si está disponible. No inventes datos. Si no hay resultados confiables, devuelve lista vacía. Si no hay imagen disponible para un resultado, devuelve image como string vacío "".';
 const allowedTypes = new Set(['artist', 'video', 'article', 'social', 'other']);
 
 
@@ -130,7 +130,7 @@ export async function GET(request: NextRequest) {
                       url: { type: 'string' },
                       image: { type: 'string' },
                     },
-                    required: ['title', 'type', 'source', 'snippet', 'url'],
+                    required: ['title', 'type', 'source', 'snippet', 'url', 'image'],
                     additionalProperties: false,
                   },
                 },
