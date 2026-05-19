@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { analyzeVedaSearchIntent } from '@/lib/veda/search-intent';
+import { analyzeVedaSearchIntent, type VedaConversationMode } from '@/lib/veda/search-intent';
 
 type SearchResult = {
   title: string;
@@ -18,6 +18,7 @@ type ApiGuideResponse = {
   message: string;
   quickActions?: string[];
   results: SearchResult[];
+  conversationMode: VedaConversationMode;
 };
 
 const SEARCH_PROMPT = 'Busca información pública reciente sobre el artista o tema consultado para una plataforma editorial de entretenimiento urbano. Devuelve resultados breves, seguros y útiles: título, tipo, fuente, resumen, url e imagen si está disponible. No inventes datos. No uses markdown. No uses comentarios. No uses texto antes o después del JSON. El campo type debe ser uno de: artist, video, article, social, other. Si no hay resultados confiables, devuelve {"results":[]}. Si no hay imagen disponible para un resultado, devuelve image como string vacío "".';
@@ -126,7 +127,10 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ ok: false, error: 'La búsqueda debe tener entre 2 y 80 caracteres.' }, { status: 400 });
   }
 
-  const intent = analyzeVedaSearchIntent(query);
+  const modeParam = request.nextUrl.searchParams.get('mode');
+  const conversationMode: VedaConversationMode = modeParam === 'artist_lead' || modeParam === 'business_lead' ? modeParam : 'neutral';
+
+  const intent = analyzeVedaSearchIntent(query, conversationMode);
 
   if (!intent.shouldCallApi) {
     const guidePayload: ApiGuideResponse = {
@@ -136,6 +140,7 @@ export async function GET(request: NextRequest) {
       message: intent.userFacingReply ?? 'Te guío rápido. Dime artista, canción, video o entrevista.',
       quickActions: intent.quickActions,
       results: [],
+      conversationMode: intent.conversationMode ?? conversationMode,
     };
 
     return NextResponse.json(guidePayload);
@@ -245,7 +250,7 @@ Devuelve máximo 5 resultados.`,
 
     const results = sanitizeResults(parsed.results);
 
-    return NextResponse.json({ ok: true, mode: 'search', query, results });
+    return NextResponse.json({ ok: true, mode: 'search', query, results, conversationMode: 'neutral' });
   } catch (error) {
     console.error('[artist-search] Unexpected search error', {
       model,
