@@ -15,6 +15,8 @@ type SearchResult = {
   image?: string;
 };
 
+type ConversationMode = 'neutral' | 'artist_lead' | 'business_lead';
+
 type ApiResponse = {
   ok: boolean;
   mode?: 'guide' | 'search';
@@ -22,6 +24,7 @@ type ApiResponse = {
   message?: string;
   quickActions?: string[];
   results?: SearchResult[];
+  conversationMode?: ConversationMode;
   error?: string;
 };
 
@@ -42,6 +45,7 @@ export default function HeaderSearchModal() {
   const [isOpen, setIsOpen] = useState(false);
   const [query, setQuery] = useState('');
   const [messages, setMessages] = useState<ChatMessage[]>([{ id: 'welcome', role: 'veda', text: INITIAL_MESSAGE, kind: 'guide' }]);
+  const [conversationMode, setConversationMode] = useState<ConversationMode>('neutral');
   const [isThinking, setIsThinking] = useState(false);
   const [selectedQuickAction, setSelectedQuickAction] = useState<string | null>(null);
   const [videoToPlay, setVideoToPlay] = useState<{ title: string; videoId: string } | null>(null);
@@ -104,13 +108,15 @@ export default function HeaderSearchModal() {
     setIsThinking(true);
 
     try {
-      const response = await fetch(`/api/artist-search?q=${encodeURIComponent(sanitized)}`);
+      const response = await fetch(`/api/artist-search?q=${encodeURIComponent(sanitized)}&mode=${conversationMode}`);
       const data = (await response.json()) as ApiResponse;
 
       if (!response.ok || !data.ok) {
         appendMessage({ id: `v-${Date.now()}`, role: 'veda', text: 'No pude traer ese resultado ahora. Prueba con artista, canción o video específico.', kind: 'guide' });
         return;
       }
+
+      if (data.conversationMode) setConversationMode(data.conversationMode);
 
       if (data.mode === 'guide') {
         const message = data.message ?? 'Te guío rápido. ¿Buscas artista, canción, video o entrevista?';
