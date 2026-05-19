@@ -34,6 +34,7 @@ export default function HeaderSearchModal() {
   const [quickActions, setQuickActions] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [hasPerformedSearch, setHasPerformedSearch] = useState(false);
   const [videoToPlay, setVideoToPlay] = useState<{ title: string; videoId: string } | null>(null);
 
   useEffect(() => setIsMounted(true), []);
@@ -74,6 +75,7 @@ export default function HeaderSearchModal() {
     setIsLoading(true);
     setError(null);
     setGuideMessage(null);
+    setHasPerformedSearch(false);
 
     try {
       const response = await fetch(`/api/artist-search?q=${encodeURIComponent(sanitized)}`);
@@ -81,6 +83,7 @@ export default function HeaderSearchModal() {
 
       if (!response.ok || !data.ok) {
         setResults([]);
+        setHasPerformedSearch(true);
         setQuickActions([]);
         setError('No pude traer ese resultado ahora. Prueba con artista, canción o video específico.');
         return;
@@ -88,15 +91,18 @@ export default function HeaderSearchModal() {
 
       if (data.mode === 'guide') {
         setResults([]);
+        setHasPerformedSearch(false);
         setGuideMessage(data.message ?? 'Te guío rápido. ¿Buscas artista, canción, video o entrevista?');
         setQuickActions(data.quickActions ?? []);
         return;
       }
 
       setQuickActions([]);
+      setHasPerformedSearch(data.mode === 'search');
       setResults(data.results ?? []);
     } catch {
       setResults([]);
+      setHasPerformedSearch(true);
       setQuickActions([]);
       setError('No pude traer ese resultado ahora. Prueba con artista, canción o video específico.');
     } finally {
@@ -138,7 +144,7 @@ export default function HeaderSearchModal() {
             {error && <p className="rounded-xl border border-red-900/70 bg-red-950/30 px-3 py-2 text-sm text-red-200">{error}</p>}
             {guideMessage ? <p className="rounded-xl border border-[#c9a67a]/40 bg-[#c9a67a]/10 px-3 py-2 text-sm text-[#f7ddb8]">{guideMessage}</p> : null}
             {quickActions.length > 0 ? <div className="flex flex-wrap gap-2">{quickActions.map((action) => (<button key={action} type="button" onClick={() => setQuery(action)} className="rounded-full border border-zinc-700 px-2.5 py-1 text-xs text-zinc-200 transition hover:border-[#c9a67a]">{action}</button>))}</div> : null}
-            {results && !isLoading && results.length === 0 && !error && <p className="text-sm text-zinc-300">No encontramos resultados.</p>}
+            {hasPerformedSearch && results && !isLoading && results.length === 0 && !error && <p className="text-sm text-zinc-300">No encontramos resultados.</p>}
 
             {results?.map((result, index) => {
               const videoId = result.url.match(YOUTUBE_REGEX)?.[1] ?? null;
@@ -166,7 +172,7 @@ export default function HeaderSearchModal() {
         {videoToPlay ? <EmbeddedVideoModal title={videoToPlay.title} youtubeVideoId={videoToPlay.videoId} onClose={() => setVideoToPlay(null)} /> : null}
       </div>
     );
-  }, [error, guideMessage, isLoading, isOpen, onSubmit, quickActions, query, results, videoToPlay]);
+  }, [error, guideMessage, hasPerformedSearch, isLoading, isOpen, onSubmit, quickActions, query, results, videoToPlay]);
 
   return (
     <>
