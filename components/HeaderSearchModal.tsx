@@ -1,6 +1,8 @@
 'use client';
 
 import { FormEvent, useEffect, useMemo, useState } from 'react';
+import { useVedaVoiceInput } from '@/hooks/useVedaVoiceInput';
+import { useVedaVoiceReply } from '@/hooks/useVedaVoiceReply';
 import { createPortal } from 'react-dom';
 import EmbeddedVideoModal from '@/components/EmbeddedVideoModal';
 
@@ -35,6 +37,10 @@ export default function HeaderSearchModal() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [videoToPlay, setVideoToPlay] = useState<{ title: string; videoId: string } | null>(null);
+  const [lastBotReply, setLastBotReply] = useState<string | null>(null);
+
+  const voiceInput = useVedaVoiceInput();
+  const voiceReply = useVedaVoiceReply();
 
   useEffect(() => setIsMounted(true), []);
 
@@ -59,15 +65,15 @@ export default function HeaderSearchModal() {
     };
   }, [isOpen, videoToPlay]);
 
-  const onSubmit = async (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    const sanitized = query.trim();
+  const handleSearch = async (rawQuery: string) => {
+    const sanitized = rawQuery.trim();
 
     if (!sanitized) {
       setError('Escribe artista, canción, video o entrevista.');
       setGuideMessage(null);
       setQuickActions([]);
       setResults(null);
+      setLastBotReply(null);
       return;
     }
 
@@ -82,27 +88,46 @@ export default function HeaderSearchModal() {
       if (!response.ok || !data.ok) {
         setResults([]);
         setQuickActions([]);
+        setLastBotReply(null);
         setError('No pude traer ese resultado ahora. Prueba con artista, canción o video específico.');
         return;
       }
 
       if (data.mode === 'guide') {
+        const message = data.message ?? 'Te guío rápido. ¿Buscas artista, canción, video o entrevista?';
         setResults([]);
-        setGuideMessage(data.message ?? 'Te guío rápido. ¿Buscas artista, canción, video o entrevista?');
+        setGuideMessage(message);
+        setLastBotReply(message);
         setQuickActions(data.quickActions ?? []);
         return;
       }
 
+      setGuideMessage(null);
+      setLastBotReply(null);
       setQuickActions([]);
       setResults(data.results ?? []);
     } catch {
       setResults([]);
       setQuickActions([]);
+      setLastBotReply(null);
       setError('No pude traer ese resultado ahora. Prueba con artista, canción o video específico.');
     } finally {
       setIsLoading(false);
     }
   };
+
+  const onSubmit = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    await handleSearch(query);
+  };
+
+  useEffect(() => {
+    if (!voiceInput.transcript) return;
+
+    setQuery(voiceInput.transcript);
+    void handleSearch(voiceInput.transcript);
+  }, [voiceInput.transcript]);
+
 
   const modalContent = useMemo(() => {
     if (!isOpen) return null;
@@ -129,15 +154,25 @@ export default function HeaderSearchModal() {
               className="w-full rounded-xl border border-zinc-700 bg-zinc-900/75 px-4 py-3 text-sm text-zinc-100 outline-none transition placeholder:text-zinc-500 focus:border-[#c9a67a]"
               maxLength={80}
             />
-            <button type="submit" className="rounded-xl border border-[#c9a67a]/70 bg-[#c9a67a]/10 px-5 py-3 text-sm font-medium text-[#f5d2a2] transition hover:bg-[#c9a67a]/20">Buscar</button>
+            <div className="flex gap-2">
+              <button type="button" disabled={isLoading || voiceInput.isProcessing} onClick={() => (voiceInput.isRecording ? void voiceInput.stopRecording() : void voiceInput.startRecording())} className="rounded-xl border border-zinc-700 px-4 py-3 text-sm text-zinc-100 transition hover:border-[#c9a67a] disabled:cursor-not-allowed disabled:opacity-50">
+                {voiceInput.isRecording ? '⏹️' : '🎙️'}
+              </button>
+              <button type="submit" className="rounded-xl border border-[#c9a67a]/70 bg-[#c9a67a]/10 px-5 py-3 text-sm font-medium text-[#f5d2a2] transition hover:bg-[#c9a67a]/20">Buscar</button>
+            </div>
           </form>
 
           <div className="max-h-[58vh] space-y-3 overflow-y-auto pr-1">
             {!results && !isLoading && !error && <p className="text-sm text-zinc-300">Escribe un artista o tema para buscar.</p>}
             {isLoading && <p className="text-sm text-zinc-300">Buscando…</p>}
+            {voiceInput.isRecording && <p className="text-sm text-zinc-300">Te escucho…</p>}
+            {voiceInput.isProcessing && <p className="text-sm text-zinc-300">Procesando…</p>}
+            {!voiceInput.isSupported && <p className="text-sm text-zinc-400">No pude activar el micrófono. Escríbeme y te guío igual.</p>}
+            {voiceInput.error && <p className="rounded-xl border border-red-900/70 bg-red-950/30 px-3 py-2 text-sm text-red-200">{voiceInput.error}</p>}
             {error && <p className="rounded-xl border border-red-900/70 bg-red-950/30 px-3 py-2 text-sm text-red-200">{error}</p>}
-            {guideMessage ? <p className="rounded-xl border border-[#c9a67a]/40 bg-[#c9a67a]/10 px-3 py-2 text-sm text-[#f7ddb8]">{guideMessage}</p> : null}
+            {guideMessage ? <div className="flex items-center gap-2"><p className="rounded-xl border border-[#c9a67a]/40 bg-[#c9a67a]/10 px-3 py-2 text-sm text-[#f7ddb8]">{guideMessage}</p><button type="button" onClick={() => (voiceReply.isSpeaking ? voiceReply.stop() : lastBotReply ? void voiceReply.speak(lastBotReply) : undefined)} disabled={!lastBotReply || voiceReply.isLoadingAudio} className="rounded-full border border-zinc-700 px-2.5 py-1 text-xs text-zinc-200 disabled:opacity-50">{voiceReply.isSpeaking ? '⏹️' : '🔊'}</button></div> : null}
             {quickActions.length > 0 ? <div className="flex flex-wrap gap-2">{quickActions.map((action) => (<button key={action} type="button" onClick={() => setQuery(action)} className="rounded-full border border-zinc-700 px-2.5 py-1 text-xs text-zinc-200 transition hover:border-[#c9a67a]">{action}</button>))}</div> : null}
+            {voiceReply.error && <p className="text-sm text-zinc-400">{voiceReply.error}</p>}
             {results && !isLoading && results.length === 0 && !error && <p className="text-sm text-zinc-300">No encontramos resultados.</p>}
 
             {results?.map((result, index) => {
@@ -166,7 +201,7 @@ export default function HeaderSearchModal() {
         {videoToPlay ? <EmbeddedVideoModal title={videoToPlay.title} youtubeVideoId={videoToPlay.videoId} onClose={() => setVideoToPlay(null)} /> : null}
       </div>
     );
-  }, [error, guideMessage, isLoading, isOpen, onSubmit, quickActions, query, results, videoToPlay]);
+  }, [error, guideMessage, isLoading, isOpen, lastBotReply, onSubmit, quickActions, query, results, videoToPlay, voiceInput.error, voiceInput.isProcessing, voiceInput.isRecording, voiceInput.isSupported, voiceReply.error, voiceReply.isLoadingAudio, voiceReply.isSpeaking]);
 
   return (
     <>
