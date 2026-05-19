@@ -46,11 +46,22 @@ export default function HeaderSearchModal() {
   const [isThinking, setIsThinking] = useState(false);
   const [selectedQuickAction, setSelectedQuickAction] = useState<string | null>(null);
   const [videoToPlay, setVideoToPlay] = useState<{ title: string; videoId: string } | null>(null);
+  const [hasUsedMic, setHasUsedMic] = useState(false);
+  const [hasUsedAudioReply, setHasUsedAudioReply] = useState(false);
   const inputRef = useRef<HTMLInputElement | null>(null);
   const bottomRef = useRef<HTMLDivElement | null>(null);
 
   const voiceInput = useVedaVoiceInput();
   const voiceReply = useVedaVoiceReply();
+
+  const clearVoiceErrors = () => {
+    voiceInput.cancelRecording();
+    voiceReply.stop();
+  };
+  const closeModal = () => {
+    clearVoiceErrors();
+    setIsOpen(false);
+  };
 
   useEffect(() => setIsMounted(true), []);
 
@@ -62,13 +73,14 @@ export default function HeaderSearchModal() {
           setVideoToPlay(null);
           return;
         }
-        setIsOpen(false);
+        closeModal();
       }
     };
 
-    document.addEventListener('keydown', onEsc);
-    document.body.style.overflow = 'hidden';
-    setTimeout(() => inputRef.current?.focus(), 60);
+      document.addEventListener('keydown', onEsc);
+      document.body.style.overflow = 'hidden';
+      clearVoiceErrors();
+      setTimeout(() => inputRef.current?.focus(), 60);
     return () => {
       document.removeEventListener('keydown', onEsc);
       document.body.style.overflow = '';
@@ -86,6 +98,7 @@ export default function HeaderSearchModal() {
   const runIntentGate = async (rawText: string) => {
     const sanitized = rawText.trim();
     if (!sanitized) return;
+    clearVoiceErrors();
 
     appendMessage({ id: `u-${Date.now()}`, role: 'user', text: sanitized, kind: 'text' });
     setIsThinking(true);
@@ -133,12 +146,14 @@ export default function HeaderSearchModal() {
     event.preventDefault();
     const text = query.trim();
     if (!text || isThinking) return;
+    clearVoiceErrors();
     setQuery('');
     await runIntentGate(text);
   };
 
   useEffect(() => {
     if (!voiceInput.transcript || isThinking) return;
+    clearVoiceErrors();
     setQuery('');
     void runIntentGate(voiceInput.transcript);
   }, [voiceInput.transcript]);
@@ -154,14 +169,14 @@ export default function HeaderSearchModal() {
     if (!isOpen) return null;
 
     return (
-      <div className="fixed inset-0 z-[220] flex items-end justify-center bg-black/70 p-0 backdrop-blur-sm sm:items-center sm:px-4" onClick={() => setIsOpen(false)}>
+      <div className="fixed inset-0 z-[220] flex items-end justify-center bg-black/70 p-0 backdrop-blur-sm sm:items-center sm:px-4" onClick={closeModal}>
         <div role="dialog" aria-modal="true" aria-labelledby="header-search-title" className="flex h-[88vh] w-full max-w-[520px] flex-col rounded-t-3xl border border-[#c9a67a]/50 bg-zinc-950/95 shadow-[0_25px_90px_rgba(0,0,0,0.65)] sm:h-[560px] sm:rounded-3xl" onClick={(event) => event.stopPropagation()}>
           <div className="flex items-center justify-between border-b border-[#c9a67a]/30 px-4 py-3">
             <div>
               <h3 id="header-search-title" className="text-base font-semibold text-[#f5d2a2]">VEDA Search IA</h3>
               <p className="text-xs text-zinc-400">Tu guía musical</p>
             </div>
-            <button type="button" onClick={() => setIsOpen(false)} className="rounded-full border border-zinc-700 px-3 py-1 text-sm text-zinc-100 transition hover:border-[#f5b21b]">✕</button>
+            <button type="button" onClick={closeModal} className="rounded-full border border-zinc-700 px-3 py-1 text-sm text-zinc-100 transition hover:border-[#f5b21b]">✕</button>
           </div>
 
           <div className="flex-1 space-y-3 overflow-y-auto px-3 py-4 sm:px-4">
@@ -205,8 +220,8 @@ export default function HeaderSearchModal() {
               </div>
             ) : null}
 
-            {voiceInput.error ? <p className="rounded-xl border border-red-900/70 bg-red-950/30 px-3 py-2 text-sm text-red-200">{voiceInput.error}</p> : null}
-            {voiceReply.error ? <p className="text-sm text-zinc-400">{voiceReply.error}</p> : null}
+            {hasUsedMic && voiceInput.error ? <p className="rounded-xl border border-red-900/70 bg-red-950/30 px-3 py-2 text-sm text-red-200">{voiceInput.error}</p> : null}
+            {hasUsedAudioReply && voiceReply.error ? <p className="rounded-xl border border-red-900/70 bg-red-950/30 px-3 py-2 text-sm text-red-200">{voiceReply.error}</p> : null}
             <div ref={bottomRef} />
           </div>
 
@@ -223,8 +238,9 @@ export default function HeaderSearchModal() {
           ) : null}
 
           <form className="sticky bottom-0 flex items-center gap-2 border-t border-[#c9a67a]/30 bg-zinc-950/95 px-3 py-3 sm:px-4" onSubmit={onSubmit}>
-            <input ref={inputRef} value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Escribe o busca en VEDA..." className="w-full rounded-xl border border-zinc-700 bg-zinc-900/75 px-4 py-2.5 text-sm text-zinc-100 outline-none transition placeholder:text-zinc-500 focus:border-[#c9a67a]" maxLength={80} />
-            <button type="button" disabled={isThinking || voiceInput.isProcessing} onClick={() => (voiceInput.isRecording ? void voiceInput.stopRecording() : void voiceInput.startRecording())} className="rounded-xl border border-zinc-700 px-3 py-2.5 text-sm text-zinc-100 transition hover:border-[#c9a67a] disabled:cursor-not-allowed disabled:opacity-50">{voiceInput.isRecording ? '⏹️' : '🎙️'}</button>
+            <input ref={inputRef} value={query} onChange={(event) => { clearVoiceErrors(); setQuery(event.target.value); }} placeholder="Escribe o busca en VEDA..." className="w-full rounded-xl border border-zinc-700 bg-zinc-900/75 px-4 py-2.5 text-sm text-zinc-100 outline-none transition placeholder:text-zinc-500 focus:border-[#c9a67a]" maxLength={80} />
+            <button type="button" disabled={isThinking || voiceInput.isProcessing} onClick={() => { setHasUsedMic(true); if (voiceInput.isRecording) { void voiceInput.stopRecording(); return; } void voiceInput.startRecording(); }} className="rounded-xl border border-zinc-700 px-3 py-2.5 text-sm text-zinc-100 transition hover:border-[#c9a67a] disabled:cursor-not-allowed disabled:opacity-50">{voiceInput.isRecording ? '⏹️' : '🎙️'}</button>
+            <button type="button" disabled={isThinking || voiceReply.isLoadingAudio} onClick={() => { setHasUsedAudioReply(true); const latestVedaMessage = [...messages].reverse().find((message) => message.role === 'veda' && message.text.trim()); if (!latestVedaMessage) return; void voiceReply.speak(latestVedaMessage.text); }} className="rounded-xl border border-zinc-700 px-3 py-2.5 text-sm text-zinc-100 transition hover:border-[#c9a67a] disabled:cursor-not-allowed disabled:opacity-50">{voiceReply.isSpeaking ? '🔈' : '🔊'}</button>
             <button type="submit" disabled={isThinking} className="rounded-xl border border-[#c9a67a]/70 bg-[#c9a67a]/10 px-4 py-2.5 text-sm font-medium text-[#f5d2a2] transition hover:bg-[#c9a67a]/20 disabled:opacity-60">Enviar</button>
           </form>
         </div>
@@ -232,11 +248,11 @@ export default function HeaderSearchModal() {
         {videoToPlay ? <EmbeddedVideoModal title={videoToPlay.title} youtubeVideoId={videoToPlay.videoId} onClose={() => setVideoToPlay(null)} /> : null}
       </div>
     );
-  }, [isOpen, messages, isThinking, voiceInput.error, voiceInput.isProcessing, voiceInput.isRecording, voiceReply.error, query, lastQuickActions, selectedQuickAction, videoToPlay]);
+  }, [hasUsedAudioReply, hasUsedMic, isOpen, messages, isThinking, voiceInput.error, voiceInput.isProcessing, voiceInput.isRecording, voiceReply.error, voiceReply.isLoadingAudio, voiceReply.isSpeaking, query, lastQuickActions, selectedQuickAction, videoToPlay]);
 
   return (
     <>
-      <button type="button" onClick={() => setIsOpen(true)} className="self-start rounded-full border border-zinc-700 px-4 py-2 text-zinc-300 transition hover:border-[#f5b21b]">
+      <button type="button" onClick={() => { clearVoiceErrors(); setIsOpen(true); }} className="self-start rounded-full border border-zinc-700 px-4 py-2 text-zinc-300 transition hover:border-[#f5b21b]">
         ⌕
       </button>
       {isMounted && modalContent ? createPortal(modalContent, document.body) : null}
