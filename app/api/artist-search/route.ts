@@ -128,7 +128,7 @@ export async function GET(request: NextRequest) {
   }
 
   const modeParam = request.nextUrl.searchParams.get('mode');
-  const conversationMode: VedaConversationMode = modeParam === 'artist_lead' || modeParam === 'business_lead' ? modeParam : 'neutral';
+  const conversationMode: VedaConversationMode = modeParam === 'artist_lead' || modeParam === 'business_lead' || modeParam === 'promotion_lead' || modeParam === 'artist_promo_services' ? modeParam : 'neutral';
 
   const intent = analyzeVedaSearchIntent(query, conversationMode);
 
