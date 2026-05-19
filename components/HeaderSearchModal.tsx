@@ -34,15 +34,14 @@ type ChatMessage = {
   quickActions?: string[];
 };
 
-const INITIAL_MESSAGE = 'Ey, bienvenido a VEDA. ¿Vienes a buscar música, eres artista o quieres promocionar algo?';
-const INITIAL_ACTIONS = ['Buscar música', 'Soy artista', 'Soy negocio', 'Quiero promocionar'];
+const INITIAL_MESSAGE = 'Hola, bienvenido. ¿Cómo puedo ayudarte?';
 const YOUTUBE_REGEX = /(?:youtube\.com\/(?:watch\?v=|shorts\/|embed\/)|youtu\.be\/)([A-Za-z0-9_-]{11})/i;
 
 export default function HeaderSearchModal() {
   const [isMounted, setIsMounted] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [query, setQuery] = useState('');
-  const [messages, setMessages] = useState<ChatMessage[]>([{ id: 'welcome', role: 'veda', text: INITIAL_MESSAGE, kind: 'guide', quickActions: INITIAL_ACTIONS }]);
+  const [messages, setMessages] = useState<ChatMessage[]>([{ id: 'welcome', role: 'veda', text: INITIAL_MESSAGE, kind: 'guide' }]);
   const [isThinking, setIsThinking] = useState(false);
   const [selectedQuickAction, setSelectedQuickAction] = useState<string | null>(null);
   const [videoToPlay, setVideoToPlay] = useState<{ title: string; videoId: string } | null>(null);
@@ -138,6 +137,10 @@ export default function HeaderSearchModal() {
   };
 
   const handleQuickAction = async (action: string) => {
+    if (action === 'Ir a Contacto') {
+      window.dispatchEvent(new CustomEvent('openCommercialContact'));
+      return;
+    }
     setSelectedQuickAction(action);
     await runIntentGate(action);
   };
@@ -254,7 +257,7 @@ export default function HeaderSearchModal() {
           ) : null}
 
           <form className="sticky bottom-0 flex items-center gap-2 border-t border-[#c9a67a]/30 bg-zinc-950/95 px-3 py-3 sm:px-4" onSubmit={onSubmit}>
-            <input ref={inputRef} value={query} onChange={(event) => { clearVoiceErrors(); setQuery(event.target.value); }} placeholder="Escribe o busca en VEDA..." className="w-full rounded-xl border border-zinc-700 bg-zinc-900/75 px-4 py-2.5 text-sm text-zinc-100 outline-none transition placeholder:text-zinc-500 focus:border-[#c9a67a]" maxLength={80} />
+            <input ref={inputRef} value={query} onChange={(event) => { clearVoiceErrors(); setQuery(event.target.value); }} placeholder="Escribe aquí…" className="w-full rounded-xl border border-zinc-700 bg-zinc-900/75 px-4 py-2.5 text-sm text-zinc-100 outline-none transition placeholder:text-zinc-500 focus:border-[#c9a67a]" maxLength={80} />
             <button type="button" disabled={isThinking || voiceInput.isProcessing} onClick={handleMicButtonClick} className="rounded-xl border border-zinc-700 px-3 py-2.5 text-sm text-zinc-100 transition hover:border-[#c9a67a] disabled:cursor-not-allowed disabled:opacity-50">{voiceInput.isRecording ? '⏹️' : '🎙️'}</button>
             <button type="button" disabled={isThinking || voiceReply.isLoadingAudio} onClick={handleAudioReplyButtonClick} className="rounded-xl border border-zinc-700 px-3 py-2.5 text-sm text-zinc-100 transition hover:border-[#c9a67a] disabled:cursor-not-allowed disabled:opacity-50">{voiceReply.isSpeaking ? '🔈' : '🔊'}</button>
             <button type="submit" disabled={isThinking} className="rounded-xl border border-[#c9a67a]/70 bg-[#c9a67a]/10 px-4 py-2.5 text-sm font-medium text-[#f5d2a2] transition hover:bg-[#c9a67a]/20 disabled:opacity-60">Enviar</button>
