@@ -62,10 +62,21 @@ export default function HeaderSearchModal() {
     voiceReply.stop();
   }, [voiceInput, voiceReply]);
 
+  const resetChatState = useCallback(() => {
+    setQuery('');
+    setMessages([{ id: 'welcome', role: 'veda', text: INITIAL_MESSAGE, kind: 'guide' }]);
+    setConversationMode('neutral');
+    setIsThinking(false);
+    setVideoToPlay(null);
+    setHasUsedMic(false);
+    setHasUsedAudioReply(false);
+  }, []);
+
   const closeModal = useCallback(() => {
     clearVoiceErrors();
+    resetChatState();
     setIsOpen(false);
-  }, [clearVoiceErrors]);
+  }, [clearVoiceErrors, resetChatState]);
 
   useEffect(() => setIsMounted(true), []);
 
@@ -82,12 +93,21 @@ export default function HeaderSearchModal() {
     };
 
       document.addEventListener('keydown', onEsc);
+      const scrollY = window.scrollY;
       document.body.style.overflow = 'hidden';
+      document.body.style.position = 'fixed';
+      document.body.style.top = `-${scrollY}px`;
+      document.body.style.width = '100%';
       clearVoiceErrors();
       setTimeout(() => inputRef.current?.focus(), 60);
     return () => {
       document.removeEventListener('keydown', onEsc);
+      const top = document.body.style.top;
       document.body.style.overflow = '';
+      document.body.style.position = '';
+      document.body.style.top = '';
+      document.body.style.width = '';
+      if (top) window.scrollTo(0, Number.parseInt(top || '0', 10) * -1);
     };
   }, [isOpen, videoToPlay, closeModal, clearVoiceErrors]);
 
@@ -179,17 +199,17 @@ export default function HeaderSearchModal() {
     if (!isOpen) return null;
 
     return (
-      <div className="fixed inset-0 z-[220] flex items-end justify-center bg-black/70 p-0 backdrop-blur-sm sm:items-center sm:px-4" onClick={closeModal}>
-        <div role="dialog" aria-modal="true" aria-labelledby="header-search-title" className="flex h-[88vh] w-full max-w-[520px] flex-col rounded-t-3xl border border-[#c9a67a]/50 bg-zinc-950/95 shadow-[0_25px_90px_rgba(0,0,0,0.65)] sm:h-[560px] sm:rounded-3xl" onClick={(event) => event.stopPropagation()}>
-          <div className="flex items-center justify-between border-b border-[#c9a67a]/30 px-4 py-3">
+      <div className="fixed inset-0 z-[220] flex items-end justify-center bg-black/70 px-3 pb-3 backdrop-blur-sm sm:items-center sm:px-4 sm:pb-4" onClick={closeModal}>
+        <div role="dialog" aria-modal="true" aria-labelledby="header-search-title" className="flex h-[82dvh] min-h-[500px] w-[calc(100vw-24px)] max-w-[420px] flex-col rounded-[1.4rem] border border-[#c9a67a]/50 bg-zinc-950/95 shadow-[0_25px_90px_rgba(0,0,0,0.65)] sm:h-[560px] sm:max-w-[520px] sm:rounded-3xl" style={{ paddingBottom: 'env(safe-area-inset-bottom, 0px)' }} onClick={(event) => event.stopPropagation()}>
+          <div className="flex items-start justify-between gap-3 border-b border-[#c9a67a]/30 px-4 py-3">
             <div>
               <h3 id="header-search-title" className="text-base font-semibold text-[#f5d2a2]">Guía VEDA</h3>
               <p className="text-xs text-zinc-400">Búsqueda y orientación musical.</p>
             </div>
-            <button type="button" onClick={closeModal} className="rounded-full border border-zinc-700 px-3 py-1 text-sm text-zinc-100 transition hover:border-[#f5b21b]">✕</button>
+            <button type="button" onClick={closeModal} className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-zinc-700 text-sm text-zinc-100 transition hover:border-[#f5b21b]">✕</button>
           </div>
 
-          <div className="flex-1 space-y-3 overflow-y-auto px-3 py-4 sm:px-4">
+          <div className="flex-1 space-y-3 overflow-y-auto px-4 py-4">
             {messages.map((message) => (
               <div key={message.id} className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'} animate-[fadeIn_220ms_ease]`}>
                 <div className={`max-w-[86%] rounded-2xl border px-3 py-2 text-sm ${message.role === 'user' ? 'border-[#c9a67a]/50 bg-[#c9a67a]/15 text-[#fae3c5]' : 'border-zinc-800 bg-zinc-900/80 text-zinc-100'}`}>
@@ -208,7 +228,6 @@ export default function HeaderSearchModal() {
                                 <p className="mt-1.5 line-clamp-3 text-xs text-zinc-300">{result.snippet}</p>
                                 <div className="mt-2 flex flex-wrap gap-2">
                                   {videoId ? <button type="button" onClick={() => setVideoToPlay({ title: result.title, videoId })} className="rounded-full border border-[#c9a67a]/70 px-2 py-0.5 text-[11px] text-[#f5d2a2] transition hover:bg-[#c9a67a]/15">Ver aquí</button> : null}
-                                  {result.url ? <a href={result.url} target="_blank" rel="noopener noreferrer" className="rounded-full border border-zinc-700 px-2 py-0.5 text-[11px] text-zinc-300">Fuente</a> : null}
                                 </div>
                               </div>
                             </div>
@@ -236,11 +255,11 @@ export default function HeaderSearchModal() {
           </div>
 
 
-          <form className="sticky bottom-0 flex items-center gap-2 border-t border-[#c9a67a]/30 bg-zinc-950/95 px-3 py-3 sm:px-4" onSubmit={onSubmit}>
-            <input ref={inputRef} value={query} onChange={(event) => { clearVoiceErrors(); setQuery(event.target.value); }} placeholder="Escribe aquí…" className="w-full rounded-xl border border-zinc-700 bg-zinc-900/75 px-4 py-2.5 text-sm text-zinc-100 outline-none transition placeholder:text-zinc-500 focus:border-[#c9a67a]" maxLength={80} />
-            <button type="button" disabled={isThinking || voiceInput.isProcessing} onClick={handleMicButtonClick} className="rounded-xl border border-zinc-700 px-3 py-2.5 text-sm text-zinc-100 transition hover:border-[#c9a67a] disabled:cursor-not-allowed disabled:opacity-50">{voiceInput.isRecording ? '⏹️' : '🎙️'}</button>
-            <button type="button" disabled={isThinking || voiceReply.isLoadingAudio} onClick={handleAudioReplyButtonClick} className="rounded-xl border border-zinc-700 px-3 py-2.5 text-sm text-zinc-100 transition hover:border-[#c9a67a] disabled:cursor-not-allowed disabled:opacity-50">{voiceReply.isSpeaking ? '🔈' : '🔊'}</button>
-            <button type="submit" disabled={isThinking} className="rounded-xl border border-[#c9a67a]/70 bg-[#c9a67a]/10 px-4 py-2.5 text-sm font-medium text-[#f5d2a2] transition hover:bg-[#c9a67a]/20 disabled:opacity-60">Enviar</button>
+          <form className="sticky bottom-0 flex items-center gap-1.5 border-t border-[#c9a67a]/30 bg-zinc-950/95 px-3 py-3" style={{ paddingBottom: 'max(0.75rem, env(safe-area-inset-bottom, 0px))' }} onSubmit={onSubmit}>
+            <input ref={inputRef} value={query} onChange={(event) => { clearVoiceErrors(); setQuery(event.target.value); }} placeholder="Escribe aquí…" className="w-full rounded-xl border border-zinc-700 bg-zinc-900/75 px-3.5 py-2.5 text-sm text-zinc-100 outline-none transition placeholder:text-zinc-500 focus:border-[#c9a67a]" maxLength={80} />
+            <button type="button" disabled={isThinking || voiceInput.isProcessing} onClick={handleMicButtonClick} className="rounded-xl border border-zinc-700 px-2.5 py-2.5 text-sm text-zinc-100 transition hover:border-[#c9a67a] disabled:cursor-not-allowed disabled:opacity-50">{voiceInput.isRecording ? '⏹️' : '🎙️'}</button>
+            <button type="button" disabled={isThinking || voiceReply.isLoadingAudio} onClick={handleAudioReplyButtonClick} className="rounded-xl border border-zinc-700 px-2.5 py-2.5 text-sm text-zinc-100 transition hover:border-[#c9a67a] disabled:cursor-not-allowed disabled:opacity-50">{voiceReply.isSpeaking ? '🔈' : '🔊'}</button>
+            <button type="submit" disabled={isThinking} className="rounded-xl border border-[#c9a67a]/70 bg-[#c9a67a]/10 px-3 py-2.5 text-sm font-medium text-[#f5d2a2] transition hover:bg-[#c9a67a]/20 disabled:opacity-60">Enviar</button>
           </form>
         </div>
 
