@@ -49,10 +49,10 @@ export default function HeaderSearchModal() {
   const [conversationMode, setConversationMode] = useState<ConversationMode>('neutral');
   const [isThinking, setIsThinking] = useState(false);
   const [videoToPlay, setVideoToPlay] = useState<{ title: string; videoId: string } | null>(null);
-  const [hasUsedMic, setHasUsedMic] = useState(false);
-  const [hasUsedAudioReply, setHasUsedAudioReply] = useState(false);
+  const [voiceNotice, setVoiceNotice] = useState<string | null>(null);
   const inputRef = useRef<HTMLInputElement | null>(null);
   const bottomRef = useRef<HTMLDivElement | null>(null);
+  const noticeTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const voiceInput = useVedaVoiceInput();
   const voiceReply = useVedaVoiceReply();
@@ -68,15 +68,34 @@ export default function HeaderSearchModal() {
     setConversationMode('neutral');
     setIsThinking(false);
     setVideoToPlay(null);
-    setHasUsedMic(false);
-    setHasUsedAudioReply(false);
+    setVoiceNotice(null);
   }, []);
+
+  const clearVoiceNotice = useCallback((): void => {
+    if (noticeTimeoutRef.current) {
+      clearTimeout(noticeTimeoutRef.current);
+      noticeTimeoutRef.current = null;
+    }
+
+    setVoiceNotice(null);
+  }, []);
+
+  const showVoiceNotice = useCallback((message: string): void => {
+    clearVoiceNotice();
+    setVoiceNotice(message);
+
+    noticeTimeoutRef.current = setTimeout(() => {
+      setVoiceNotice(null);
+      noticeTimeoutRef.current = null;
+    }, 4500);
+  }, [clearVoiceNotice]);
 
   const closeModal = useCallback(() => {
     clearVoiceErrors();
+    clearVoiceNotice();
     resetChatState();
     setIsOpen(false);
-  }, [clearVoiceErrors, resetChatState]);
+  }, [clearVoiceErrors, clearVoiceNotice, resetChatState]);
 
   useEffect(() => setIsMounted(true), []);
 
@@ -168,6 +187,7 @@ export default function HeaderSearchModal() {
     const text = query.trim();
     if (!text || isThinking) return;
     clearVoiceErrors();
+    clearVoiceNotice();
     setQuery('');
     await runIntentGate(text);
   };
@@ -175,24 +195,25 @@ export default function HeaderSearchModal() {
   useEffect(() => {
     if (!voiceInput.transcript || isThinking) return;
     clearVoiceErrors();
+    clearVoiceNotice();
     setQuery('');
     void runIntentGate(voiceInput.transcript);
-  }, [voiceInput.transcript, isThinking, clearVoiceErrors, runIntentGate]);
+  }, [voiceInput.transcript, isThinking, clearVoiceErrors, clearVoiceNotice, runIntentGate]);
+
+
+  useEffect(() => () => {
+    if (noticeTimeoutRef.current) {
+      clearTimeout(noticeTimeoutRef.current);
+      noticeTimeoutRef.current = null;
+    }
+  }, []);
 
   const handleMicButtonClick = () => {
-    setHasUsedMic(true);
-    if (voiceInput.isRecording) {
-      void voiceInput.stopRecording();
-      return;
-    }
-    void voiceInput.startRecording();
+    showVoiceNotice('Hablar con VEDA estará disponible próximamente.');
   };
 
   const handleAudioReplyButtonClick = () => {
-    setHasUsedAudioReply(true);
-    const latestVedaMessage = [...messages].reverse().find((message) => message.role === 'veda' && message.text.trim());
-    if (!latestVedaMessage) return;
-    void voiceReply.speak(latestVedaMessage.text);
+    showVoiceNotice('Escuchar respuestas estará disponible próximamente.');
   };
 
   const modalContent = useMemo(() => {
@@ -249,14 +270,13 @@ export default function HeaderSearchModal() {
               </div>
             ) : null}
 
-            {hasUsedMic && voiceInput.error ? <p className="rounded-xl border border-red-900/70 bg-red-950/30 px-3 py-2 text-sm text-red-200">{voiceInput.error}</p> : null}
-            {hasUsedAudioReply && voiceReply.error ? <p className="rounded-xl border border-red-900/70 bg-red-950/30 px-3 py-2 text-sm text-red-200">{voiceReply.error}</p> : null}
+            {voiceNotice ? <p className="rounded-xl border border-[#c9a67a]/50 bg-[#c9a67a]/15 px-3 py-2 text-sm text-[#f5d2a2]">{voiceNotice}</p> : null}
             <div ref={bottomRef} />
           </div>
 
 
           <form className="sticky bottom-0 flex items-center gap-1.5 border-t border-[#c9a67a]/30 bg-zinc-950/95 px-3 py-3" style={{ paddingBottom: 'max(0.75rem, env(safe-area-inset-bottom, 0px))' }} onSubmit={onSubmit}>
-            <input ref={inputRef} value={query} onChange={(event) => { clearVoiceErrors(); setQuery(event.target.value); }} placeholder="Escribe aquí…" className="w-full rounded-xl border border-zinc-700 bg-zinc-900/75 px-3.5 py-2.5 text-sm text-zinc-100 outline-none transition placeholder:text-zinc-500 focus:border-[#c9a67a]" maxLength={80} />
+            <input ref={inputRef} value={query} onChange={(event) => { clearVoiceErrors(); clearVoiceNotice(); setQuery(event.target.value); }} placeholder="Escribe aquí…" className="w-full rounded-xl border border-zinc-700 bg-zinc-900/75 px-3.5 py-2.5 text-sm text-zinc-100 outline-none transition placeholder:text-zinc-500 focus:border-[#c9a67a]" maxLength={80} />
             <button type="button" disabled={isThinking || voiceInput.isProcessing} onClick={handleMicButtonClick} className="rounded-xl border border-zinc-700 px-2.5 py-2.5 text-sm text-zinc-100 transition hover:border-[#c9a67a] disabled:cursor-not-allowed disabled:opacity-50">{voiceInput.isRecording ? '⏹️' : '🎙️'}</button>
             <button type="button" disabled={isThinking || voiceReply.isLoadingAudio} onClick={handleAudioReplyButtonClick} className="rounded-xl border border-zinc-700 px-2.5 py-2.5 text-sm text-zinc-100 transition hover:border-[#c9a67a] disabled:cursor-not-allowed disabled:opacity-50">{voiceReply.isSpeaking ? '🔈' : '🔊'}</button>
             <button type="submit" disabled={isThinking} className="rounded-xl border border-[#c9a67a]/70 bg-[#c9a67a]/10 px-3 py-2.5 text-sm font-medium text-[#f5d2a2] transition hover:bg-[#c9a67a]/20 disabled:opacity-60">Enviar</button>
@@ -266,7 +286,7 @@ export default function HeaderSearchModal() {
         {videoToPlay ? <EmbeddedVideoModal title={videoToPlay.title} youtubeVideoId={videoToPlay.videoId} onClose={() => setVideoToPlay(null)} /> : null}
       </div>
     );
-  }, [hasUsedAudioReply, hasUsedMic, isOpen, messages, isThinking, voiceInput.error, voiceInput.isProcessing, voiceInput.isRecording, voiceReply.error, voiceReply.isLoadingAudio, voiceReply.isSpeaking, query, videoToPlay]);
+  }, [isOpen, messages, isThinking, voiceInput.isProcessing, query, videoToPlay, voiceReply.isLoadingAudio, voiceNotice]);
 
   return (
     <>
