@@ -26,7 +26,7 @@ export type VedaSearchIntentAnalysis = {
   conversationMode?: VedaConversationMode;
 };
 
-export type VedaConversationMode = 'neutral' | 'artist_lead' | 'business_lead' | 'promotion_lead' | 'artist_promo_services';
+export type VedaConversationMode = 'neutral' | 'artist_lead' | 'business_lead' | 'promotion_lead' | 'artist_promo_services' | 'package_services';
 
 const QUICK = {
   explore: ['Buscar artista', 'Buscar canción', 'Ver videos', 'Ver entrevista'],
@@ -47,6 +47,7 @@ const PROMO_PACKAGE = /(paquetes?\s+promocionales?|paquetes?\s+de\s+exposicion|p
 
 const SERVICES_PROMO_INTENT = /(que\s+servicios\s+ofreces|que\s+ofrecen|que\s+ofrecen\s+para\s+artistas|servicios?|paquetes?|promocion|promocion\s+artista|exposicion|precios?|presupuesto|plan(?:es)?\s+para\s+artistas?|artista\s+emergente|lanzamiento|estreno|nota\s+editorial|presencia\s+destacada|pauta\s+artistica|auspicio|colaboracion)/i;
 const PROMO_CONTEXT_TERMS = /(canciones?|videos?|entrevista|estreno|nota|presupuesto|paquete|precio|servicio|promocion|exposicion)/i;
+const PROMO_PROCESS_QUESTION = /(cual\s+es\s+el\s+proceso|como\s+funciona|como\s+es|para\s+los\s+paquetes\s+como\s+es|que\s+sigue|como\s+empiezo)/i;
 const CLEAR_MUSIC_ENTITY_SEARCH = /(videos?\s+de\s+|canciones?\s+de\s+|noticias?\s+de\s+|entrevista\s+de\s+|biografia\s+de\s+|biografía\s+de\s+)/i;
 
 const LEAD_CONTACT = /(soy cantante|soy artista|soy productor|tengo musica|tengo música|quiero promocionar|quiero pautar|tengo un negocio|tengo negocio|quiero anunciar|quiero promocionarme)/i;
@@ -88,7 +89,19 @@ export function analyzeVedaSearchIntent(input: string, currentMode: VedaConversa
   }
 
 
-  const inPromoContext = currentMode === 'artist_lead' || currentMode === 'promotion_lead' || currentMode === 'artist_promo_services';
+  const inPromoContext = currentMode === 'artist_lead' || currentMode === 'promotion_lead' || currentMode === 'artist_promo_services' || currentMode === 'package_services';
+
+  if (inPromoContext && !CLEAR_MUSIC_ENTITY_SEARCH.test(q)) {
+    if (/para\s+los\s+paquetes\s+como\s+es/.test(q)) {
+      return { shouldCallApi: false, intent: 'promotion_lead', confidence: 'high', normalizedQuery, userFacingReply: 'Los paquetes se ajustan según tu objetivo y presupuesto. Pueden incluir canción, video, estreno, entrevista, nota editorial o presencia destacada.', quickActions: QUICK.lead, reason: 'promo_context_package_how_it_is', conversationMode: 'package_services' };
+    }
+    if (PROMO_PROCESS_QUESTION.test(q)) {
+      return { shouldCallApi: false, intent: 'promotion_lead', confidence: 'high', normalizedQuery, userFacingReply: 'El proceso es simple: envías tu material en Contacto, evaluamos el objetivo y te orientamos con una opción según tu presupuesto.', quickActions: QUICK.lead, reason: 'promo_context_process', conversationMode: 'package_services' };
+    }
+    if (/que\s+tienen\s+los\s+paquetes|que\s+incluyen\s+los\s+paquetes|que\s+trae\s+el\s+paquete|que\s+incluye/.test(q)) {
+      return { shouldCallApi: false, intent: 'promotion_lead', confidence: 'high', normalizedQuery, userFacingReply: 'Pueden incluir exposición de canción, video, estreno, entrevista, nota editorial, presencia destacada y pauta artística.', quickActions: QUICK.lead, reason: 'promo_context_package_contents', conversationMode: 'package_services' };
+    }
+  }
 
   if (inPromoContext && !CLEAR_MUSIC_ENTITY_SEARCH.test(q) && PROMO_CONTEXT_TERMS.test(q)) {
     if (/^canciones?$/.test(q)) {
