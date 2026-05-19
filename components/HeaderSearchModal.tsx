@@ -43,7 +43,6 @@ export default function HeaderSearchModal() {
   const [query, setQuery] = useState('');
   const [messages, setMessages] = useState<ChatMessage[]>([{ id: 'welcome', role: 'veda', text: INITIAL_MESSAGE, kind: 'guide' }]);
   const [isThinking, setIsThinking] = useState(false);
-  const [selectedQuickAction, setSelectedQuickAction] = useState<string | null>(null);
   const [videoToPlay, setVideoToPlay] = useState<{ title: string; videoId: string } | null>(null);
   const [hasUsedMic, setHasUsedMic] = useState(false);
   const [hasUsedAudioReply, setHasUsedAudioReply] = useState(false);
@@ -132,15 +131,10 @@ export default function HeaderSearchModal() {
       appendMessage({ id: `v-${Date.now()}`, role: 'veda', text: 'No pude traer ese resultado ahora. Prueba con artista, canción o video específico.', kind: 'guide' });
     } finally {
       setIsThinking(false);
-      setSelectedQuickAction(null);
       setTimeout(() => inputRef.current?.focus(), 60);
     }
   }, [clearVoiceErrors]);
 
-  const handleQuickAction = async (action: string) => {
-    setSelectedQuickAction(action);
-    await runIntentGate(action);
-  };
 
   const onSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -157,13 +151,6 @@ export default function HeaderSearchModal() {
     setQuery('');
     void runIntentGate(voiceInput.transcript);
   }, [voiceInput.transcript, isThinking, clearVoiceErrors, runIntentGate]);
-
-  const lastQuickActions = useMemo(() => {
-    for (let i = messages.length - 1; i >= 0; i -= 1) {
-      if (messages[i].role === 'veda' && messages[i].quickActions?.length) return messages[i].quickActions ?? [];
-    }
-    return [];
-  }, [messages]);
 
   const handleMicButtonClick = () => {
     setHasUsedMic(true);
@@ -241,17 +228,6 @@ export default function HeaderSearchModal() {
             <div ref={bottomRef} />
           </div>
 
-          {lastQuickActions.length ? (
-            <div className="border-t border-zinc-800 px-3 py-2 sm:px-4">
-              <div className="flex flex-wrap gap-2">
-                {lastQuickActions.map((action) => (
-                  <button key={action} type="button" onClick={() => void handleQuickAction(action)} disabled={isThinking} className={`rounded-full border px-2.5 py-1 text-xs transition ${selectedQuickAction === action ? 'border-[#c9a67a] text-[#f5d2a2]' : 'border-zinc-700 text-zinc-200 hover:border-[#c9a67a]'}`}>
-                    {action}
-                  </button>
-                ))}
-              </div>
-            </div>
-          ) : null}
 
           <form className="sticky bottom-0 flex items-center gap-2 border-t border-[#c9a67a]/30 bg-zinc-950/95 px-3 py-3 sm:px-4" onSubmit={onSubmit}>
             <input ref={inputRef} value={query} onChange={(event) => { clearVoiceErrors(); setQuery(event.target.value); }} placeholder="Escribe aquí…" className="w-full rounded-xl border border-zinc-700 bg-zinc-900/75 px-4 py-2.5 text-sm text-zinc-100 outline-none transition placeholder:text-zinc-500 focus:border-[#c9a67a]" maxLength={80} />
@@ -264,7 +240,7 @@ export default function HeaderSearchModal() {
         {videoToPlay ? <EmbeddedVideoModal title={videoToPlay.title} youtubeVideoId={videoToPlay.videoId} onClose={() => setVideoToPlay(null)} /> : null}
       </div>
     );
-  }, [hasUsedAudioReply, hasUsedMic, isOpen, messages, isThinking, voiceInput.error, voiceInput.isProcessing, voiceInput.isRecording, voiceReply.error, voiceReply.isLoadingAudio, voiceReply.isSpeaking, query, lastQuickActions, selectedQuickAction, videoToPlay]);
+  }, [hasUsedAudioReply, hasUsedMic, isOpen, messages, isThinking, voiceInput.error, voiceInput.isProcessing, voiceInput.isRecording, voiceReply.error, voiceReply.isLoadingAudio, voiceReply.isSpeaking, query, videoToPlay]);
 
   return (
     <>
