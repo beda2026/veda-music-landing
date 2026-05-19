@@ -1,8 +1,6 @@
 'use client';
 
 import { FormEvent, useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { useVedaVoiceInput } from '@/hooks/useVedaVoiceInput';
-import { useVedaVoiceReply } from '@/hooks/useVedaVoiceReply';
 import { createPortal } from 'react-dom';
 import EmbeddedVideoModal from '@/components/EmbeddedVideoModal';
 
@@ -49,18 +47,28 @@ export default function HeaderSearchModal() {
   const [conversationMode, setConversationMode] = useState<ConversationMode>('neutral');
   const [isThinking, setIsThinking] = useState(false);
   const [videoToPlay, setVideoToPlay] = useState<{ title: string; videoId: string } | null>(null);
-  const [hasUsedMic, setHasUsedMic] = useState(false);
-  const [hasUsedAudioReply, setHasUsedAudioReply] = useState(false);
+  const [voiceNotice, setVoiceNotice] = useState<string | null>(null);
   const inputRef = useRef<HTMLInputElement | null>(null);
   const bottomRef = useRef<HTMLDivElement | null>(null);
 
-  const voiceInput = useVedaVoiceInput();
-  const voiceReply = useVedaVoiceReply();
+  const noticeTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const clearVoiceErrors = useCallback(() => {
-    voiceInput.cancelRecording();
-    voiceReply.stop();
-  }, [voiceInput, voiceReply]);
+  const clearVoiceNotice = useCallback(() => {
+    if (noticeTimeoutRef.current) {
+      clearTimeout(noticeTimeoutRef.current);
+      noticeTimeoutRef.current = null;
+    }
+    setVoiceNotice(null);
+  }, [clearVoiceNotice]);
+
+  const showVoiceNotice = useCallback((message: string) => {
+    clearVoiceNotice();
+    setVoiceNotice(message);
+    noticeTimeoutRef.current = setTimeout(() => {
+      setVoiceNotice(null);
+      noticeTimeoutRef.current = null;
+    }, 5000);
+  }, [clearVoiceNotice]);
 
   const resetChatState = useCallback(() => {
     setQuery('');
@@ -68,17 +76,17 @@ export default function HeaderSearchModal() {
     setConversationMode('neutral');
     setIsThinking(false);
     setVideoToPlay(null);
-    setHasUsedMic(false);
-    setHasUsedAudioReply(false);
+    clearVoiceNotice();
   }, []);
 
   const closeModal = useCallback(() => {
-    clearVoiceErrors();
+    clearVoiceNotice();
     resetChatState();
     setIsOpen(false);
-  }, [clearVoiceErrors, resetChatState]);
+  }, [clearVoiceNotice, resetChatState]);
 
   useEffect(() => setIsMounted(true), []);
+  useEffect(() => () => clearVoiceNotice(), [clearVoiceNotice]);
 
   useEffect(() => {
     if (!isOpen) return;
@@ -98,7 +106,7 @@ export default function HeaderSearchModal() {
       document.body.style.position = 'fixed';
       document.body.style.top = `-${scrollY}px`;
       document.body.style.width = '100%';
-      clearVoiceErrors();
+      clearVoiceNotice();
       setTimeout(() => inputRef.current?.focus(), 60);
     return () => {
       document.removeEventListener('keydown', onEsc);
@@ -109,7 +117,7 @@ export default function HeaderSearchModal() {
       document.body.style.width = '';
       if (top) window.scrollTo(0, Number.parseInt(top || '0', 10) * -1);
     };
-  }, [isOpen, videoToPlay, closeModal, clearVoiceErrors]);
+  }, [isOpen, videoToPlay, closeModal, clearVoiceNotice]);
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' });
@@ -122,7 +130,7 @@ export default function HeaderSearchModal() {
   const runIntentGate = useCallback(async (rawText: string) => {
     const sanitized = rawText.trim();
     if (!sanitized) return;
-    clearVoiceErrors();
+    clearVoiceNotice();
 
     appendMessage({ id: `u-${Date.now()}`, role: 'user', text: sanitized, kind: 'text' });
     setIsThinking(true);
@@ -160,39 +168,24 @@ export default function HeaderSearchModal() {
       setIsThinking(false);
       setTimeout(() => inputRef.current?.focus(), 60);
     }
-  }, [clearVoiceErrors]);
+  }, [clearVoiceNotice, conversationMode]);
 
 
   const onSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const text = query.trim();
     if (!text || isThinking) return;
-    clearVoiceErrors();
+    clearVoiceNotice();
     setQuery('');
     await runIntentGate(text);
   };
 
-  useEffect(() => {
-    if (!voiceInput.transcript || isThinking) return;
-    clearVoiceErrors();
-    setQuery('');
-    void runIntentGate(voiceInput.transcript);
-  }, [voiceInput.transcript, isThinking, clearVoiceErrors, runIntentGate]);
-
   const handleMicButtonClick = () => {
-    setHasUsedMic(true);
-    if (voiceInput.isRecording) {
-      void voiceInput.stopRecording();
-      return;
-    }
-    void voiceInput.startRecording();
+    showVoiceNotice('Hablar con VEDA estará disponible próximamente.');
   };
 
   const handleAudioReplyButtonClick = () => {
-    setHasUsedAudioReply(true);
-    const latestVedaMessage = [...messages].reverse().find((message) => message.role === 'veda' && message.text.trim());
-    if (!latestVedaMessage) return;
-    void voiceReply.speak(latestVedaMessage.text);
+    showVoiceNotice('Escuchar respuestas estará disponible próximamente.');
   };
 
   const modalContent = useMemo(() => {
@@ -249,16 +242,17 @@ export default function HeaderSearchModal() {
               </div>
             ) : null}
 
-            {hasUsedMic && voiceInput.error ? <p className="rounded-xl border border-red-900/70 bg-red-950/30 px-3 py-2 text-sm text-red-200">{voiceInput.error}</p> : null}
-            {hasUsedAudioReply && voiceReply.error ? <p className="rounded-xl border border-red-900/70 bg-red-950/30 px-3 py-2 text-sm text-red-200">{voiceReply.error}</p> : null}
+            {voiceNotice ? (
+              <p className="rounded-xl border border-amber-700/60 bg-amber-950/30 px-3 py-2 text-sm text-amber-100">{voiceNotice}</p>
+            ) : null}
             <div ref={bottomRef} />
           </div>
 
 
           <form className="sticky bottom-0 flex items-center gap-1.5 border-t border-[#c9a67a]/30 bg-zinc-950/95 px-3 py-3" style={{ paddingBottom: 'max(0.75rem, env(safe-area-inset-bottom, 0px))' }} onSubmit={onSubmit}>
-            <input ref={inputRef} value={query} onChange={(event) => { clearVoiceErrors(); setQuery(event.target.value); }} placeholder="Escribe aquí…" className="w-full rounded-xl border border-zinc-700 bg-zinc-900/75 px-3.5 py-2.5 text-sm text-zinc-100 outline-none transition placeholder:text-zinc-500 focus:border-[#c9a67a]" maxLength={80} />
-            <button type="button" disabled={isThinking || voiceInput.isProcessing} onClick={handleMicButtonClick} className="rounded-xl border border-zinc-700 px-2.5 py-2.5 text-sm text-zinc-100 transition hover:border-[#c9a67a] disabled:cursor-not-allowed disabled:opacity-50">{voiceInput.isRecording ? '⏹️' : '🎙️'}</button>
-            <button type="button" disabled={isThinking || voiceReply.isLoadingAudio} onClick={handleAudioReplyButtonClick} className="rounded-xl border border-zinc-700 px-2.5 py-2.5 text-sm text-zinc-100 transition hover:border-[#c9a67a] disabled:cursor-not-allowed disabled:opacity-50">{voiceReply.isSpeaking ? '🔈' : '🔊'}</button>
+            <input ref={inputRef} value={query} onChange={(event) => { clearVoiceNotice(); setQuery(event.target.value); }} placeholder="Escribe aquí…" className="w-full rounded-xl border border-zinc-700 bg-zinc-900/75 px-3.5 py-2.5 text-sm text-zinc-100 outline-none transition placeholder:text-zinc-500 focus:border-[#c9a67a]" maxLength={80} />
+            <button type="button" onClick={handleMicButtonClick} aria-label="Voz próximamente" title="Voz próximamente" className="rounded-xl border border-zinc-700 px-2.5 py-2.5 text-sm text-zinc-100/80 transition hover:border-[#c9a67a] hover:text-zinc-100">🎙️</button>
+            <button type="button" onClick={handleAudioReplyButtonClick} aria-label="Voz próximamente" title="Voz próximamente" className="rounded-xl border border-zinc-700 px-2.5 py-2.5 text-sm text-zinc-100/80 transition hover:border-[#c9a67a] hover:text-zinc-100">🔊</button>
             <button type="submit" disabled={isThinking} className="rounded-xl border border-[#c9a67a]/70 bg-[#c9a67a]/10 px-3 py-2.5 text-sm font-medium text-[#f5d2a2] transition hover:bg-[#c9a67a]/20 disabled:opacity-60">Enviar</button>
           </form>
         </div>
@@ -266,14 +260,14 @@ export default function HeaderSearchModal() {
         {videoToPlay ? <EmbeddedVideoModal title={videoToPlay.title} youtubeVideoId={videoToPlay.videoId} onClose={() => setVideoToPlay(null)} /> : null}
       </div>
     );
-  }, [hasUsedAudioReply, hasUsedMic, isOpen, messages, isThinking, voiceInput.error, voiceInput.isProcessing, voiceInput.isRecording, voiceReply.error, voiceReply.isLoadingAudio, voiceReply.isSpeaking, query, videoToPlay]);
+  }, [isOpen, messages, isThinking, query, videoToPlay, closeModal, onSubmit, clearVoiceNotice, voiceNotice]);
 
   return (
     <>
       <>
         <button
           type="button"
-          onClick={() => { clearVoiceErrors(); setIsOpen(true); }}
+          onClick={() => { clearVoiceNotice(); setIsOpen(true); }}
           aria-label="Abrir Guía VEDA"
           title="Busca música o recibe orientación."
           className="hidden items-center gap-2 rounded-full border border-[#c9a67a]/80 bg-zinc-950/90 px-4 py-2 text-sm font-medium text-[#f5d2a2] shadow-[0_0_18px_rgba(201,166,122,0.26)] transition hover:border-[#f5d2a2] hover:shadow-[0_0_24px_rgba(245,210,162,0.35)] md:inline-flex"
@@ -284,7 +278,7 @@ export default function HeaderSearchModal() {
 
         <button
           type="button"
-          onClick={() => { clearVoiceErrors(); setIsOpen(true); }}
+          onClick={() => { clearVoiceNotice(); setIsOpen(true); }}
           aria-label="Abrir Guía VEDA"
           title="Busca música o recibe orientación."
           className="fixed bottom-20 right-4 z-[210] inline-flex items-center gap-2 rounded-full border border-[#c9a67a]/80 bg-zinc-950/95 px-4 py-2 text-sm font-medium text-[#f5d2a2] shadow-[0_0_18px_rgba(201,166,122,0.3)] transition hover:border-[#f5d2a2] hover:shadow-[0_0_26px_rgba(245,210,162,0.35)] md:hidden"
