@@ -26,9 +26,9 @@ export type VedaSearchIntentAnalysis = {
 };
 
 const QUICK = {
-  explore: ['Buscar artista', 'Buscar canción', 'Ver videos', 'Ver entrevista'],
-  fan: ['Ver videos', 'Ver noticias', 'Buscar canción', 'Playlist VEDA'],
-  lead: ['Soy artista', 'Soy negocio', 'Quiero promocionar', 'Auspiciar / pautar'],
+  explore: ['Buscar artista', 'Buscar canción', 'Ver videos'],
+  fan: ['Videos', 'Canciones', 'Noticias'],
+  lead: ['Ir a Contacto'],
 };
 
 const GREETINGS = /^(hola|hello|hey|saludos?|buenas|que tal|qué tal|hi)$/i;
@@ -64,17 +64,17 @@ export function analyzeVedaSearchIntent(input: string): VedaSearchIntentAnalysis
       intent: 'ambiguous',
       confidence: 'low',
       normalizedQuery,
-      userFacingReply: 'Te guío rápido. Dime artista, canción, video o si quieres mover algo en VEDA.',
-      quickActions: [...QUICK.explore, 'Quiero promocionar'],
+      userFacingReply: 'Hola, bienvenido. ¿Cómo puedo ayudarte?',
+      quickActions: [],
       reason: 'empty_query',
     };
   }
 
   if (GREETINGS.test(q)) {
-    return { shouldCallApi: false, intent: 'greeting', confidence: 'high', normalizedQuery, userFacingReply: 'Ey, bienvenido a VEDA. ¿Vienes a buscar música, eres artista o quieres promocionar algo?', quickActions: [...QUICK.explore.slice(0,2), ...QUICK.lead.slice(0,2)], reason: 'greeting' };
+    return { shouldCallApi: false, intent: 'greeting', confidence: 'high', normalizedQuery, userFacingReply: 'Hola, bienvenido. ¿Cómo puedo ayudarte?', quickActions: [], reason: 'greeting' };
   }
   if (TEST.test(q)) {
-    return { shouldCallApi: false, intent: 'ambiguous', confidence: 'high', normalizedQuery, userFacingReply: 'Estoy ready. Busca un artista, una canción, un video o dime si quieres aparecer en VEDA.', quickActions: QUICK.explore, reason: 'test' };
+    return { shouldCallApi: false, intent: 'ambiguous', confidence: 'high', normalizedQuery, userFacingReply: 'Listo. ¿Qué artista o canción buscas?', quickActions: [], reason: 'test' };
   }
 
   if (PLAYLIST.test(q)) {
@@ -82,22 +82,22 @@ export function analyzeVedaSearchIntent(input: string): VedaSearchIntentAnalysis
   }
 
   if (ARTIST_LEAD.test(q)) {
-    return { shouldCallApi: false, intent: 'artist_submission', confidence: 'high', normalizedQuery, userFacingReply: 'Duro. ¿Quieres mover una canción, un video, una entrevista o tu perfil?', quickActions: ['Enviar música', 'Ver entrevista', 'Quiero promocionar', 'Soy artista'], reason: 'artist_lead' };
+    return { shouldCallApi: false, intent: 'artist_submission', confidence: 'high', normalizedQuery, userFacingReply: 'Perfecto. VEDA puede darte exposición. Envíanos tu música en la sección de Contacto.', quickActions: ['Ir a Contacto'], reason: 'artist_lead' };
   }
   if (EVENT_LEAD.test(q)) {
-    return { shouldCallApi: false, intent: 'event_lead', confidence: 'high', normalizedQuery, userFacingReply: 'Bien. ¿Quieres promocionar el evento o buscar artistas para moverlo?', quickActions: ['Quiero promocionar', 'Buscar artista', 'Auspiciar / pautar'], reason: 'event_lead' };
+    return { shouldCallApi: false, intent: 'event_lead', confidence: 'high', normalizedQuery, userFacingReply: 'Perfecto. VEDA puede ayudar a darle visibilidad. Envíanos la información en Contacto.', quickActions: ['Ir a Contacto'], reason: 'event_lead' };
   }
   if (PROMO.test(q)) {
     const sponsor = /(pautar|auspiciar|auspicio)/i.test(q);
-    return { shouldCallApi: false, intent: sponsor ? 'sponsor_lead' : 'promotion_lead', confidence: 'high', normalizedQuery, userFacingReply: 'Claro. ¿Quieres mover un artista, un negocio, un evento o una marca?', quickActions: QUICK.lead, reason: 'promotion_lead' };
+    return { shouldCallApi: false, intent: sponsor ? 'sponsor_lead' : 'promotion_lead', confidence: 'high', normalizedQuery, userFacingReply: sponsor ? 'Para pautas y auspicios, déjanos tus datos en Contacto.' : 'Claro. Si es música, negocio o evento, puedes enviar tu propuesta en Contacto.', quickActions: ['Ir a Contacto'], reason: 'promotion_lead' };
   }
   if (BUSINESS_LEAD.test(q)) {
-    return { shouldCallApi: false, intent: 'business_lead', confidence: 'high', normalizedQuery, userFacingReply: 'Duro. ¿Qué tipo de negocio quieres mover en VEDA?', quickActions: ['Soy negocio', 'Quiero promocionar', 'Auspiciar / pautar'], reason: 'business_lead' };
+    return { shouldCallApi: false, intent: 'business_lead', confidence: 'high', normalizedQuery, userFacingReply: 'Perfecto. VEDA ofrece espacio para auspicios y visibilidad. Escríbenos en Contacto.', quickActions: ['Ir a Contacto'], reason: 'business_lead' };
   }
 
   const tokens = q.split(' ').filter(Boolean);
   if (tokens.length === 1 && AMBIGUOUS_SINGLE.has(tokens[0])) {
-    return { shouldCallApi: false, intent: 'generic_music', confidence: 'medium', normalizedQuery, userFacingReply: tokens[0] === 'amor' ? 'Eso está amplio. ¿Buscas una canción llamada “Amor”, un artista o videos?' : 'Duro. ¿Quieres artistas, videos, canciones o playlist urbana?', quickActions: QUICK.fan, reason: 'ambiguous_single' };
+    return { shouldCallApi: false, intent: 'generic_music', confidence: 'medium', normalizedQuery, userFacingReply: tokens[0] === 'amor' ? 'Entendido. ¿Buscas la canción “Amor” o un artista?' : 'Perfecto. ¿Nombre del artista o canción?', quickActions: [], reason: 'ambiguous_single' };
   }
 
   const hasDe = q.includes(' de ') || q.includes(' del ') || q.includes(' por ');
@@ -108,8 +108,8 @@ export function analyzeVedaSearchIntent(input: string): VedaSearchIntentAnalysis
   if (SONG_HINT.test(q) || hasDe) return { shouldCallApi: true, intent: 'song_lookup', confidence: 'medium', normalizedQuery, reason: 'song' };
 
   if (tokens.length <= 3) {
-    return { shouldCallApi: false, intent: 'artist_lookup', confidence: 'medium', normalizedQuery, userFacingReply: `¿Qué quieres ver de ${normalizedQuery}: videos, canciones, entrevista, biografía o noticias?`, quickActions: QUICK.fan, reason: 'artist_name_only' };
+    return { shouldCallApi: false, intent: 'artist_lookup', confidence: 'medium', normalizedQuery, userFacingReply: `¿Qué quieres ver de ${normalizedQuery}: videos, canciones o noticias?`, quickActions: ['Videos', 'Canciones', 'Noticias'], reason: 'artist_name_only' };
   }
 
-  return { shouldCallApi: false, intent: 'ambiguous', confidence: 'low', normalizedQuery, userFacingReply: 'Eso está amplio. ¿Buscas artista, canción, video o entrevista?', quickActions: QUICK.explore, reason: 'fallback_ambiguous' };
+  return { shouldCallApi: false, intent: 'ambiguous', confidence: 'low', normalizedQuery, userFacingReply: 'Entendido. ¿Nombre del artista o canción?', quickActions: [], reason: 'fallback_ambiguous' };
 }
