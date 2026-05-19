@@ -15,7 +15,7 @@ type SearchResult = {
   image?: string;
 };
 
-type ConversationMode = 'neutral' | 'artist_lead' | 'business_lead' | 'promotion_lead' | 'artist_promo_services';
+type ConversationMode = 'neutral' | 'artist_lead' | 'business_lead' | 'promotion_lead' | 'artist_promo_services' | 'package_services';
 
 type ApiResponse = {
   ok: boolean;
