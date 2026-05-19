@@ -30,6 +30,10 @@ export function useVedaVoiceReply() {
     cleanupAudio();
   }, [cleanupAudio]);
 
+  const clearError = useCallback(() => {
+    setError(null);
+  }, []);
+
   const speak = useCallback(async (text: string) => {
     const normalized = text.trim();
     if (!normalized) return;
@@ -83,5 +87,6 @@ export function useVedaVoiceReply() {
     error,
     speak,
     stop,
+    clearError,
   };
 }

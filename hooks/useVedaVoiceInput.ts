@@ -62,6 +62,10 @@ export function useVedaVoiceInput() {
     cleanup();
   }, [cleanup]);
 
+  const clearError = useCallback(() => {
+    setError(null);
+  }, []);
+
   const startRecording = useCallback(async () => {
     if (!isSupported || isRecording || isProcessing) {
       if (!isSupported) setError('No pude activar el micrófono. Escríbeme y te guío igual.');
@@ -145,5 +149,6 @@ export function useVedaVoiceInput() {
     startRecording,
     stopRecording,
     cancelRecording,
+    clearError,
   };
 }

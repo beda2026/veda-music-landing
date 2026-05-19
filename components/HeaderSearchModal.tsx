@@ -38,6 +38,7 @@ export default function HeaderSearchModal() {
   const [error, setError] = useState<string | null>(null);
   const [videoToPlay, setVideoToPlay] = useState<{ title: string; videoId: string } | null>(null);
   const [lastBotReply, setLastBotReply] = useState<string | null>(null);
+  const [hasPerformedSearch, setHasPerformedSearch] = useState(false);
 
   const voiceInput = useVedaVoiceInput();
   const voiceReply = useVedaVoiceReply();
@@ -65,10 +66,31 @@ export default function HeaderSearchModal() {
     };
   }, [isOpen, videoToPlay]);
 
+  useEffect(() => {
+    if (!voiceInput.error) return;
+    const timeout = setTimeout(() => voiceInput.clearError(), 5000);
+    return () => clearTimeout(timeout);
+  }, [voiceInput, voiceInput.error]);
+
+  useEffect(() => {
+    if (!voiceReply.error) return;
+    const timeout = setTimeout(() => voiceReply.clearError(), 5000);
+    return () => clearTimeout(timeout);
+  }, [voiceReply, voiceReply.error]);
+
+  useEffect(() => {
+    if (!isOpen) {
+      voiceInput.clearError();
+      voiceReply.clearError();
+    }
+  }, [isOpen, voiceInput, voiceReply]);
+
   const handleSearch = async (rawQuery: string) => {
     const sanitized = rawQuery.trim();
 
     if (!sanitized) {
+      voiceInput.clearError();
+      voiceReply.clearError();
       setError('Escribe artista, canción, video o entrevista.');
       setGuideMessage(null);
       setQuickActions([]);
@@ -78,6 +100,9 @@ export default function HeaderSearchModal() {
     }
 
     setIsLoading(true);
+    setHasPerformedSearch(true);
+    voiceInput.clearError();
+    voiceReply.clearError();
     setError(null);
     setGuideMessage(null);
 
@@ -128,6 +153,13 @@ export default function HeaderSearchModal() {
     void handleSearch(voiceInput.transcript);
   }, [voiceInput.transcript]);
 
+  useEffect(() => {
+    if (!isOpen) return;
+    if (!query.trim()) return;
+    voiceInput.clearError();
+    voiceReply.clearError();
+  }, [isOpen, query, voiceInput, voiceReply]);
+
 
   const modalContent = useMemo(() => {
     if (!isOpen) return null;
@@ -149,7 +181,11 @@ export default function HeaderSearchModal() {
           <form className="mb-4 flex flex-col gap-2 sm:flex-row" onSubmit={onSubmit}>
             <input
               value={query}
-              onChange={(event) => setQuery(event.target.value)}
+              onChange={(event) => {
+                setQuery(event.target.value);
+                voiceInput.clearError();
+                voiceReply.clearError();
+              }}
               placeholder="Busca artistas, videos, entrevistas o música…"
               className="w-full rounded-xl border border-zinc-700 bg-zinc-900/75 px-4 py-3 text-sm text-zinc-100 outline-none transition placeholder:text-zinc-500 focus:border-[#c9a67a]"
               maxLength={80}
@@ -171,9 +207,9 @@ export default function HeaderSearchModal() {
             {voiceInput.error && <p className="rounded-xl border border-red-900/70 bg-red-950/30 px-3 py-2 text-sm text-red-200">{voiceInput.error}</p>}
             {error && <p className="rounded-xl border border-red-900/70 bg-red-950/30 px-3 py-2 text-sm text-red-200">{error}</p>}
             {guideMessage ? <div className="flex items-center gap-2"><p className="rounded-xl border border-[#c9a67a]/40 bg-[#c9a67a]/10 px-3 py-2 text-sm text-[#f7ddb8]">{guideMessage}</p><button type="button" onClick={() => (voiceReply.isSpeaking ? voiceReply.stop() : lastBotReply ? void voiceReply.speak(lastBotReply) : undefined)} disabled={!lastBotReply || voiceReply.isLoadingAudio} className="rounded-full border border-zinc-700 px-2.5 py-1 text-xs text-zinc-200 disabled:opacity-50">{voiceReply.isSpeaking ? '⏹️' : '🔊'}</button></div> : null}
-            {quickActions.length > 0 ? <div className="flex flex-wrap gap-2">{quickActions.map((action) => (<button key={action} type="button" onClick={() => setQuery(action)} className="rounded-full border border-zinc-700 px-2.5 py-1 text-xs text-zinc-200 transition hover:border-[#c9a67a]">{action}</button>))}</div> : null}
-            {voiceReply.error && <p className="text-sm text-zinc-400">{voiceReply.error}</p>}
-            {results && !isLoading && results.length === 0 && !error && <p className="text-sm text-zinc-300">No encontramos resultados.</p>}
+            {quickActions.length > 0 ? <div className="flex flex-wrap gap-2">{quickActions.map((action) => (<button key={action} type="button" onClick={() => { setQuery(action); voiceInput.clearError(); voiceReply.clearError(); void handleSearch(action); }} className="rounded-full border border-zinc-700 px-2.5 py-1 text-xs text-zinc-200 transition hover:border-[#c9a67a]">{action}</button>))}</div> : null}
+            {voiceReply.error && <p className="text-xs text-zinc-400">{voiceReply.error}</p>}
+            {hasPerformedSearch && results && !isLoading && results.length === 0 && !error && !guideMessage && <p className="text-sm text-zinc-300">No encontramos resultados.</p>}
 
             {results?.map((result, index) => {
               const videoId = result.url.match(YOUTUBE_REGEX)?.[1] ?? null;
