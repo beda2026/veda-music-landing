@@ -41,6 +41,16 @@ const INITIAL_MESSAGE = 'Hola, bienvenido. ¿Cómo puedo ayudarte?';
 const SEARCH_ERROR_MESSAGE = 'No pude traer ese resultado ahora. Prueba con artista, canción o video específico.';
 const YOUTUBE_REGEX = /(?:youtube\.com\/(?:watch\?v=|shorts\/|embed\/)|youtu\.be\/)([A-Za-z0-9_-]{11})/i;
 
+const LEAD_MODES: ConversationMode[] = ['artist_lead', 'business_lead', 'promotion_lead', 'artist_promo_services', 'package_services'];
+
+function scrollToContactSection(): boolean {
+  if (typeof window === 'undefined') return false;
+  const contactSection = document.getElementById('contacto') ?? document.getElementById('contacto-comercial') ?? document.querySelector<HTMLElement>('[data-section="contacto"]');
+  if (!contactSection) return false;
+  contactSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  return true;
+}
+
 export default function HeaderSearchModal() {
   const [isMounted, setIsMounted] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
@@ -160,6 +170,14 @@ export default function HeaderSearchModal() {
       if (data.mode === 'guide') {
         const message = data.message ?? 'Te guío rápido. ¿Buscas artista, canción, video o entrevista?';
         appendMessage({ id: `v-${Date.now()}`, role: 'veda', text: message, kind: 'guide', quickActions: data.quickActions ?? [] });
+
+        const nextMode = data.conversationMode ?? conversationMode;
+        const isLeadFlow = LEAD_MODES.includes(nextMode);
+        if (isLeadFlow && /contacto/i.test(message)) {
+          setTimeout(() => {
+            scrollToContactSection();
+          }, 120);
+        }
         return;
       }
 
@@ -179,7 +197,7 @@ export default function HeaderSearchModal() {
       setIsThinking(false);
       setTimeout(() => inputRef.current?.focus(), 60);
     }
-  }, [clearVoiceErrors]);
+  }, [clearVoiceErrors, conversationMode]);
 
 
   const onSubmit = async (event: FormEvent<HTMLFormElement>) => {
