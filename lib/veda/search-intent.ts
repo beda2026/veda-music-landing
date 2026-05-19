@@ -43,12 +43,16 @@ const INTERVIEW = /(entrevista)/i;
 const BIO = /(biografia|biografía|quien es|quién es)/i;
 const SONG_HINT = /(cancion|canción|tema|track|single|remix)/i;
 const PROMO = /(promocionar|promo|anunciarme|publicidad|pautar|auspiciar|auspicio)/i;
+const LEAD_CONTACT = /(soy cantante|soy artista|soy productor|tengo musica|tengo música|quiero promocionar|quiero pautar|tengo un negocio|tengo negocio|quiero anunciar|quiero promocionarme)/i;
 const ARTIST_LEAD = /(soy cantante|soy artista|soy productor|manager|quiero sonar|tengo musica|tengo música|meter mi cancion|meter mi canción|enviar musica|enviar música|quiero salir)/i;
 const BUSINESS_LEAD = /(negocio|barberia|barbería|restaurante|tienda|discoteca|marca)/i;
 const EVENT_LEAD = /(evento|promotor|party|concierto)/i;
 const CLEAR_MUSIC_SEARCH = /(videos?\s+de\s+|canciones?\s+de\s+|noticias?\s+de\s+|entrevista\s+de\s+|biografia\s+de\s+|biografía\s+de\s+)/i;
 const LEAD_FOLLOW_UP = new Set(['musica', 'música', 'cancion', 'canción', 'video', 'mi tema', 'aqui', 'aquí', 'eso', 'quiero subirla', 'como funciona', 'cómo funciona']);
 const AMBIGUOUS_SINGLE = new Set(['musica','música','reggaeton','trap','cancion','canción','video','artista','amor','perreo','remix','entrevista','noticias','negocio','promo']);
+const VEDA_GUIDE = /(que puedes hacer|qué puedes hacer|que haces|qué haces|ayuda|que hay aqui|qué hay aquí|veda|web|sitio|seccion|sección)/i;
+const VEDA_RECOMMEND = /(que me recomiendas|qué me recomiendas|recomiendame|recomiéndame)/i;
+const PHOTO_QUERY = /(fotos?|imagenes?|im[aá]genes?)/i;
 
 function normalize(input: string): string {
   return input
@@ -101,6 +105,28 @@ export function analyzeVedaSearchIntent(input: string, currentMode: VedaConversa
     return { shouldCallApi: false, intent: 'ambiguous', confidence: 'high', normalizedQuery, userFacingReply: 'Entendido. Puedes buscar artista, canción o video.', quickActions: QUICK.explore, reason: 'test', conversationMode: currentMode };
   }
 
+  if (LEAD_CONTACT.test(q)) {
+    return { shouldCallApi: false, intent: 'promotion_lead', confidence: 'high', normalizedQuery, userFacingReply: 'Perfecto. Puedes enviar tu propuesta en Contacto.', quickActions: QUICK.lead, reason: 'lead_contact_rule', conversationMode: /artista|cantante|productor|musica|música/.test(q) ? 'artist_lead' : 'business_lead' };
+  }
+
+  if (VEDA_RECOMMEND.test(q)) {
+    return { shouldCallApi: false, intent: 'generic_music', confidence: 'high', normalizedQuery, userFacingReply: 'Puedes empezar por VEDA Radio, últimos videos o entrevistas destacadas.', quickActions: ['VEDA Radio', 'Últimos videos', 'Entrevistas'], reason: 'veda_recommend', conversationMode: currentMode };
+  }
+
+  if (q === 'musica' || q === 'música') {
+    return { shouldCallApi: false, intent: 'generic_music', confidence: 'high', normalizedQuery, userFacingReply: 'Puedes escuchar VEDA Radio o buscar un artista, canción o playlist.', quickActions: ['VEDA Radio', 'Buscar artista', 'Buscar canción'], reason: 'music_entrypoint', conversationMode: currentMode };
+  }
+
+  if (VEDA_GUIDE.test(q)) {
+    return { shouldCallApi: false, intent: 'ambiguous', confidence: 'high', normalizedQuery, userFacingReply: 'Puedo guiarte por VEDA: música, videos, entrevistas, noticias, VEDA Radio y Contacto.', quickActions: ['VEDA Radio', 'Videos', 'Entrevistas', 'Noticias', 'Contacto'], reason: 'veda_guide', conversationMode: currentMode };
+  }
+
+  if (PHOTO_QUERY.test(q)) {
+    const artistMatch = normalizedQuery.match(/de\s+(.+)$/i);
+    const artistName = artistMatch?.[1]?.trim() || 'ese artista';
+    return { shouldCallApi: false, intent: 'ambiguous', confidence: 'high', normalizedQuery, userFacingReply: `Puedo ayudarte con videos, entrevistas, noticias o música de ${artistName}.`, quickActions: ['Ver videos', 'Ver entrevistas', 'Ver noticias'], reason: 'photo_not_allowed', conversationMode: currentMode };
+  }
+
   if (PLAYLIST.test(q)) {
     return { shouldCallApi: true, intent: 'playlist_lookup', confidence: 'high', normalizedQuery: 'playlist oficial veda music', reason: 'playlist' };
   }
@@ -135,5 +161,5 @@ export function analyzeVedaSearchIntent(input: string, currentMode: VedaConversa
     return { shouldCallApi: false, intent: 'artist_lookup', confidence: 'medium', normalizedQuery, userFacingReply: `¿Qué quieres ver de ${normalizedQuery}: videos, canciones o noticias?`, quickActions: QUICK.fan, reason: 'artist_name_only', conversationMode: currentMode };
   }
 
-  return { shouldCallApi: false, intent: 'ambiguous', confidence: 'low', normalizedQuery, userFacingReply: 'Entendido. ¿Buscas artista, canción o video?', quickActions: QUICK.explore, reason: 'fallback_ambiguous', conversationMode: currentMode };
+  return { shouldCallApi: false, intent: 'ambiguous', confidence: 'low', normalizedQuery, userFacingReply: 'Puedo ayudarte con música, videos, entrevistas, noticias o guiarte dentro de VEDA.', quickActions: QUICK.explore, reason: 'fallback_ambiguous', conversationMode: currentMode };
 }
