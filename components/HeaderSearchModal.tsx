@@ -38,6 +38,7 @@ type ChatMessage = {
 };
 
 const INITIAL_MESSAGE = 'Hola, bienvenido. ¿Cómo puedo ayudarte?';
+const SEARCH_ERROR_MESSAGE = 'No pude traer ese resultado ahora. Prueba con artista, canción o video específico.';
 const YOUTUBE_REGEX = /(?:youtube\.com\/(?:watch\?v=|shorts\/|embed\/)|youtu\.be\/)([A-Za-z0-9_-]{11})/i;
 
 export default function HeaderSearchModal() {
@@ -111,7 +112,7 @@ export default function HeaderSearchModal() {
       const data = (await response.json()) as ApiResponse;
 
       if (!response.ok || !data.ok) {
-        appendMessage({ id: `v-${Date.now()}`, role: 'veda', text: 'No pude traer ese resultado ahora. Prueba con artista, canción o video específico.', kind: 'guide' });
+        appendMessage({ id: `v-${Date.now()}`, role: 'veda', text: SEARCH_ERROR_MESSAGE, kind: 'guide' });
         return;
       }
 
@@ -134,7 +135,7 @@ export default function HeaderSearchModal() {
 
       appendMessage({ id: `v-r-${Date.now()}`, role: 'veda', text: 'Te encontré esto en VEDA:', kind: 'results', results: found });
     } catch {
-      appendMessage({ id: `v-${Date.now()}`, role: 'veda', text: 'No pude traer ese resultado ahora. Prueba con artista, canción o video específico.', kind: 'guide' });
+      appendMessage({ id: `v-${Date.now()}`, role: 'veda', text: SEARCH_ERROR_MESSAGE, kind: 'guide' });
     } finally {
       setIsThinking(false);
       setTimeout(() => inputRef.current?.focus(), 60);
