@@ -15,7 +15,10 @@ type SearchResult = {
 
 type ApiResponse = {
   ok: boolean;
+  mode?: 'guide' | 'search';
   query?: string;
+  message?: string;
+  quickActions?: string[];
   results?: SearchResult[];
   error?: string;
 };
@@ -27,6 +30,8 @@ export default function HeaderSearchModal() {
   const [isOpen, setIsOpen] = useState(false);
   const [query, setQuery] = useState('');
   const [results, setResults] = useState<SearchResult[] | null>(null);
+  const [guideMessage, setGuideMessage] = useState<string | null>(null);
+  const [quickActions, setQuickActions] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [videoToPlay, setVideoToPlay] = useState<{ title: string; videoId: string } | null>(null);
@@ -59,13 +64,16 @@ export default function HeaderSearchModal() {
     const sanitized = query.trim();
 
     if (!sanitized) {
-      setError('Escribe un artista o tema para buscar.');
+      setError('Escribe artista, canción, video o entrevista.');
+      setGuideMessage(null);
+      setQuickActions([]);
       setResults(null);
       return;
     }
 
     setIsLoading(true);
     setError(null);
+    setGuideMessage(null);
 
     try {
       const response = await fetch(`/api/artist-search?q=${encodeURIComponent(sanitized)}`);
@@ -73,14 +81,24 @@ export default function HeaderSearchModal() {
 
       if (!response.ok || !data.ok) {
         setResults([]);
-        setError(data.error ?? 'No se pudo completar la búsqueda ahora mismo.');
+        setQuickActions([]);
+        setError('No pude traer ese resultado ahora. Prueba con artista, canción o video específico.');
         return;
       }
 
+      if (data.mode === 'guide') {
+        setResults([]);
+        setGuideMessage(data.message ?? 'Te guío rápido. ¿Buscas artista, canción, video o entrevista?');
+        setQuickActions(data.quickActions ?? []);
+        return;
+      }
+
+      setQuickActions([]);
       setResults(data.results ?? []);
     } catch {
       setResults([]);
-      setError('No se pudo completar la búsqueda ahora mismo.');
+      setQuickActions([]);
+      setError('No pude traer ese resultado ahora. Prueba con artista, canción o video específico.');
     } finally {
       setIsLoading(false);
     }
@@ -118,6 +136,8 @@ export default function HeaderSearchModal() {
             {!results && !isLoading && !error && <p className="text-sm text-zinc-300">Escribe un artista o tema para buscar.</p>}
             {isLoading && <p className="text-sm text-zinc-300">Buscando…</p>}
             {error && <p className="rounded-xl border border-red-900/70 bg-red-950/30 px-3 py-2 text-sm text-red-200">{error}</p>}
+            {guideMessage ? <p className="rounded-xl border border-[#c9a67a]/40 bg-[#c9a67a]/10 px-3 py-2 text-sm text-[#f7ddb8]">{guideMessage}</p> : null}
+            {quickActions.length > 0 ? <div className="flex flex-wrap gap-2">{quickActions.map((action) => (<button key={action} type="button" onClick={() => setQuery(action)} className="rounded-full border border-zinc-700 px-2.5 py-1 text-xs text-zinc-200 transition hover:border-[#c9a67a]">{action}</button>))}</div> : null}
             {results && !isLoading && results.length === 0 && !error && <p className="text-sm text-zinc-300">No encontramos resultados.</p>}
 
             {results?.map((result, index) => {
@@ -146,7 +166,7 @@ export default function HeaderSearchModal() {
         {videoToPlay ? <EmbeddedVideoModal title={videoToPlay.title} youtubeVideoId={videoToPlay.videoId} onClose={() => setVideoToPlay(null)} /> : null}
       </div>
     );
-  }, [error, isLoading, isOpen, onSubmit, query, results, videoToPlay]);
+  }, [error, guideMessage, isLoading, isOpen, onSubmit, quickActions, query, results, videoToPlay]);
 
   return (
     <>
