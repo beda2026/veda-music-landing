@@ -43,7 +43,7 @@ const INTERVIEW = /(entrevista)/i;
 const BIO = /(biografia|biografía|quien es|quién es)/i;
 const SONG_HINT = /(cancion|canción|tema|track|single|remix)/i;
 const PROMO = /(promocionar|promo|anunciarme|publicidad|pautar|auspiciar|auspicio)/i;
-const PROMO_PACKAGE = /(paquetes?\s+promocionales?|paquetes?\s+para\s+artistas?|precios?\s+de\s+promocion|precios?\s+de\s+promoción|cuanto\s+cuesta|cuánto\s+cuesta|presupuesto|exposicion\s+para\s+artista\s+emergente|exposición\s+para\s+artista\s+emergente|quiero\s+promocionar\s+mi\s+musica|quiero\s+promocionar\s+mi\s+música|plan\s+para\s+mi\s+cancion|plan\s+para\s+mi\s+canción|plan\s+para\s+mi\s+video)/i;
+const PROMO_PACKAGE = /(paquetes?\s+promocionales?|paquetes?\s+de\s+exposicion|paquetes?\s+para\s+artistas?|precios?\s+de\s+promocion|precios?\s+de\s+promoción|cuanto\s+cuesta|cuánto\s+cuesta|presupuesto|exposicion\s+para\s+artista\s+emergente|exposición\s+para\s+artista\s+emergente|quiero\s+promocionar\s+mi\s+musica|quiero\s+promocionar\s+mi\s+música|plan\s+para\s+mi\s+cancion|plan\s+para\s+mi\s+canción|plan\s+para\s+mi\s+video|que\s+tienen\s+los\s+paquetes|que\s+trae\s+el\s+paquete|que\s+incluye|que\s+incluyen)/i;
 
 const SERVICES_PROMO_INTENT = /(que\s+servicios\s+ofreces|que\s+ofrecen|que\s+ofrecen\s+para\s+artistas|servicios?|paquetes?|promocion|promocion\s+artista|exposicion|precios?|presupuesto|plan(?:es)?\s+para\s+artistas?|artista\s+emergente|lanzamiento|estreno|nota\s+editorial|presencia\s+destacada|pauta\s+artistica|auspicio|colaboracion)/i;
 const PROMO_CONTEXT_TERMS = /(canciones?|videos?|entrevista|estreno|nota|presupuesto|paquete|precio|servicio|promocion|exposicion)/i;
@@ -104,10 +104,10 @@ export function analyzeVedaSearchIntent(input: string, currentMode: VedaConversa
 
   if (SERVICES_PROMO_INTENT.test(q) && !CLEAR_MUSIC_ENTITY_SEARCH.test(q)) {
     if (/paquete|artista\s+emergente|promocion\s+artista/.test(q)) {
-      return { shouldCallApi: false, intent: 'artist_submission', confidence: 'high', normalizedQuery, userFacingReply: 'Claro. Hay paquetes de exposición para artistas emergentes. Podemos ajustarlos según tu presupuesto y objetivo.', quickActions: QUICK.lead, reason: 'artist_promo_package', conversationMode: 'artist_promo_services' };
+      return { shouldCallApi: false, intent: 'artist_submission', confidence: 'high', normalizedQuery, userFacingReply: 'Claro. Los paquetes pueden incluir exposición de canción, video, estreno, entrevista, nota editorial y presencia destacada. Se pueden ajustar según tu presupuesto y objetivo.', quickActions: QUICK.lead, reason: 'artist_promo_package', conversationMode: 'artist_promo_services' };
     }
     if (/que\s+servicios\s+ofreces|que\s+ofrecen|servicios/.test(q)) {
-      return { shouldCallApi: false, intent: 'promotion_lead', confidence: 'high', normalizedQuery, userFacingReply: 'Ofrecemos exposición de canción, video, estreno, entrevista, nota editorial y presencia destacada.', quickActions: QUICK.lead, reason: 'artist_promo_services_list', conversationMode: 'artist_promo_services' };
+      return { shouldCallApi: false, intent: 'promotion_lead', confidence: 'high', normalizedQuery, userFacingReply: 'Los paquetes pueden incluir exposición de canción, video, estreno, entrevista, nota editorial, presencia destacada y pauta artística.', quickActions: QUICK.lead, reason: 'artist_promo_services_list', conversationMode: 'artist_promo_services' };
     }
     if (/cuanto\s+cuesta|cuánto\s+cuesta|precio|precios/.test(q)) {
       return { shouldCallApi: false, intent: 'promotion_lead', confidence: 'high', normalizedQuery, userFacingReply: 'Los precios dependen del objetivo y tipo de exposición. Déjanos tu presupuesto estimado en Contacto.', quickActions: QUICK.lead, reason: 'artist_promo_price', conversationMode: 'artist_promo_services' };
@@ -139,7 +139,7 @@ export function analyzeVedaSearchIntent(input: string, currentMode: VedaConversa
 
   if (PROMO_PACKAGE.test(q)) {
     if (/tienen\s+paquetes?\s+para\s+artistas?\s+emergentes?/.test(q)) {
-      return { shouldCallApi: false, intent: 'artist_submission', confidence: 'high', normalizedQuery, userFacingReply: 'Claro. Hay paquetes de exposición para artistas emergentes. Podemos ajustarlos según tu presupuesto y objetivo.', quickActions: QUICK.lead, reason: 'promo_package_emerging_artist', conversationMode: 'artist_lead' };
+      return { shouldCallApi: false, intent: 'artist_submission', confidence: 'high', normalizedQuery, userFacingReply: 'Claro. Los paquetes pueden incluir exposición de canción, video, estreno, entrevista, nota editorial y presencia destacada. Se pueden ajustar según tu presupuesto y objetivo.', quickActions: QUICK.lead, reason: 'promo_package_emerging_artist', conversationMode: 'artist_lead' };
     }
     if (/cuanto\s+cuesta\s+promocionar\s+mi\s+cancion|cuánto\s+cuesta\s+promocionar\s+mi\s+canción/.test(q)) {
       return { shouldCallApi: false, intent: 'promotion_lead', confidence: 'high', normalizedQuery, userFacingReply: 'Los precios dependen del objetivo y tipo de exposición. Déjanos canción, link y presupuesto estimado en Contacto.', quickActions: QUICK.lead, reason: 'promo_package_price_question', conversationMode: 'artist_lead' };
@@ -147,8 +147,8 @@ export function analyzeVedaSearchIntent(input: string, currentMode: VedaConversa
     if (/tengo\s+poco\s+presupuesto/.test(q)) {
       return { shouldCallApi: false, intent: 'promotion_lead', confidence: 'high', normalizedQuery, userFacingReply: 'Podemos evaluar una opción básica según tu presupuesto. Envíanos tu material y objetivo en Contacto.', quickActions: QUICK.lead, reason: 'promo_package_low_budget', conversationMode: 'artist_lead' };
     }
-    if (/que\s+incluyen\s+los\s+paquetes|qué\s+incluyen\s+los\s+paquetes/.test(q)) {
-      return { shouldCallApi: false, intent: 'promotion_lead', confidence: 'high', normalizedQuery, userFacingReply: 'Pueden incluir exposición de canción, video, estreno, entrevista, nota editorial o presencia destacada, según el objetivo.', quickActions: QUICK.lead, reason: 'promo_package_inclusions', conversationMode: 'artist_lead' };
+    if (/que\s+incluyen\s+los\s+paquetes|qué\s+incluyen\s+los\s+paquetes|que\s+tienen\s+los\s+paquetes|qué\s+tienen\s+los\s+paquetes|que\s+servicios\s+ofrecen\s+los\s+paquetes|qué\s+servicios\s+ofrecen\s+los\s+paquetes|que\s+trae\s+el\s+paquete|qué\s+trae\s+el\s+paquete|que\s+incluye|qué\s+incluye/.test(q)) {
+      return { shouldCallApi: false, intent: 'promotion_lead', confidence: 'high', normalizedQuery, userFacingReply: 'Pueden incluir canción, video, estreno, entrevista, nota editorial, presencia destacada y pauta artística.', quickActions: QUICK.lead, reason: 'promo_package_inclusions', conversationMode: 'artist_lead' };
     }
 
     return {
@@ -156,7 +156,7 @@ export function analyzeVedaSearchIntent(input: string, currentMode: VedaConversa
       intent: 'promotion_lead',
       confidence: 'high',
       normalizedQuery,
-      userFacingReply: 'Claro. Tenemos opciones de exposición y podemos crear un paquete según tu presupuesto y objetivo. Déjanos nombre artístico, link del material y presupuesto estimado en Contacto.',
+      userFacingReply: 'Claro. Los paquetes pueden incluir exposición de canción, video, estreno, entrevista, nota editorial, presencia destacada y pauta artística. Se pueden ajustar según tu presupuesto y objetivo.',
       quickActions: QUICK.lead,
       reason: 'promo_package_base',
       conversationMode: 'artist_lead',
