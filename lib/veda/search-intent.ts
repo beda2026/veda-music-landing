@@ -50,6 +50,7 @@ const EVENT_LEAD = /(evento|promotor|party|concierto)/i;
 const CLEAR_MUSIC_SEARCH = /(videos?\s+de\s+|canciones?\s+de\s+|noticias?\s+de\s+|entrevista\s+de\s+|biografia\s+de\s+|biografía\s+de\s+)/i;
 const LEAD_FOLLOW_UP = new Set(['musica', 'música', 'cancion', 'canción', 'video', 'mi tema', 'aqui', 'aquí', 'eso', 'quiero subirla', 'como funciona', 'cómo funciona']);
 const AMBIGUOUS_SINGLE = new Set(['musica','música','reggaeton','trap','cancion','canción','video','artista','amor','perreo','remix','entrevista','noticias','negocio','promo']);
+const WHAT_CAN_I_DO = /(que puedes hacer por mi|qué puedes hacer por mí|que puedes hacer|qué puedes hacer|que haces|qué haces)/i;
 const VEDA_GUIDE = /(que puedes hacer|qué puedes hacer|que haces|qué haces|ayuda|que hay aqui|qué hay aquí|veda|web|sitio|seccion|sección)/i;
 const VEDA_RECOMMEND = /(que me recomiendas|qué me recomiendas|recomiendame|recomiéndame)/i;
 const PHOTO_QUERY = /(fotos?|imagenes?|im[aá]genes?)/i;
@@ -92,7 +93,7 @@ export function analyzeVedaSearchIntent(input: string, currentMode: VedaConversa
         ? (q === 'como funciona' || q === 'cómo funciona'
           ? 'Revisamos tu material y evaluamos exposición dentro de VEDA. Déjanos la información en Contacto.'
           : 'Envíanos nombre artístico, canción y link en Contacto.')
-        : 'Perfecto. VEDA ofrece visibilidad para negocios y auspicios. Escríbenos en Contacto.',
+        : 'Perfecto. Hay espacios de visibilidad para negocios y auspicios. Escríbenos en Contacto.',
       reason: 'lead_context_follow_up',
       conversationMode: currentMode,
     };
@@ -106,19 +107,35 @@ export function analyzeVedaSearchIntent(input: string, currentMode: VedaConversa
   }
 
   if (LEAD_CONTACT.test(q)) {
-    return { shouldCallApi: false, intent: 'promotion_lead', confidence: 'high', normalizedQuery, userFacingReply: 'Perfecto. Puedes enviar tu propuesta en Contacto.', quickActions: QUICK.lead, reason: 'lead_contact_rule', conversationMode: /artista|cantante|productor|musica|música/.test(q) ? 'artist_lead' : 'business_lead' };
+    const isArtistLead = /artista|cantante|productor|musica|música/.test(q);
+    return {
+      shouldCallApi: false,
+      intent: 'promotion_lead',
+      confidence: 'high',
+      normalizedQuery,
+      userFacingReply: isArtistLead
+        ? 'Perfecto. Envíanos nombre artístico, canción y link en Contacto.'
+        : 'Perfecto. Hay espacios de visibilidad para negocios y auspicios. Escríbenos en Contacto.',
+      quickActions: QUICK.lead,
+      reason: 'lead_contact_rule',
+      conversationMode: isArtistLead ? 'artist_lead' : 'business_lead',
+    };
   }
 
   if (VEDA_RECOMMEND.test(q)) {
-    return { shouldCallApi: false, intent: 'generic_music', confidence: 'high', normalizedQuery, userFacingReply: 'Puedes empezar por VEDA Radio, últimos videos o entrevistas destacadas.', quickActions: ['VEDA Radio', 'Últimos videos', 'Entrevistas'], reason: 'veda_recommend', conversationMode: currentMode };
+    return { shouldCallApi: false, intent: 'generic_music', confidence: 'high', normalizedQuery, userFacingReply: 'Puedes empezar por la radio, últimos videos o entrevistas destacadas.', quickActions: ['VEDA Radio', 'Últimos videos', 'Entrevistas'], reason: 'veda_recommend', conversationMode: currentMode };
   }
 
   if (q === 'musica' || q === 'música') {
     return { shouldCallApi: false, intent: 'generic_music', confidence: 'high', normalizedQuery, userFacingReply: 'Puedes escuchar VEDA Radio o buscar un artista, canción o playlist.', quickActions: ['VEDA Radio', 'Buscar artista', 'Buscar canción'], reason: 'music_entrypoint', conversationMode: currentMode };
   }
 
+  if (WHAT_CAN_I_DO.test(q)) {
+    return { shouldCallApi: false, intent: 'ambiguous', confidence: 'high', normalizedQuery, userFacingReply: 'Puedo guiarte por la página: música, videos, entrevistas, noticias, radio y Contacto.', quickActions: ['VEDA Radio', 'Videos', 'Entrevistas', 'Noticias', 'Contacto'], reason: 'what_can_i_do', conversationMode: currentMode };
+  }
+
   if (VEDA_GUIDE.test(q)) {
-    return { shouldCallApi: false, intent: 'ambiguous', confidence: 'high', normalizedQuery, userFacingReply: 'Puedo guiarte por VEDA: música, videos, entrevistas, noticias, VEDA Radio y Contacto.', quickActions: ['VEDA Radio', 'Videos', 'Entrevistas', 'Noticias', 'Contacto'], reason: 'veda_guide', conversationMode: currentMode };
+    return { shouldCallApi: false, intent: 'ambiguous', confidence: 'high', normalizedQuery, userFacingReply: 'Encontrarás música, videos, entrevistas, noticias urbanas y artistas destacados.', quickActions: ['VEDA Radio', 'Videos', 'Entrevistas', 'Noticias', 'Contacto'], reason: 'veda_guide', conversationMode: currentMode };
   }
 
   if (PHOTO_QUERY.test(q)) {
@@ -132,17 +149,17 @@ export function analyzeVedaSearchIntent(input: string, currentMode: VedaConversa
   }
 
   if (ARTIST_LEAD.test(q)) {
-    return { shouldCallApi: false, intent: 'artist_submission', confidence: 'high', normalizedQuery, userFacingReply: 'Perfecto. VEDA puede evaluar exposición para tu música. Déjanos tus datos en Contacto.', quickActions: [], reason: 'artist_lead', conversationMode: 'artist_lead' };
+    return { shouldCallApi: false, intent: 'artist_submission', confidence: 'high', normalizedQuery, userFacingReply: 'Perfecto. Podemos evaluar exposición para tu música. Déjanos nombre artístico, canción y link en Contacto.', quickActions: [], reason: 'artist_lead', conversationMode: 'artist_lead' };
   }
   if (EVENT_LEAD.test(q)) {
     return { shouldCallApi: false, intent: 'event_lead', confidence: 'high', normalizedQuery, userFacingReply: 'Perfecto. VEDA puede evaluar exposición para tu evento. Escríbenos en Contacto.', quickActions: [], reason: 'event_lead', conversationMode: 'business_lead' };
   }
   if (PROMO.test(q)) {
     const sponsor = /(pautar|auspiciar|auspicio)/i.test(q);
-    return { shouldCallApi: false, intent: sponsor ? 'sponsor_lead' : 'promotion_lead', confidence: 'high', normalizedQuery, userFacingReply: 'Claro. VEDA ofrece visibilidad comercial y auspicios. Puedes enviarlo en Contacto.', quickActions: [], reason: 'promotion_lead', conversationMode: /artista|cantante|productor|mi\s+(musica|música|cancion|canción|video)/i.test(q) ? 'artist_lead' : 'business_lead' };
+    return { shouldCallApi: false, intent: sponsor ? 'sponsor_lead' : 'promotion_lead', confidence: 'high', normalizedQuery, userFacingReply: 'Claro. Hay espacios de visibilidad comercial y auspicios. Puedes enviarlo en Contacto.', quickActions: [], reason: 'promotion_lead', conversationMode: /artista|cantante|productor|mi\s+(musica|música|cancion|canción|video)/i.test(q) ? 'artist_lead' : 'business_lead' };
   }
   if (BUSINESS_LEAD.test(q)) {
-    return { shouldCallApi: false, intent: 'business_lead', confidence: 'high', normalizedQuery, userFacingReply: 'Perfecto. VEDA ofrece visibilidad para negocios y auspicios. Escríbenos en Contacto.', quickActions: [], reason: 'business_lead', conversationMode: 'business_lead' };
+    return { shouldCallApi: false, intent: 'business_lead', confidence: 'high', normalizedQuery, userFacingReply: 'Perfecto. Hay espacios de visibilidad para negocios y auspicios. Escríbenos en Contacto.', quickActions: [], reason: 'business_lead', conversationMode: 'business_lead' };
   }
 
   const tokens = q.split(' ').filter(Boolean);
