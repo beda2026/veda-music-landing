@@ -43,6 +43,7 @@ const INTERVIEW = /(entrevista)/i;
 const BIO = /(biografia|biografía|quien es|quién es)/i;
 const SONG_HINT = /(cancion|canción|tema|track|single|remix)/i;
 const PROMO = /(promocionar|promo|anunciarme|publicidad|pautar|auspiciar|auspicio)/i;
+const PROMO_PACKAGE = /(paquetes?\s+promocionales?|paquetes?\s+para\s+artistas?|precios?\s+de\s+promocion|precios?\s+de\s+promoción|cuanto\s+cuesta|cuánto\s+cuesta|presupuesto|exposicion\s+para\s+artista\s+emergente|exposición\s+para\s+artista\s+emergente|quiero\s+promocionar\s+mi\s+musica|quiero\s+promocionar\s+mi\s+música|plan\s+para\s+mi\s+cancion|plan\s+para\s+mi\s+canción|plan\s+para\s+mi\s+video)/i;
 const LEAD_CONTACT = /(soy cantante|soy artista|soy productor|tengo musica|tengo música|quiero promocionar|quiero pautar|tengo un negocio|tengo negocio|quiero anunciar|quiero promocionarme)/i;
 const ARTIST_LEAD = /(soy cantante|soy artista|soy productor|manager|quiero sonar|tengo musica|tengo música|meter mi cancion|meter mi canción|enviar musica|enviar música|quiero salir)/i;
 const BUSINESS_LEAD = /(negocio|barberia|barbería|restaurante|tienda|discoteca|marca)/i;
@@ -96,6 +97,34 @@ export function analyzeVedaSearchIntent(input: string, currentMode: VedaConversa
         : 'Perfecto. Hay espacios de visibilidad para negocios y auspicios. Escríbenos en Contacto.',
       reason: 'lead_context_follow_up',
       conversationMode: currentMode,
+    };
+  }
+
+
+
+  if (PROMO_PACKAGE.test(q)) {
+    if (/tienen\s+paquetes?\s+para\s+artistas?\s+emergentes?/.test(q)) {
+      return { shouldCallApi: false, intent: 'artist_submission', confidence: 'high', normalizedQuery, userFacingReply: 'Claro. Hay paquetes de exposición para artistas emergentes. Podemos ajustarlos según tu presupuesto y objetivo.', quickActions: QUICK.lead, reason: 'promo_package_emerging_artist', conversationMode: 'artist_lead' };
+    }
+    if (/cuanto\s+cuesta\s+promocionar\s+mi\s+cancion|cuánto\s+cuesta\s+promocionar\s+mi\s+canción/.test(q)) {
+      return { shouldCallApi: false, intent: 'promotion_lead', confidence: 'high', normalizedQuery, userFacingReply: 'Los precios dependen del objetivo y tipo de exposición. Déjanos canción, link y presupuesto estimado en Contacto.', quickActions: QUICK.lead, reason: 'promo_package_price_question', conversationMode: 'artist_lead' };
+    }
+    if (/tengo\s+poco\s+presupuesto/.test(q)) {
+      return { shouldCallApi: false, intent: 'promotion_lead', confidence: 'high', normalizedQuery, userFacingReply: 'Podemos evaluar una opción básica según tu presupuesto. Envíanos tu material y objetivo en Contacto.', quickActions: QUICK.lead, reason: 'promo_package_low_budget', conversationMode: 'artist_lead' };
+    }
+    if (/que\s+incluyen\s+los\s+paquetes|qué\s+incluyen\s+los\s+paquetes/.test(q)) {
+      return { shouldCallApi: false, intent: 'promotion_lead', confidence: 'high', normalizedQuery, userFacingReply: 'Pueden incluir exposición de canción, video, estreno, entrevista, nota editorial o presencia destacada, según el objetivo.', quickActions: QUICK.lead, reason: 'promo_package_inclusions', conversationMode: 'artist_lead' };
+    }
+
+    return {
+      shouldCallApi: false,
+      intent: 'promotion_lead',
+      confidence: 'high',
+      normalizedQuery,
+      userFacingReply: 'Claro. Tenemos opciones de exposición y podemos crear un paquete según tu presupuesto y objetivo. Déjanos nombre artístico, link del material y presupuesto estimado en Contacto.',
+      quickActions: QUICK.lead,
+      reason: 'promo_package_base',
+      conversationMode: 'artist_lead',
     };
   }
 
