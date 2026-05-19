@@ -48,8 +48,10 @@ export default function HeaderSearchModal() {
   const [videoToPlay, setVideoToPlay] = useState<{ title: string; videoId: string } | null>(null);
   const [hasUsedMic, setHasUsedMic] = useState(false);
   const [hasUsedAudioReply, setHasUsedAudioReply] = useState(false);
+  const [uiNotice, setUiNotice] = useState<string | null>(null);
   const inputRef = useRef<HTMLInputElement | null>(null);
   const bottomRef = useRef<HTMLDivElement | null>(null);
+  const noticeTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const voiceInput = useVedaVoiceInput();
   const voiceReply = useVedaVoiceReply();
@@ -58,8 +60,34 @@ export default function HeaderSearchModal() {
     voiceInput.cancelRecording();
     voiceReply.stop();
   };
+
+  const clearUiNotice = () => {
+    setUiNotice(null);
+    if (noticeTimeoutRef.current) {
+      clearTimeout(noticeTimeoutRef.current);
+      noticeTimeoutRef.current = null;
+    }
+  };
+
+  const showUiNotice = (message: string) => {
+    clearUiNotice();
+    setUiNotice(message);
+    noticeTimeoutRef.current = setTimeout(() => {
+      setUiNotice(null);
+      noticeTimeoutRef.current = null;
+    }, 5000);
+  };
+
+  const resetChatSession = () => {
+    setMessages([{ id: `welcome-${Date.now()}`, role: 'veda', text: INITIAL_MESSAGE, kind: 'guide', quickActions: INITIAL_ACTIONS }]);
+    setQuery('');
+    setIsThinking(false);
+    setSelectedQuickAction(null);
+    clearUiNotice();
+  };
   const closeModal = () => {
     clearVoiceErrors();
+    clearUiNotice();
     setIsOpen(false);
   };
 
@@ -80,6 +108,7 @@ export default function HeaderSearchModal() {
       document.addEventListener('keydown', onEsc);
       document.body.style.overflow = 'hidden';
       clearVoiceErrors();
+      clearUiNotice();
       setTimeout(() => inputRef.current?.focus(), 60);
     return () => {
       document.removeEventListener('keydown', onEsc);
@@ -89,7 +118,9 @@ export default function HeaderSearchModal() {
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' });
-  }, [messages, isThinking]);
+  }, [messages, isThinking, uiNotice]);
+
+  useEffect(() => () => clearUiNotice(), []);
 
   const appendMessage = (message: ChatMessage) => {
     setMessages((prev) => [...prev, message]);
@@ -99,6 +130,7 @@ export default function HeaderSearchModal() {
     const sanitized = rawText.trim();
     if (!sanitized) return;
     clearVoiceErrors();
+    clearUiNotice();
 
     appendMessage({ id: `u-${Date.now()}`, role: 'user', text: sanitized, kind: 'text' });
     setIsThinking(true);
@@ -139,6 +171,7 @@ export default function HeaderSearchModal() {
 
   const handleQuickAction = async (action: string) => {
     setSelectedQuickAction(action);
+    clearUiNotice();
     await runIntentGate(action);
   };
 
@@ -147,6 +180,7 @@ export default function HeaderSearchModal() {
     const text = query.trim();
     if (!text || isThinking) return;
     clearVoiceErrors();
+    clearUiNotice();
     setQuery('');
     await runIntentGate(text);
   };
@@ -154,15 +188,28 @@ export default function HeaderSearchModal() {
   useEffect(() => {
     if (!voiceInput.transcript || isThinking) return;
     clearVoiceErrors();
+    clearUiNotice();
     setQuery('');
     void runIntentGate(voiceInput.transcript);
   }, [voiceInput.transcript]);
 
-  const lastQuickActions = useMemo(() => {
-    for (let i = messages.length - 1; i >= 0; i -= 1) {
-      if (messages[i].role === 'veda' && messages[i].quickActions?.length) return messages[i].quickActions ?? [];
+  useEffect(() => {
+    if (hasUsedMic && voiceInput.error) {
+      showUiNotice('No pude activar el micrófono. Escríbeme y te guío igual.');
     }
-    return [];
+  }, [hasUsedMic, voiceInput.error]);
+
+  useEffect(() => {
+    if (hasUsedAudioReply && voiceReply.error) {
+      showUiNotice('No pude reproducir audio ahora.');
+    }
+  }, [hasUsedAudioReply, voiceReply.error]);
+
+  const latestVedaActionsMessageId = useMemo(() => {
+    for (let i = messages.length - 1; i >= 0; i -= 1) {
+      if (messages[i].role === 'veda' && messages[i].quickActions?.length) return messages[i].id;
+    }
+    return null;
   }, [messages]);
 
   const modalContent = useMemo(() => {
@@ -207,6 +254,15 @@ export default function HeaderSearchModal() {
                       })}
                     </div>
                   ) : null}
+                  {message.id === latestVedaActionsMessageId && message.quickActions?.length ? (
+                    <div className="mt-3 flex flex-wrap gap-2">
+                      {message.quickActions.map((action) => (
+                        <button key={action} type="button" onClick={() => void handleQuickAction(action)} disabled={isThinking} className={`rounded-full border px-2.5 py-1 text-xs transition ${selectedQuickAction === action ? 'border-[#c9a67a] text-[#f5d2a2]' : 'border-zinc-700 text-zinc-200 hover:border-[#c9a67a]'}`}>
+                          {action}
+                        </button>
+                      ))}
+                    </div>
+                  ) : null}
                 </div>
               </div>
             ))}
@@ -220,27 +276,14 @@ export default function HeaderSearchModal() {
               </div>
             ) : null}
 
-            {hasUsedMic && voiceInput.error ? <p className="rounded-xl border border-red-900/70 bg-red-950/30 px-3 py-2 text-sm text-red-200">{voiceInput.error}</p> : null}
-            {hasUsedAudioReply && voiceReply.error ? <p className="rounded-xl border border-red-900/70 bg-red-950/30 px-3 py-2 text-sm text-red-200">{voiceReply.error}</p> : null}
+            {uiNotice ? <p className="mx-auto w-fit rounded-full border border-amber-700/60 bg-zinc-900/95 px-3 py-1 text-xs text-amber-100">{uiNotice}</p> : null}
             <div ref={bottomRef} />
           </div>
 
-          {lastQuickActions.length ? (
-            <div className="border-t border-zinc-800 px-3 py-2 sm:px-4">
-              <div className="flex flex-wrap gap-2">
-                {lastQuickActions.map((action) => (
-                  <button key={action} type="button" onClick={() => void handleQuickAction(action)} disabled={isThinking} className={`rounded-full border px-2.5 py-1 text-xs transition ${selectedQuickAction === action ? 'border-[#c9a67a] text-[#f5d2a2]' : 'border-zinc-700 text-zinc-200 hover:border-[#c9a67a]'}`}>
-                    {action}
-                  </button>
-                ))}
-              </div>
-            </div>
-          ) : null}
-
           <form className="sticky bottom-0 flex items-center gap-2 border-t border-[#c9a67a]/30 bg-zinc-950/95 px-3 py-3 sm:px-4" onSubmit={onSubmit}>
-            <input ref={inputRef} value={query} onChange={(event) => { clearVoiceErrors(); setQuery(event.target.value); }} placeholder="Escribe o busca en VEDA..." className="w-full rounded-xl border border-zinc-700 bg-zinc-900/75 px-4 py-2.5 text-sm text-zinc-100 outline-none transition placeholder:text-zinc-500 focus:border-[#c9a67a]" maxLength={80} />
-            <button type="button" disabled={isThinking || voiceInput.isProcessing} onClick={() => { setHasUsedMic(true); if (voiceInput.isRecording) { void voiceInput.stopRecording(); return; } void voiceInput.startRecording(); }} className="rounded-xl border border-zinc-700 px-3 py-2.5 text-sm text-zinc-100 transition hover:border-[#c9a67a] disabled:cursor-not-allowed disabled:opacity-50">{voiceInput.isRecording ? '⏹️' : '🎙️'}</button>
-            <button type="button" disabled={isThinking || voiceReply.isLoadingAudio} onClick={() => { setHasUsedAudioReply(true); const latestVedaMessage = [...messages].reverse().find((message) => message.role === 'veda' && message.text.trim()); if (!latestVedaMessage) return; void voiceReply.speak(latestVedaMessage.text); }} className="rounded-xl border border-zinc-700 px-3 py-2.5 text-sm text-zinc-100 transition hover:border-[#c9a67a] disabled:cursor-not-allowed disabled:opacity-50">{voiceReply.isSpeaking ? '🔈' : '🔊'}</button>
+            <input ref={inputRef} value={query} onChange={(event) => { clearVoiceErrors(); clearUiNotice(); setQuery(event.target.value); }} placeholder="Escribe o busca en VEDA..." className="w-full rounded-xl border border-zinc-700 bg-zinc-900/75 px-4 py-2.5 text-sm text-zinc-100 outline-none transition placeholder:text-zinc-500 focus:border-[#c9a67a]" maxLength={80} />
+            <button type="button" disabled={isThinking || voiceInput.isProcessing} onClick={async () => { setHasUsedMic(true); if (voiceInput.isRecording) { void voiceInput.stopRecording(); return; } await voiceInput.startRecording(); }} className="rounded-xl border border-zinc-700 px-3 py-2.5 text-sm text-zinc-100 transition hover:border-[#c9a67a] disabled:cursor-not-allowed disabled:opacity-50">{voiceInput.isRecording ? '⏹️' : '🎙️'}</button>
+            <button type="button" disabled={isThinking || voiceReply.isLoadingAudio} onClick={async () => { setHasUsedAudioReply(true); const latestVedaMessage = [...messages].reverse().find((message) => message.role === 'veda' && message.text.trim()); if (!latestVedaMessage) return; const ok = await voiceReply.speak(latestVedaMessage.text); if (!ok) showUiNotice('No pude reproducir audio ahora.'); }} className="rounded-xl border border-zinc-700 px-3 py-2.5 text-sm text-zinc-100 transition hover:border-[#c9a67a] disabled:cursor-not-allowed disabled:opacity-50">{voiceReply.isSpeaking ? '🔈' : '🔊'}</button>
             <button type="submit" disabled={isThinking} className="rounded-xl border border-[#c9a67a]/70 bg-[#c9a67a]/10 px-4 py-2.5 text-sm font-medium text-[#f5d2a2] transition hover:bg-[#c9a67a]/20 disabled:opacity-60">Enviar</button>
           </form>
         </div>
@@ -248,11 +291,11 @@ export default function HeaderSearchModal() {
         {videoToPlay ? <EmbeddedVideoModal title={videoToPlay.title} youtubeVideoId={videoToPlay.videoId} onClose={() => setVideoToPlay(null)} /> : null}
       </div>
     );
-  }, [hasUsedAudioReply, hasUsedMic, isOpen, messages, isThinking, voiceInput.error, voiceInput.isProcessing, voiceInput.isRecording, voiceReply.error, voiceReply.isLoadingAudio, voiceReply.isSpeaking, query, lastQuickActions, selectedQuickAction, videoToPlay]);
+  }, [isOpen, messages, isThinking, latestVedaActionsMessageId, voiceInput.isProcessing, voiceInput.isRecording, voiceReply.isLoadingAudio, voiceReply.isSpeaking, query, selectedQuickAction, uiNotice, videoToPlay]);
 
   return (
     <>
-      <button type="button" onClick={() => { clearVoiceErrors(); setIsOpen(true); }} className="self-start rounded-full border border-zinc-700 px-4 py-2 text-zinc-300 transition hover:border-[#f5b21b]">
+      <button type="button" onClick={() => { clearVoiceErrors(); clearUiNotice(); resetChatSession(); setIsOpen(true); }} className="self-start rounded-full border border-zinc-700 px-4 py-2 text-zinc-300 transition hover:border-[#f5b21b]">
         ⌕
       </button>
       {isMounted && modalContent ? createPortal(modalContent, document.body) : null}
