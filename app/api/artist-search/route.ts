@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { analyzeVedaSearchIntent } from '@/lib/veda/search-intent';
 
 type SearchResult = {
   title: string;
@@ -7,6 +8,16 @@ type SearchResult = {
   snippet: string;
   url: string;
   image?: string;
+};
+
+
+type ApiGuideResponse = {
+  ok: true;
+  mode: 'guide';
+  query: string;
+  message: string;
+  quickActions?: string[];
+  results: SearchResult[];
 };
 
 const SEARCH_PROMPT = 'Busca información pública reciente sobre el artista o tema consultado para una plataforma editorial de entretenimiento urbano. Devuelve resultados breves, seguros y útiles: título, tipo, fuente, resumen, url e imagen si está disponible. No inventes datos. No uses markdown. No uses comentarios. No uses texto antes o después del JSON. El campo type debe ser uno de: artist, video, article, social, other. Si no hay resultados confiables, devuelve {"results":[]}. Si no hay imagen disponible para un resultado, devuelve image como string vacío "".';
@@ -115,6 +126,21 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ ok: false, error: 'La búsqueda debe tener entre 2 y 80 caracteres.' }, { status: 400 });
   }
 
+  const intent = analyzeVedaSearchIntent(query);
+
+  if (!intent.shouldCallApi) {
+    const guidePayload: ApiGuideResponse = {
+      ok: true,
+      mode: 'guide',
+      query,
+      message: intent.userFacingReply ?? 'Te guío rápido. Dime artista, canción, video o entrevista.',
+      quickActions: intent.quickActions,
+      results: [],
+    };
+
+    return NextResponse.json(guidePayload);
+  }
+
   if (!process.env.OPENAI_API_KEY) {
     return NextResponse.json({ ok: false, error: 'Search provider not configured.' }, { status: 503 });
   }
@@ -138,7 +164,7 @@ export async function GET(request: NextRequest) {
           },
           {
             role: 'user',
-            content: `Consulta: ${query}. Devuelve únicamente JSON válido. No uses markdown. No uses bloque de código. No añadas texto fuera del JSON. Usa este formato exacto:
+            content: `Consulta: ${intent.normalizedQuery}. Devuelve únicamente JSON válido. No uses markdown. No uses bloque de código. No añadas texto fuera del JSON. Usa este formato exacto:
 {"results":[{"title":"","type":"artist|video|article|social|other","source":"","snippet":"","url":"","image":""}]}
 
 Si no hay imagen disponible, usa image como string vacío "".
@@ -219,7 +245,7 @@ Devuelve máximo 5 resultados.`,
 
     const results = sanitizeResults(parsed.results);
 
-    return NextResponse.json({ ok: true, query, results });
+    return NextResponse.json({ ok: true, mode: 'search', query, results });
   } catch (error) {
     console.error('[artist-search] Unexpected search error', {
       model,
