@@ -165,6 +165,22 @@ export default function HeaderSearchModal() {
     return [];
   }, [messages]);
 
+  const handleMicButtonClick = () => {
+    setHasUsedMic(true);
+    if (voiceInput.isRecording) {
+      void voiceInput.stopRecording();
+      return;
+    }
+    void voiceInput.startRecording();
+  };
+
+  const handleAudioReplyButtonClick = () => {
+    setHasUsedAudioReply(true);
+    const latestVedaMessage = [...messages].reverse().find((message) => message.role === 'veda' && message.text.trim());
+    if (!latestVedaMessage) return;
+    void voiceReply.speak(latestVedaMessage.text);
+  };
+
   const modalContent = useMemo(() => {
     if (!isOpen) return null;
 
@@ -239,8 +255,8 @@ export default function HeaderSearchModal() {
 
           <form className="sticky bottom-0 flex items-center gap-2 border-t border-[#c9a67a]/30 bg-zinc-950/95 px-3 py-3 sm:px-4" onSubmit={onSubmit}>
             <input ref={inputRef} value={query} onChange={(event) => { clearVoiceErrors(); setQuery(event.target.value); }} placeholder="Escribe o busca en VEDA..." className="w-full rounded-xl border border-zinc-700 bg-zinc-900/75 px-4 py-2.5 text-sm text-zinc-100 outline-none transition placeholder:text-zinc-500 focus:border-[#c9a67a]" maxLength={80} />
-            <button type="button" disabled={isThinking || voiceInput.isProcessing} onClick={() => { setHasUsedMic(true); if (voiceInput.isRecording) { void voiceInput.stopRecording(); return; } void voiceInput.startRecording(); }} className="rounded-xl border border-zinc-700 px-3 py-2.5 text-sm text-zinc-100 transition hover:border-[#c9a67a] disabled:cursor-not-allowed disabled:opacity-50">{voiceInput.isRecording ? '⏹️' : '🎙️'}</button>
-            <button type="button" disabled={isThinking || voiceReply.isLoadingAudio} onClick={() => { setHasUsedAudioReply(true); const latestVedaMessage = [...messages].reverse().find((message) => message.role === 'veda' && message.text.trim()); if (!latestVedaMessage) return; void voiceReply.speak(latestVedaMessage.text); }} className="rounded-xl border border-zinc-700 px-3 py-2.5 text-sm text-zinc-100 transition hover:border-[#c9a67a] disabled:cursor-not-allowed disabled:opacity-50">{voiceReply.isSpeaking ? '🔈' : '🔊'}</button>
+            <button type="button" disabled={isThinking || voiceInput.isProcessing} onClick={handleMicButtonClick} className="rounded-xl border border-zinc-700 px-3 py-2.5 text-sm text-zinc-100 transition hover:border-[#c9a67a] disabled:cursor-not-allowed disabled:opacity-50">{voiceInput.isRecording ? '⏹️' : '🎙️'}</button>
+            <button type="button" disabled={isThinking || voiceReply.isLoadingAudio} onClick={handleAudioReplyButtonClick} className="rounded-xl border border-zinc-700 px-3 py-2.5 text-sm text-zinc-100 transition hover:border-[#c9a67a] disabled:cursor-not-allowed disabled:opacity-50">{voiceReply.isSpeaking ? '🔈' : '🔊'}</button>
             <button type="submit" disabled={isThinking} className="rounded-xl border border-[#c9a67a]/70 bg-[#c9a67a]/10 px-4 py-2.5 text-sm font-medium text-[#f5d2a2] transition hover:bg-[#c9a67a]/20 disabled:opacity-60">Enviar</button>
           </form>
         </div>
