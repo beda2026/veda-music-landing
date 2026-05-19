@@ -1,6 +1,6 @@
 'use client';
 
-import { FormEvent, useEffect, useMemo, useRef, useState } from 'react';
+import { FormEvent, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useVedaVoiceInput } from '@/hooks/useVedaVoiceInput';
 import { useVedaVoiceReply } from '@/hooks/useVedaVoiceReply';
 import { createPortal } from 'react-dom';
@@ -54,14 +54,15 @@ export default function HeaderSearchModal() {
   const voiceInput = useVedaVoiceInput();
   const voiceReply = useVedaVoiceReply();
 
-  const clearVoiceErrors = () => {
+  const clearVoiceErrors = useCallback(() => {
     voiceInput.cancelRecording();
     voiceReply.stop();
-  };
-  const closeModal = () => {
+  }, [voiceInput, voiceReply]);
+
+  const closeModal = useCallback(() => {
     clearVoiceErrors();
     setIsOpen(false);
-  };
+  }, [clearVoiceErrors]);
 
   useEffect(() => setIsMounted(true), []);
 
@@ -85,7 +86,7 @@ export default function HeaderSearchModal() {
       document.removeEventListener('keydown', onEsc);
       document.body.style.overflow = '';
     };
-  }, [isOpen, videoToPlay]);
+  }, [isOpen, videoToPlay, closeModal, clearVoiceErrors]);
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' });
@@ -95,7 +96,7 @@ export default function HeaderSearchModal() {
     setMessages((prev) => [...prev, message]);
   };
 
-  const runIntentGate = async (rawText: string) => {
+  const runIntentGate = useCallback(async (rawText: string) => {
     const sanitized = rawText.trim();
     if (!sanitized) return;
     clearVoiceErrors();
@@ -135,7 +136,7 @@ export default function HeaderSearchModal() {
       setSelectedQuickAction(null);
       setTimeout(() => inputRef.current?.focus(), 60);
     }
-  };
+  }, [clearVoiceErrors]);
 
   const handleQuickAction = async (action: string) => {
     setSelectedQuickAction(action);
@@ -156,7 +157,7 @@ export default function HeaderSearchModal() {
     clearVoiceErrors();
     setQuery('');
     void runIntentGate(voiceInput.transcript);
-  }, [voiceInput.transcript]);
+  }, [voiceInput.transcript, isThinking, clearVoiceErrors, runIntentGate]);
 
   const lastQuickActions = useMemo(() => {
     for (let i = messages.length - 1; i >= 0; i -= 1) {
